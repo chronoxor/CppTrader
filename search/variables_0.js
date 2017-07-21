@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['version',['version',['../namespace_cpp_template.html#a456fc2b0df12279e381bdd14f355ddca',1,'CppTemplate']]]
+  ['eventcode',['EventCode',['../struct_cpp_trader_1_1_i_t_c_h_1_1_system_event_message.html#a14c27edc3f89a6f163b4329cd47604e9',1,'CppTrader::ITCH::SystemEventMessage']]]
 ];
