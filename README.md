@@ -6,7 +6,7 @@
 [![MinGW build status](https://img.shields.io/appveyor/ci/chronoxor/CppTrader/master.svg?label=MinGW)](https://ci.appveyor.com/project/chronoxor/CppTrader)
 [![Windows build status](https://img.shields.io/appveyor/ci/chronoxor/CppTrader/master.svg?label=Windows)](https://ci.appveyor.com/project/chronoxor/CppTrader)
 
-C++ Trader is a set of components for the Trading Platform.
+C++ Trader is a set of components for building a Trading Platform.
 
 [CppTrader API reference](http://chronoxor.github.io/CppTrader/index.html)
 
