@@ -57,7 +57,7 @@ std::ostream& operator<<(std::ostream& stream, SystemEventCodes e);
 struct SystemEventMessage
 {
     /// Nanoseconds portion of the timestamp.
-    int Timestamp;
+    uint32_t Timestamp;
     /// System event code.
     SystemEventCodes EventCode;
 };
@@ -86,13 +86,21 @@ public:
     ITCHHandler& operator=(const ITCHHandler&) = delete;
     ITCHHandler& operator=(ITCHHandler&&) = default;
 
-    //! Process the given buffer in ITCH format and call corresponding handlers
+    //! Process all messages from the given buffer in ITCH format and call corresponding handlers
     /*!
         \param buffer - Buffer to process
         \param size - Buffer size
         \return 'true' if the given buffer was successfully processed, 'false' if the given buffer process was failed
     */
     bool Process(void* buffer, size_t size);
+    //! Process a single message from the given buffer in ITCH format and call corresponding handlers
+    /*!
+        \param buffer - Buffer to process
+        \param size - Buffer size
+        \return 'true' if the given buffer was successfully processed, 'false' if the given buffer process was failed
+    */
+    bool ProcessMessage(void* buffer, size_t size);
+
     //! Reset ITCH handler
     void Reset();
 
@@ -102,6 +110,8 @@ public:
 private:
     size_t _size;
     std::vector<uint8_t> _cache;
+
+    bool ProcessSystemEventMessage(void* buffer, size_t size);
 };
 
 /*! \example itch_handler.cpp NASDAQ ITCH handler example */

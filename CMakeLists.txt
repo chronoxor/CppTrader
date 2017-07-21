@@ -30,9 +30,30 @@ add_subdirectory("modules")
 
 # External packages
 find_package(Threads REQUIRED)
+if(UNIX)
+  find_package(LibBFD)
+  find_package(LibDL)
+  find_package(LibRT)
+  find_package(LibUUID)
+endif()
+if(WIN32)
+  find_package(DbgHelp)
+  find_package(Userenv)
+endif()
 
 # Link libraries
 list(APPEND LINKLIBS Threads::Threads)
+if(UNIX)
+  list(APPEND LINKLIBS ${LIBBFD_LIBRARIES})
+  list(APPEND LINKLIBS ${LIBDL_LIBRARIES})
+  list(APPEND LINKLIBS ${LIBRT_LIBRARIES})
+  list(APPEND LINKLIBS ${LIBUUID_LIBRARIES})
+endif()
+if(WIN32)
+  list(APPEND LINKLIBS ${DBGHELP_LIBRARIES})
+  list(APPEND LINKLIBS ${USERENV_LIBRARIES})
+endif()
+list(APPEND LINKLIBS cppcommon)
 
 # Library
 file(GLOB_RECURSE SOURCE_FILES "source/*.cpp")
