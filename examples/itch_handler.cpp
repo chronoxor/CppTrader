@@ -15,27 +15,21 @@
 class MyHandler : public CppTrader::ITCH::ITCHHandler
 {
 protected:
-    bool HandleMessage(const CppTrader::ITCH::SystemEventMessage& message) override
-    {
-        //std::cout << message << std::endl;
-        return true;
-    }
+    bool HandleMessage(const CppTrader::ITCH::SystemEventMessage& message) override { return OutputMessage(message); }
+    bool HandleMessage(const CppTrader::ITCH::StockDirectoryMessage& message) override { return OutputMessage(message); }
+    bool HandleMessage(const CppTrader::ITCH::StockTradingActionMessage& message) override { return OutputMessage(message); }
+    bool HandleMessage(const CppTrader::ITCH::RegSHOMessage& message) override { return OutputMessage(message); }
+    bool HandleMessage(const CppTrader::ITCH::MarketParticipantPositionMessage& message) override { return OutputMessage(message); }
+    bool HandleMessage(const CppTrader::ITCH::MWCBDeclineMessage& message) override { return OutputMessage(message); }
+    bool HandleMessage(const CppTrader::ITCH::MWCBStatusMessage& message) override { return OutputMessage(message); }
+    bool HandleMessage(const CppTrader::ITCH::IPOQuotingMessage& message) override { return OutputMessage(message); }
+    bool HandleMessage(const CppTrader::ITCH::UnknownMessage& message) override { return OutputMessage(message); }
 
-    bool HandleMessage(const CppTrader::ITCH::StockDirectoryMessage& message) override
+private:
+    template <class TMessage>
+    static bool OutputMessage(const TMessage& message)
     {
-        //std::cout << message << std::endl;
-        return true;
-    }
-
-    bool HandleMessage(const CppTrader::ITCH::StockTradingActionMessage& message) override
-    {
-        //std::cout << message << std::endl;
-        return true;
-    }
-
-    bool HandleMessage(const CppTrader::ITCH::UnknownMessage& message) override
-    {
-        //std::cout << message << std::endl;
+        std::cout << message << std::endl;
         return true;
     }
 };

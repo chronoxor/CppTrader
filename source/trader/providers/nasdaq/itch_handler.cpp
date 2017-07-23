@@ -127,6 +127,16 @@ bool ITCHHandler::ProcessMessage(void* buffer, size_t size)
             return ProcessStockDirectoryMessage(data, size);
         case 'H':
             return ProcessStockTradingActionMessage(data, size);
+        case 'Y':
+            return ProcessRegSHOMessage(data, size);
+        case 'L':
+            return ProcessMarketParticipantPositionMessage(data, size);
+        case 'V':
+            return ProcessMWCBDeclineMessage(data, size);
+        case 'W':
+            return ProcessMWCBStatusMessage(data, size);
+        case 'K':
+            return ProcessIPOQuotingMessage(data, size);
         default:
             return ProcessUnknownMessage(data, size);
     }
@@ -151,7 +161,7 @@ bool ITCHHandler::ProcessSystemEventMessage(void* buffer, size_t size)
     data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
     data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
     data += ReadTimestamp(data, message.Timestamp);
-    message.EventCode = *data;
+    message.EventCode = *data++;
 
     return HandleMessage(message);
 }
@@ -192,7 +202,7 @@ bool ITCHHandler::ProcessStockDirectoryMessage(void* buffer, size_t size)
     message.LULDReferencePriceTier = *data++;
     message.ETPFlag = *data++;
     data += CppCommon::Endian::ReadBigEndian(data, message.ETPLeverageFactor);
-    message.InverseIndicator = *data;
+    message.InverseIndicator = *data++;
 
     return HandleMessage(message);
 }
@@ -251,6 +261,166 @@ std::ostream& operator<<(std::ostream& stream, const StockTradingActionMessage& 
         << "; TradingState=" << WriteChar(message.TradingState)
         << "; Reserved=" << WriteChar(message.Reserved)
         << "; Reason=" << WriteChar(message.Reason)
+        << ")";
+}
+
+bool ITCHHandler::ProcessRegSHOMessage(void* buffer, size_t size)
+{
+    assert((size == 20) && "Invalid size of the ITCH message type 'Y'");
+    if (size != 20)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    RegSHOMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    data += ReadString(data, message.Stock);
+    message.RegSHOAction = *data++;
+
+    return HandleMessage(message);
+}
+
+std::ostream& operator<<(std::ostream& stream, const RegSHOMessage& message)
+{
+    return stream << "RegSHOMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; Stock=" << WriteString(message.Stock)
+        << "; RegSHOAction=" << WriteChar(message.RegSHOAction)
+        << ")";
+}
+
+bool ITCHHandler::ProcessMarketParticipantPositionMessage(void* buffer, size_t size)
+{
+    assert((size == 26) && "Invalid size of the ITCH message type 'L'");
+    if (size != 26)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    MarketParticipantPositionMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    data += ReadString(data, message.MPID);
+    data += ReadString(data, message.Stock);
+    message.PrimaryMarketMaker = *data++;
+    message.MarketMakerMode = *data++;
+    message.MarketParticipantState = *data++;
+
+    return HandleMessage(message);
+}
+
+std::ostream& operator<<(std::ostream& stream, const MarketParticipantPositionMessage& message)
+{
+    return stream << "MarketParticipantPositionMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; MPID=" << WriteString(message.MPID)
+        << "; Stock=" << WriteString(message.Stock)
+        << "; PrimaryMarketMaker=" << WriteChar(message.PrimaryMarketMaker)
+        << "; MarketMakerMode=" << WriteChar(message.MarketMakerMode)
+        << "; MarketParticipantState=" << WriteChar(message.MarketParticipantState)
+        << ")";
+}
+
+bool ITCHHandler::ProcessMWCBDeclineMessage(void* buffer, size_t size)
+{
+    assert((size == 35) && "Invalid size of the ITCH message type 'V'");
+    if (size != 35)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    MWCBDeclineMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    data += CppCommon::Endian::ReadBigEndian(data, message.Level1);
+    data += CppCommon::Endian::ReadBigEndian(data, message.Level2);
+    data += CppCommon::Endian::ReadBigEndian(data, message.Level3);
+
+    return HandleMessage(message);
+}
+
+std::ostream& operator<<(std::ostream& stream, const MWCBDeclineMessage& message)
+{
+    return stream << "MWCBDeclineMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; Level1=" << message.Level1
+        << "; Level2=" << message.Level2
+        << "; Level3=" << message.Level3
+        << ")";
+}
+
+bool ITCHHandler::ProcessMWCBStatusMessage(void* buffer, size_t size)
+{
+    assert((size == 12) && "Invalid size of the ITCH message type 'W'");
+    if (size != 12)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    MWCBStatusMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    message.BreachedLevel = *data++;
+
+    return HandleMessage(message);
+}
+
+std::ostream& operator<<(std::ostream& stream, const MWCBStatusMessage& message)
+{
+    return stream << "MWCBStatusMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; BreachedLevel=" << message.BreachedLevel
+        << ")";
+}
+
+bool ITCHHandler::ProcessIPOQuotingMessage(void* buffer, size_t size)
+{
+    assert((size == 28) && "Invalid size of the ITCH message type 'W'");
+    if (size != 28)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    IPOQuotingMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    data += ReadString(data, message.Stock);
+    data += CppCommon::Endian::ReadBigEndian(data, message.IPOReleaseTime);
+    message.IPOReleaseQualifier = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.IPOPrice);
+
+    return HandleMessage(message);
+}
+
+std::ostream& operator<<(std::ostream& stream, const IPOQuotingMessage& message)
+{
+    return stream << "IPOQuotingMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; Stock=" << WriteString(message.Stock)
+        << "; IPOReleaseTime=" << message.IPOReleaseTime
+        << "; IPOReleaseQualifier=" << message.IPOReleaseQualifier
+        << "; IPOPrice=" << message.IPOPrice
         << ")";
 }
 
