@@ -8,7 +8,6 @@
 
 #include "trader/providers/nasdaq/itch_handler.h"
 
-#include "string/format.h"
 #include "utility/endian.h"
 
 #include <cassert>
@@ -127,20 +126,15 @@ bool ITCHHandler::ProcessMessage(void* buffer, size_t size)
         case 'S':
             return ProcessSystemEventMessage(data, size - 1);
         default:
-            break;
+            return ProcessUnknownMessage(type);
     }
-
-    assert(false && "Unknown ITCH message type '{}'"_format(type));
-    return false;
 }
 
 bool ITCHHandler::ProcessSystemEventMessage(void* buffer, size_t size)
 {
+    assert((size == 6) && "Invalid size of the ITCH message type 'S'");
     if (size != 6)
-    {
-        assert(false && "Invalid size of the ITCH message type 'S'");
         return false;
-    }
 
     uint8_t* data = (uint8_t*)buffer;
 
@@ -150,9 +144,15 @@ bool ITCHHandler::ProcessSystemEventMessage(void* buffer, size_t size)
     message.EventCode = (SystemEventCodes)*data;
     data += 1;
 
-    HandleMessage(message);
+    return HandleMessage(message);
+}
 
-    return true;
+bool ITCHHandler::ProcessUnknownMessage(uint8_t type)
+{
+    UnknownMessage message;
+    message.Type = type;
+
+    return HandleMessage(message);
 }
 
 void ITCHHandler::Reset()

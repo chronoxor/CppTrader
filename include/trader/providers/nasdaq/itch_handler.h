@@ -62,6 +62,13 @@ struct SystemEventMessage
     SystemEventCodes EventCode;
 };
 
+//! Unknown message
+struct UnknownMessage
+{
+    /// Unknown message type.
+    uint8_t Type;
+};
+
 //! NASDAQ ITCH handler class
 /*!
     NASDAQ ITCH handler is used to parse NASDAQ ITCH protocol and handle its
@@ -105,13 +112,15 @@ public:
     void Reset();
 
     // Message handlers
-    virtual void HandleMessage(const SystemEventMessage& message) {}
+    virtual bool HandleMessage(const SystemEventMessage& message) { return true; }
+    virtual bool HandleMessage(const UnknownMessage& message) { return true; }
 
 private:
     size_t _size;
     std::vector<uint8_t> _cache;
 
     bool ProcessSystemEventMessage(void* buffer, size_t size);
+    bool ProcessUnknownMessage(uint8_t type);
 };
 
 /*! \example itch_handler.cpp NASDAQ ITCH handler example */
