@@ -61,6 +61,7 @@ struct SystemEventMessage
     /// System event code.
     SystemEventCodes EventCode;
 };
+std::ostream& operator<<(std::ostream& stream, const SystemEventMessage& message);
 
 //! Unknown message
 struct UnknownMessage
@@ -68,6 +69,7 @@ struct UnknownMessage
     /// Unknown message type.
     uint8_t Type;
 };
+std::ostream& operator<<(std::ostream& stream, const UnknownMessage& message);
 
 //! NASDAQ ITCH handler class
 /*!
@@ -111,6 +113,7 @@ public:
     //! Reset ITCH handler
     void Reset();
 
+protected:
     // Message handlers
     virtual bool HandleMessage(const SystemEventMessage& message) { return true; }
     virtual bool HandleMessage(const UnknownMessage& message) { return true; }

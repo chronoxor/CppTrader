@@ -51,6 +51,16 @@ std::ostream& operator<<(std::ostream& stream, SystemEventCodes e)
     return stream;
 }
 
+std::ostream& operator<<(std::ostream& stream, const SystemEventMessage& message)
+{
+    return stream << "SystemEventMessage(Timestamp=" << message.Timestamp << "; EventCode=" << message.EventCode << ")";
+}
+
+std::ostream& operator<<(std::ostream& stream, const UnknownMessage& message)
+{
+    return stream << "SystemEventMessage(Type=" << message.Type << ")";
+}
+
 bool ITCHHandler::Process(void* buffer, size_t size)
 {
     size_t index = 0;
