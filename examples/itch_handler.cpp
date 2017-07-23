@@ -17,13 +17,25 @@ class MyHandler : public CppTrader::ITCH::ITCHHandler
 protected:
     bool HandleMessage(const CppTrader::ITCH::SystemEventMessage& message) override
     {
-        std::cout << message << std::endl;
+        //std::cout << message << std::endl;
+        return true;
+    }
+
+    bool HandleMessage(const CppTrader::ITCH::StockDirectoryMessage& message) override
+    {
+        //std::cout << message << std::endl;
+        return true;
+    }
+
+    bool HandleMessage(const CppTrader::ITCH::StockTradingActionMessage& message) override
+    {
+        //std::cout << message << std::endl;
         return true;
     }
 
     bool HandleMessage(const CppTrader::ITCH::UnknownMessage& message) override
     {
-        std::cout << message << std::endl;
+        //std::cout << message << std::endl;
         return true;
     }
 };

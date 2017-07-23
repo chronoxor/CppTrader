@@ -8,52 +8,47 @@
 
 #include "trader/providers/nasdaq/itch_handler.h"
 
-#include "utility/endian.h"
-
 #include <cassert>
+
+namespace {
+
+class WriteChar
+{
+public:
+    explicit WriteChar(char ch) : _ch(ch) {}
+
+    friend std::ostream& operator<<(std::ostream& stream, const WriteChar& writer)
+    {
+        return stream << '\'' << writer._ch << '\'';
+    }
+
+private:
+    char _ch;
+};
+
+class WriteString
+{
+public:
+    template <size_t N>
+    explicit WriteString(const char (&str)[N]) : _str(str), _size(N) {}
+
+    friend std::ostream& operator<<(std::ostream& stream, const WriteString& writer)
+    {
+        stream << '"';
+        stream.write(writer._str, writer._size);
+        stream << '"';
+        return stream;
+    }
+
+private:
+    const char* _str;
+    size_t _size;
+};
+
+}
 
 namespace CppTrader {
 namespace ITCH {
-
-std::ostream& operator<<(std::ostream& stream, SystemEventCodes e)
-{
-    switch (e)
-    {
-        case SystemEventCodes::START_OF_MESSAGES:
-            stream << "START_OF_MESSAGES ('O')";
-            break;
-        case SystemEventCodes::START_OF_SYSTEM_HOURS:
-            stream << "START_OF_SYSTEM_HOURS ('S')";
-            break;
-        case SystemEventCodes::START_OF_MARKET_HOURS:
-            stream << "START_OF_MARKET_HOURS ('Q')";
-            break;
-        case SystemEventCodes::END_OF_MARKET_HOURS:
-            stream << "END_OF_MARKET_HOURS ('M')";
-            break;
-        case SystemEventCodes::END_OF_SYSTEM_HOURS:
-            stream << "END_OF_SYSTEM_HOURS ('E')";
-            break;
-        case SystemEventCodes::END_OF_MESSAGES:
-            stream << "END_OF_MESSAGES ('C')";
-            break;
-        default:
-            stream << "<\?\?\?>";
-            break;
-    }
-
-    return stream;
-}
-
-std::ostream& operator<<(std::ostream& stream, const SystemEventMessage& message)
-{
-    return stream << "SystemEventMessage(StockLocate=" << message.StockLocate << "; TrackingNumber=" << message.TrackingNumber << "; Timestamp=" << message.Timestamp << "; EventCode=" << message.EventCode << ")";
-}
-
-std::ostream& operator<<(std::ostream& stream, const UnknownMessage& message)
-{
-    return stream << "UnknownMessage(Type=" << message.Type << ")";
-}
 
 bool ITCHHandler::Process(void* buffer, size_t size)
 {
@@ -123,14 +118,17 @@ bool ITCHHandler::ProcessMessage(void* buffer, size_t size)
         return false;
 
     uint8_t* data = (uint8_t*)buffer;
-    char type = *data++;
 
-    switch (type)
+    switch (*data)
     {
         case 'S':
-            return ProcessSystemEventMessage(data, size - 1);
+            return ProcessSystemEventMessage(data, size);
+        case 'R':
+            return ProcessStockDirectoryMessage(data, size);
+        case 'H':
+            return ProcessStockTradingActionMessage(data, size);
         default:
-            return ProcessUnknownMessage(type);
+            return ProcessUnknownMessage(data, size);
     }
 }
 
@@ -142,47 +140,137 @@ void ITCHHandler::Reset()
 
 bool ITCHHandler::ProcessSystemEventMessage(void* buffer, size_t size)
 {
-    assert((size == 11) && "Invalid size of the ITCH message type 'S'");
-    if (size != 11)
+    assert((size == 12) && "Invalid size of the ITCH message type 'S'");
+    if (size != 12)
         return false;
 
     uint8_t* data = (uint8_t*)buffer;
 
     SystemEventMessage message;
+    message.Type = *data++;
     data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
     data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
     data += ReadTimestamp(data, message.Timestamp);
-    message.EventCode = (SystemEventCodes)*data++;
+    message.EventCode = *data;
 
     return HandleMessage(message);
 }
 
-bool ITCHHandler::ProcessUnknownMessage(uint8_t type)
+std::ostream& operator<<(std::ostream& stream, const SystemEventMessage& message)
 {
+    return stream << "SystemEventMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; EventCode=" << WriteChar(message.EventCode)
+        << ")";
+}
+
+bool ITCHHandler::ProcessStockDirectoryMessage(void* buffer, size_t size)
+{
+    assert((size == 39) && "Invalid size of the ITCH message type 'R'");
+    if (size != 39)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    StockDirectoryMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    data += ReadString(data, message.Stock);
+    message.MarketCategory = *data++;
+    message.FinancialStatusIndicator = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.RoundLotSize);
+    message.RoundLotsOnly = *data++;
+    message.IssueClassification = *data++;
+    data += ReadString(data, message.IssueSubType);
+    message.Authenticity = *data++;
+    message.ShortSaleThresholdIndicator = *data++;
+    message.IPOFlag = *data++;
+    message.LULDReferencePriceTier = *data++;
+    message.ETPFlag = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.ETPLeverageFactor);
+    message.InverseIndicator = *data;
+
+    return HandleMessage(message);
+}
+
+std::ostream& operator<<(std::ostream& stream, const StockDirectoryMessage& message)
+{
+    return stream << "StockDirectoryMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; Stock=" << WriteString(message.Stock)
+        << "; MarketCategory=" << WriteChar(message.MarketCategory)
+        << "; FinancialStatusIndicator=" << WriteChar(message.FinancialStatusIndicator)
+        << "; RoundLotSize=" << message.RoundLotSize
+        << "; RoundLotsOnly=" << WriteChar(message.RoundLotsOnly)
+        << "; IssueClassification=" << WriteChar(message.IssueClassification)
+        << "; IssueSubType=" << WriteString(message.IssueSubType)
+        << "; Authenticity=" << WriteChar(message.Authenticity)
+        << "; ShortSaleThresholdIndicator=" << WriteChar(message.ShortSaleThresholdIndicator)
+        << "; IPOFlag=" << WriteChar(message.IPOFlag)
+        << "; LULDReferencePriceTier=" << WriteChar(message.LULDReferencePriceTier)
+        << "; ETPFlag=" << WriteChar(message.ETPFlag)
+        << "; ETPLeverageFactor=" << message.ETPLeverageFactor
+        << "; InverseIndicator=" << WriteChar(message.InverseIndicator)
+        << ")";
+}
+
+bool ITCHHandler::ProcessStockTradingActionMessage(void* buffer, size_t size)
+{
+    assert((size == 25) && "Invalid size of the ITCH message type 'H'");
+    if (size != 25)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    StockTradingActionMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    data += ReadString(data, message.Stock);
+    message.TradingState = *data++;
+    message.Reserved = *data++;
+    message.Reason = *data++;
+
+    return HandleMessage(message);
+}
+
+std::ostream& operator<<(std::ostream& stream, const StockTradingActionMessage& message)
+{
+    return stream << "StockTradingActionMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; Stock=" << WriteString(message.Stock)
+        << "; TradingState=" << WriteChar(message.TradingState)
+        << "; Reserved=" << WriteChar(message.Reserved)
+        << "; Reason=" << WriteChar(message.Reason)
+        << ")";
+}
+
+bool ITCHHandler::ProcessUnknownMessage(void* buffer, size_t size)
+{
+    assert((size > 0) && "Invalid size of the unknown ITCH message!");
+    if (size == 0)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
     UnknownMessage message;
-    message.Type = type;
+    message.Type = *data;
 
     return HandleMessage(message);
 }
 
-size_t ITCHHandler::ReadTimestamp(const void* buffer, uint64_t& value)
+std::ostream& operator<<(std::ostream& stream, const UnknownMessage& message)
 {
-    if (CppCommon::Endian::IsBigEndian())
-    {
-        ((uint8_t*)&value)[0] = 0;
-        ((uint8_t*)&value)[1] = ((const uint8_t*)buffer)[0];
-        ((uint8_t*)&value)[2] = ((const uint8_t*)buffer)[1];
-        ((uint8_t*)&value)[3] = ((const uint8_t*)buffer)[2];
-    }
-    else
-    {
-        ((uint8_t*)&value)[0] = ((const uint8_t*)buffer)[2];
-        ((uint8_t*)&value)[1] = ((const uint8_t*)buffer)[1];
-        ((uint8_t*)&value)[2] = ((const uint8_t*)buffer)[0];
-        ((uint8_t*)&value)[3] = 0;
-    }
-
-    return 6;
+    return stream << "UnknownMessage(Type=" << WriteChar(message.Type) << ")";
 }
 
 } // namespace ITCH

@@ -9,6 +9,8 @@
 #ifndef CPPTRADER_ITCH_HANDLER_H
 #define CPPTRADER_ITCH_HANDLER_H
 
+#include "utility/endian.h"
+
 #include <iostream>
 #include <vector>
 
@@ -20,49 +22,65 @@ namespace CppTrader {
 */
 namespace ITCH {
 
-//! System event codes
-enum class SystemEventCodes
-{
-    /// Start of Messages. Outside of time stamp messages, the start of day message is the first message sent in
-    /// any trading day.
-    START_OF_MESSAGES = 'O',
-    /// Start of System hours. This message indicates that NASDAQ is open and ready to start accepting orders.
-    START_OF_SYSTEM_HOURS = 'S',
-    /// Start of Market hours. This message is intended to indicate that Market Hours orders are available
-    /// for execution.
-    START_OF_MARKET_HOURS = 'Q',
-    /// End of Market hours. This message is intended to indicate that Market Hours orders are no longer
-    /// available for execution.
-    END_OF_MARKET_HOURS = 'M',
-    /// End of System hours. It indicates that Nasdaq is now closed and will not accept any new orders today.
-    /// It is still possible to receive Broken Trade messages and Order Delete messages after the End of Day.
-    END_OF_SYSTEM_HOURS = 'E',
-    /// End of Messages. This is always the last message sent in any trading day.
-    END_OF_MESSAGES = 'C'
-};
-std::ostream& operator<<(std::ostream& stream, SystemEventCodes e);
-
-//! The system event message type is used to signal a market or data feed handler event.
+//! System Event Message
 struct SystemEventMessage
 {
-    /// Always 0
+    char Type;
     uint16_t StockLocate;
-    /// Nasdaq internal tracking number
     uint16_t TrackingNumber;
-    /// Nanoseconds since midnight
     uint64_t Timestamp;
-    /// System event code
-    SystemEventCodes EventCode;
+    char EventCode;
+
+    friend std::ostream& operator<<(std::ostream& stream, const SystemEventMessage& message);
 };
-std::ostream& operator<<(std::ostream& stream, const SystemEventMessage& message);
+
+//! Stock Directory
+struct StockDirectoryMessage
+{
+    char Type;
+    uint16_t StockLocate;
+    uint16_t TrackingNumber;
+    uint64_t Timestamp;
+    char Stock[8];
+    char MarketCategory;
+    char FinancialStatusIndicator;
+    uint32_t RoundLotSize;
+    char RoundLotsOnly;
+    char IssueClassification;
+    char IssueSubType[2];
+    char Authenticity;
+    char ShortSaleThresholdIndicator;
+    char IPOFlag;
+    char LULDReferencePriceTier;
+    char ETPFlag;
+    uint32_t ETPLeverageFactor;
+    char InverseIndicator;
+
+    friend std::ostream& operator<<(std::ostream& stream, const StockDirectoryMessage& message);
+};
+
+//! Stock Trading Action
+struct StockTradingActionMessage
+{
+    char Type;
+    uint16_t StockLocate;
+    uint16_t TrackingNumber;
+    uint64_t Timestamp;
+    char Stock[8];
+    char TradingState;
+    char Reserved;
+    char Reason;
+
+    friend std::ostream& operator<<(std::ostream& stream, const StockTradingActionMessage& message);
+};
 
 //! Unknown message
 struct UnknownMessage
 {
-    /// Unknown message type
-    uint8_t Type;
+    char Type;
+
+    friend std::ostream& operator<<(std::ostream& stream, const UnknownMessage& message);
 };
-std::ostream& operator<<(std::ostream& stream, const UnknownMessage& message);
 
 //! NASDAQ ITCH handler class
 /*!
@@ -109,6 +127,8 @@ public:
 protected:
     // Message handlers
     virtual bool HandleMessage(const SystemEventMessage& message) { return true; }
+    virtual bool HandleMessage(const StockDirectoryMessage& message) { return true; }
+    virtual bool HandleMessage(const StockTradingActionMessage& message) { return true; }
     virtual bool HandleMessage(const UnknownMessage& message) { return true; }
 
 private:
@@ -116,14 +136,20 @@ private:
     std::vector<uint8_t> _cache;
 
     bool ProcessSystemEventMessage(void* buffer, size_t size);
-    bool ProcessUnknownMessage(uint8_t type);
+    bool ProcessStockDirectoryMessage(void* buffer, size_t size);
+    bool ProcessStockTradingActionMessage(void* buffer, size_t size);
+    bool ProcessUnknownMessage(void* buffer, size_t size);
 
-    static size_t ReadTimestamp(const void* buffer, uint64_t& value);
+    template <size_t N>
+    size_t ReadString(const void* buffer, char (&str)[N]);
+    size_t ReadTimestamp(const void* buffer, uint64_t& value);
 };
 
 /*! \example itch_handler.cpp NASDAQ ITCH handler example */
 
 } // namespace ITCH
 } // namespace CppTrader
+
+#include "itch_handler.inl"
 
 #endif // CPPTRADER_ITCH_HANDLER_H
