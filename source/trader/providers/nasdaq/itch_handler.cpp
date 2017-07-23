@@ -52,7 +52,7 @@ std::ostream& operator<<(std::ostream& stream, const SystemEventMessage& message
 
 std::ostream& operator<<(std::ostream& stream, const UnknownMessage& message)
 {
-    return stream << "SystemEventMessage(Type=" << message.Type << ")";
+    return stream << "UnknownMessage(Type=" << message.Type << ")";
 }
 
 bool ITCHHandler::Process(void* buffer, size_t size)
@@ -151,7 +151,7 @@ bool ITCHHandler::ProcessSystemEventMessage(void* buffer, size_t size)
     SystemEventMessage message;
     data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
     data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
-    data += CppCommon::Endian::ReadBigEndian(data, message.Timestamp);
+    data += ReadTimestamp(data, message.Timestamp);
     message.EventCode = (SystemEventCodes)*data++;
 
     return HandleMessage(message);

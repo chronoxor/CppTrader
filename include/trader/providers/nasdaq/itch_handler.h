@@ -50,7 +50,7 @@ struct SystemEventMessage
     /// Nasdaq internal tracking number
     uint16_t TrackingNumber;
     /// Nanoseconds since midnight
-    uint32_t Timestamp;
+    uint64_t Timestamp;
     /// System event code
     SystemEventCodes EventCode;
 };
