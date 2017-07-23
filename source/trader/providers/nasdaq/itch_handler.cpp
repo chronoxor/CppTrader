@@ -28,20 +28,14 @@ std::ostream& operator<<(std::ostream& stream, SystemEventCodes e)
         case SystemEventCodes::START_OF_MARKET_HOURS:
             stream << "START_OF_MARKET_HOURS ('Q')";
             break;
+        case SystemEventCodes::END_OF_MARKET_HOURS:
+            stream << "END_OF_MARKET_HOURS ('M')";
+            break;
         case SystemEventCodes::END_OF_SYSTEM_HOURS:
             stream << "END_OF_SYSTEM_HOURS ('E')";
             break;
         case SystemEventCodes::END_OF_MESSAGES:
             stream << "END_OF_MESSAGES ('C')";
-            break;
-        case SystemEventCodes::EMERGENCY_MARKET_CONDITION_HALT:
-            stream << "EMERGENCY_MARKET_CONDITION_HALT ('A')";
-            break;
-        case SystemEventCodes::EMERGENCY_MARKET_CONDITION_QUOTE_ONLY_PERIOD:
-            stream << "EMERGENCY_MARKET_CONDITION_QUOTE_ONLY_PERIOD ('R')";
-            break;
-        case SystemEventCodes::EMERGENCY_MARKET_CONDITION_RESUMPTION:
-            stream << "EMERGENCY_MARKET_CONDITION_RESUMPTION ('B')";
             break;
         default:
             stream << "<\?\?\?>";
@@ -53,7 +47,7 @@ std::ostream& operator<<(std::ostream& stream, SystemEventCodes e)
 
 std::ostream& operator<<(std::ostream& stream, const SystemEventMessage& message)
 {
-    return stream << "SystemEventMessage(Timestamp=" << message.Timestamp << "; EventCode=" << message.EventCode << ")";
+    return stream << "SystemEventMessage(StockLocate=" << message.StockLocate << "; TrackingNumber=" << message.TrackingNumber << "; Timestamp=" << message.Timestamp << "; EventCode=" << message.EventCode << ")";
 }
 
 std::ostream& operator<<(std::ostream& stream, const UnknownMessage& message)
@@ -70,16 +64,16 @@ bool ITCHHandler::Process(void* buffer, size_t size)
     {
         size_t remaining = size - index;
 
-        // Collect message size in cache
-        if (((_cache.size() == 0) && (remaining < 3)) || (_cache.size() == 1))
-        {
-            _cache.push_back(data[index++]);
-            continue;
-        }
-
-        // Read a new message size
         if (_size == 0)
         {
+            // Collect message size in cache
+            if (((_cache.size() == 0) && (remaining < 3)) || (_cache.size() == 1))
+            {
+                _cache.push_back(data[index++]);
+                continue;
+            }
+
+            // Read a new message size
             uint16_t message_size;
             CppCommon::Endian::ReadBigEndian(_cache.empty() ? &data[index++] : _cache.data(), message_size);
             _size = message_size;
@@ -140,19 +134,25 @@ bool ITCHHandler::ProcessMessage(void* buffer, size_t size)
     }
 }
 
+void ITCHHandler::Reset()
+{
+    _size = 0;
+    _cache.clear();
+}
+
 bool ITCHHandler::ProcessSystemEventMessage(void* buffer, size_t size)
 {
-    assert((size == 6) && "Invalid size of the ITCH message type 'S'");
-    if (size != 6)
+    assert((size == 11) && "Invalid size of the ITCH message type 'S'");
+    if (size != 11)
         return false;
 
     uint8_t* data = (uint8_t*)buffer;
 
     SystemEventMessage message;
-    CppCommon::Endian::ReadBigEndian(data, message.Timestamp);
-    data += 4;
-    message.EventCode = (SystemEventCodes)*data;
-    data += 1;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += CppCommon::Endian::ReadBigEndian(data, message.Timestamp);
+    message.EventCode = (SystemEventCodes)*data++;
 
     return HandleMessage(message);
 }
@@ -165,10 +165,24 @@ bool ITCHHandler::ProcessUnknownMessage(uint8_t type)
     return HandleMessage(message);
 }
 
-void ITCHHandler::Reset()
+size_t ITCHHandler::ReadTimestamp(const void* buffer, uint64_t& value)
 {
-    _size = 0;
-    _cache.clear();
+    if (CppCommon::Endian::IsBigEndian())
+    {
+        ((uint8_t*)&value)[0] = 0;
+        ((uint8_t*)&value)[1] = ((const uint8_t*)buffer)[0];
+        ((uint8_t*)&value)[2] = ((const uint8_t*)buffer)[1];
+        ((uint8_t*)&value)[3] = ((const uint8_t*)buffer)[2];
+    }
+    else
+    {
+        ((uint8_t*)&value)[0] = ((const uint8_t*)buffer)[2];
+        ((uint8_t*)&value)[1] = ((const uint8_t*)buffer)[1];
+        ((uint8_t*)&value)[2] = ((const uint8_t*)buffer)[0];
+        ((uint8_t*)&value)[3] = 0;
+    }
+
+    return 6;
 }
 
 } // namespace ITCH

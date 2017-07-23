@@ -23,42 +23,35 @@ namespace ITCH {
 //! System event codes
 enum class SystemEventCodes
 {
-    /// Start of Messages. Outside of time stamp messages, the start of day
-    /// message is the first message sent in any trading day.
+    /// Start of Messages. Outside of time stamp messages, the start of day message is the first message sent in
+    /// any trading day.
     START_OF_MESSAGES = 'O',
-    /// Start of System hours. This message indicates that NASDAQ is open and
-    /// ready to start accepting orders.
+    /// Start of System hours. This message indicates that NASDAQ is open and ready to start accepting orders.
     START_OF_SYSTEM_HOURS = 'S',
-    /// Start of Market hours. This message is intended to indicate that Market
-    /// Hours orders are available for execution.
+    /// Start of Market hours. This message is intended to indicate that Market Hours orders are available
+    /// for execution.
     START_OF_MARKET_HOURS = 'Q',
-    /// End of System hours. It indicates that NASDAQ is now closed and will
-    /// not accept any new orders today. It is still possible to receive Broken
-    /// Trade messages and Order Delete messages after the End of Day.
+    /// End of Market hours. This message is intended to indicate that Market Hours orders are no longer
+    /// available for execution.
+    END_OF_MARKET_HOURS = 'M',
+    /// End of System hours. It indicates that Nasdaq is now closed and will not accept any new orders today.
+    /// It is still possible to receive Broken Trade messages and Order Delete messages after the End of Day.
     END_OF_SYSTEM_HOURS = 'E',
     /// End of Messages. This is always the last message sent in any trading day.
-    END_OF_MESSAGES = 'C',
-
-    /// Emergency Market Condition - Halt: This message is sent to inform
-    /// NASDAQ market participants that the EMC is in effect. No trading is
-    /// allowed during the EMC.
-    EMERGENCY_MARKET_CONDITION_HALT = 'A',
-    /// Emergency Market Condition – Quote Only Period: This message is sent
-    /// to inform NASDAQ market participants that the EMC quotation only
-    /// period is in effect.
-    EMERGENCY_MARKET_CONDITION_QUOTE_ONLY_PERIOD = 'R',
-    /// Emergency Market Condition – Resumption: This message is sent to
-    /// inform NASDAQ market participants that EMC is no longer in effect.
-    EMERGENCY_MARKET_CONDITION_RESUMPTION = 'B'
+    END_OF_MESSAGES = 'C'
 };
 std::ostream& operator<<(std::ostream& stream, SystemEventCodes e);
 
 //! The system event message type is used to signal a market or data feed handler event.
 struct SystemEventMessage
 {
-    /// Nanoseconds portion of the timestamp.
+    /// Always 0
+    uint16_t StockLocate;
+    /// Nasdaq internal tracking number
+    uint16_t TrackingNumber;
+    /// Nanoseconds since midnight
     uint32_t Timestamp;
-    /// System event code.
+    /// System event code
     SystemEventCodes EventCode;
 };
 std::ostream& operator<<(std::ostream& stream, const SystemEventMessage& message);
@@ -66,7 +59,7 @@ std::ostream& operator<<(std::ostream& stream, const SystemEventMessage& message
 //! Unknown message
 struct UnknownMessage
 {
-    /// Unknown message type.
+    /// Unknown message type
     uint8_t Type;
 };
 std::ostream& operator<<(std::ostream& stream, const UnknownMessage& message);
@@ -77,7 +70,7 @@ std::ostream& operator<<(std::ostream& stream, const UnknownMessage& message);
     messages in special handlers.
 
     NASDAQ ITCH protocol specification:
-    http://nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/NQTV-ITCH-V4_1.pdf
+    http://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/NQTVITCHSpecification.pdf
 
     NASDAQ ITCH protocol examples:
     ftp://emi.nasdaq.com/ITCH
@@ -90,7 +83,7 @@ public:
     ITCHHandler() { Reset(); }
     ITCHHandler(const ITCHHandler&) = delete;
     ITCHHandler(ITCHHandler&&) = default;
-    ~ITCHHandler() = default;
+    virtual ~ITCHHandler() = default;
 
     ITCHHandler& operator=(const ITCHHandler&) = delete;
     ITCHHandler& operator=(ITCHHandler&&) = default;
@@ -124,6 +117,8 @@ private:
 
     bool ProcessSystemEventMessage(void* buffer, size_t size);
     bool ProcessUnknownMessage(uint8_t type);
+
+    static size_t ReadTimestamp(const void* buffer, uint64_t& value);
 };
 
 /*! \example itch_handler.cpp NASDAQ ITCH handler example */
