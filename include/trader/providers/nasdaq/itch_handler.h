@@ -351,11 +351,11 @@ class ITCHHandler
 public:
     ITCHHandler() { Reset(); }
     ITCHHandler(const ITCHHandler&) = delete;
-    ITCHHandler(ITCHHandler&&) = default;
+    ITCHHandler(ITCHHandler&&) noexcept = default;
     virtual ~ITCHHandler() = default;
 
     ITCHHandler& operator=(const ITCHHandler&) = delete;
-    ITCHHandler& operator=(ITCHHandler&&) = default;
+    ITCHHandler& operator=(ITCHHandler&&) noexcept = default;
 
     //! Process all messages from the given buffer in ITCH format and call corresponding handlers
     /*!
