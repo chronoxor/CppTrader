@@ -18,3 +18,7 @@
 	path = modules/CppCommon
 	url = https://github.com/chronoxor/CppCommon.git
 	branch = master
+[submodule "modules/cpp-optparse"]
+	path = modules/cpp-optparse
+	url = https://github.com/weisslj/cpp-optparse.git
+	branch = master

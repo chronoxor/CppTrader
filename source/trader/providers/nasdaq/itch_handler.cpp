@@ -57,11 +57,11 @@ bool ITCHHandler::Process(void* buffer, size_t size)
 
     while (index < size)
     {
-        size_t remaining = size - index;
-
         if (_size == 0)
         {
-            // Collect message size in cache
+            size_t remaining = size - index;
+
+            // Collect message size into the cache
             if (((_cache.size() == 0) && (remaining < 3)) || (_cache.size() == 1))
             {
                 _cache.push_back(data[index++]);
@@ -70,21 +70,34 @@ bool ITCHHandler::Process(void* buffer, size_t size)
 
             // Read a new message size
             uint16_t message_size;
-            CppCommon::Endian::ReadBigEndian(_cache.empty() ? &data[index++] : _cache.data(), message_size);
+            if (_cache.empty())
+            {
+                // Read the message size directly from the input buffer
+                index += CppCommon::Endian::ReadBigEndian(&data[index], message_size);
+            }
+            else
+            {
+                // Read the message size from the cache
+                CppCommon::Endian::ReadBigEndian(_cache.data(), message_size);
+
+                // Clear the cache
+                _cache.clear();
+            }
             _size = message_size;
-            _cache.clear();
         }
 
         // Read a new message
         if (_size > 0)
         {
-            // Complete or place the message in the cache
+            size_t remaining = size - index;
+
+            // Complete or place the message into the cache
             if (!_cache.empty())
             {
                 size_t tail = _size - _cache.size();
                 if (tail > remaining)
                     tail = remaining;
-                _cache.insert(_cache.end(), &data[index], &data[tail]);
+                _cache.insert(_cache.end(), &data[index], &data[index + tail]);
                 index += tail;
                 if (_cache.size() < _size)
                     continue;
@@ -92,19 +105,31 @@ bool ITCHHandler::Process(void* buffer, size_t size)
             else if (_size > remaining)
             {
                 _cache.reserve(_size);
-                _cache.insert(_cache.end(), &data[index], &data[remaining]);
+                _cache.insert(_cache.end(), &data[index], &data[index + remaining]);
                 index += remaining;
                 continue;
             }
 
             // Process the current message
-            if (!ProcessMessage(_cache.empty() ? &data[index] : _cache.data(), _size))
-                return false;
+            if (_cache.empty())
+            {
+                // Process the current message size directly from the input buffer
+                if (!ProcessMessage(&data[index], _size))
+                    return false;
+                index += _size;
+            }
+            else
+            {
+                // Process the current message size directly from the cache
+                if (!ProcessMessage(_cache.data(), _size))
+                    return false;
 
-            index += _size;
+                // Clear the cache
+                _cache.clear();
+            }
 
-            // Reset to the next message
-            Reset();
+            // Process the next message
+            _size = 0;
         }
     }
 

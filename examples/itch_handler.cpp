@@ -52,7 +52,7 @@ int main(int argc, char** argv)
 
     // Perform input
     size_t size;
-    uint8_t buffer[1];
+    uint8_t buffer[8192];
     CppCommon::StdInput input;
     while ((size = input.Read(buffer, sizeof(buffer))) > 0)
     {

@@ -1,0 +1,104 @@
+//
+// Created by Ivan Shynkarenka on 24.07.2017
+//
+
+#include "trader/providers/nasdaq/itch_handler.h"
+
+#include "benchmark/reporter_console.h"
+#include "filesystem/file.h"
+#include "system/stream.h"
+#include "time/timestamp.h"
+
+#include "../modules/cpp-optparse/OptionParser.h"
+
+using namespace CppCommon;
+using namespace CppTrader::ITCH;
+
+class MyHandler : public ITCHHandler
+{
+public:
+    MyHandler() : _messages(0), _errors(0) {}
+
+    size_t messages() const { return _messages; }
+    size_t errors() const { return _errors; }
+
+protected:
+    bool HandleMessage(const SystemEventMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const StockDirectoryMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const StockTradingActionMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const RegSHOMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const MarketParticipantPositionMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const MWCBDeclineMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const MWCBStatusMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const IPOQuotingMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const AddOrderMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const AddOrderMPIDMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const OrderExecutedMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const OrderExecutedWithPriceMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const OrderCancelMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const OrderDeleteMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const OrderReplaceMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const TradeMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const CrossTradeMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const BrokenTradeMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const NOIIMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const RPIIMessage& message) override { ++_messages; return true; }
+    bool HandleMessage(const UnknownMessage& message) override { ++_errors; return true; }
+
+private:
+    size_t _messages;
+    size_t _errors;
+};
+
+int main(int argc, char** argv)
+{
+    auto parser = optparse::OptionParser().version("1.0.0.0");
+
+    parser.add_option("-h", "--help").help("Show help");
+    parser.add_option("-i", "--input").help("Input file name");
+
+    optparse::Values options = parser.parse_args(argc, argv);
+
+    // Print help
+    if (options.get("help"))
+    {
+        parser.print_help();
+        parser.exit();
+    }
+
+    MyHandler handler;
+
+    // Open the input file or stdin
+    std::unique_ptr<Reader> input(new StdInput());
+    if (options.is_set("input"))
+    {
+        File* file = new File(Path(options.get("input")));
+        file->Open(true, false);
+        input.reset(file);
+    }
+
+    // Perform input
+    size_t size;
+    uint8_t buffer[8192];
+    std::cout << "ITCH processing...";
+    uint64_t timestamp_start = Timestamp::nano();
+    while ((size = input->Read(buffer, sizeof(buffer))) > 0)
+    {
+        // Process the buffer
+        handler.Process(buffer, size);
+    }
+    uint64_t timestamp_stop = Timestamp::nano();
+    std::cout << "Done!" << std::endl;
+
+    std::cout << std::endl;
+
+    size_t total_messages = handler.messages();
+    size_t total_errors = handler.errors();
+
+    std::cout << "Processing time: " << CppBenchmark::ReporterConsole::GenerateTimePeriod(timestamp_stop - timestamp_start) << std::endl;
+    std::cout << "Total messages: " << total_messages << std::endl;
+    std::cout << "Messages throughput: " << total_messages * 1000000000 / (timestamp_stop - timestamp_start) << " messages per second" << std::endl;
+    std::cout << "Errors: " << total_errors << std::endl;
+
+    return 0;
+}
