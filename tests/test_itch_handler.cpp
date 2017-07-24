@@ -52,9 +52,9 @@ TEST_CASE("ITCHHandler", "[CppTrader][Providers][NASDAQ]")
     MyHandler handler;
 
     // Open the input file
-    File input = "../../tools/itch/sample.itch";
+    File input("../../tools/itch/sample.itch");
     if (!input.IsExists())
-        input = "../tools/itch/sample.itch";
+        input = Path("../tools/itch/sample.itch");
     REQUIRE(input.IsExists());
     input.Open(true, false);
 
