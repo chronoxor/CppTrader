@@ -34,7 +34,7 @@ struct SystemEventMessage
     friend std::ostream& operator<<(std::ostream& stream, const SystemEventMessage& message);
 };
 
-//! Stock Directory
+//! Stock Directory Message
 struct StockDirectoryMessage
 {
     char Type;
@@ -59,7 +59,7 @@ struct StockDirectoryMessage
     friend std::ostream& operator<<(std::ostream& stream, const StockDirectoryMessage& message);
 };
 
-//! Stock Trading Action
+//! Stock Trading Action Message
 struct StockTradingActionMessage
 {
     char Type;
@@ -74,7 +74,7 @@ struct StockTradingActionMessage
     friend std::ostream& operator<<(std::ostream& stream, const StockTradingActionMessage& message);
 };
 
-//! Reg SHO Short Sale Price Test Restricted Indicator
+//! Reg SHO Short Sale Price Test Restricted Indicator Message
 struct RegSHOMessage
 {
     char Type;
@@ -87,7 +87,7 @@ struct RegSHOMessage
     friend std::ostream& operator<<(std::ostream& stream, const RegSHOMessage& message);
 };
 
-//! Market Participant Position
+//! Market Participant Position Message
 struct MarketParticipantPositionMessage
 {
     char Type;
@@ -129,7 +129,7 @@ struct MWCBStatusMessage
     friend std::ostream& operator<<(std::ostream& stream, const MWCBStatusMessage& message);
 };
 
-//! IPO Quoting Period Update
+//! IPO Quoting Period Update Message
 struct IPOQuotingMessage
 {
     char Type;
@@ -142,6 +142,187 @@ struct IPOQuotingMessage
     uint32_t IPOPrice;
 
     friend std::ostream& operator<<(std::ostream& stream, const IPOQuotingMessage& message);
+};
+
+//! Add Order Message
+struct AddOrderMessage
+{
+    char Type;
+    uint16_t StockLocate;
+    uint16_t TrackingNumber;
+    uint64_t Timestamp;
+    uint64_t OrderReferenceNumber;
+    char BuySellIndicator;
+    uint32_t Shares;
+    char Stock[8];
+    uint32_t Price;
+
+    friend std::ostream& operator<<(std::ostream& stream, const AddOrderMessage& message);
+};
+
+//! Add Order with MPID Attribution Message
+struct AddOrderMPIDMessage
+{
+    char Type;
+    uint16_t StockLocate;
+    uint16_t TrackingNumber;
+    uint64_t Timestamp;
+    uint64_t OrderReferenceNumber;
+    char BuySellIndicator;
+    uint32_t Shares;
+    char Stock[8];
+    uint32_t Price;
+    char Attribution;
+
+    friend std::ostream& operator<<(std::ostream& stream, const AddOrderMPIDMessage& message);
+};
+
+//! Order Executed Message
+struct OrderExecutedMessage
+{
+    char Type;
+    uint16_t StockLocate;
+    uint16_t TrackingNumber;
+    uint64_t Timestamp;
+    uint64_t OrderReferenceNumber;
+    uint32_t ExecutedShares;
+    uint64_t MatchNumber;
+
+    friend std::ostream& operator<<(std::ostream& stream, const OrderExecutedMessage& message);
+};
+
+//! Order Executed With Price Message
+struct OrderExecutedWithPriceMessage
+{
+    char Type;
+    uint16_t StockLocate;
+    uint16_t TrackingNumber;
+    uint64_t Timestamp;
+    uint64_t OrderReferenceNumber;
+    uint32_t ExecutedShares;
+    uint64_t MatchNumber;
+    char Printable;
+    uint32_t ExecutionPrice;
+
+    friend std::ostream& operator<<(std::ostream& stream, const OrderExecutedWithPriceMessage& message);
+};
+
+//! Order Cancel Message
+struct OrderCancelMessage
+{
+    char Type;
+    uint16_t StockLocate;
+    uint16_t TrackingNumber;
+    uint64_t Timestamp;
+    uint64_t OrderReferenceNumber;
+    uint32_t CanceledShares;
+
+    friend std::ostream& operator<<(std::ostream& stream, const OrderCancelMessage& message);
+};
+
+//! Order Delete Message
+struct OrderDeleteMessage
+{
+    char Type;
+    uint16_t StockLocate;
+    uint16_t TrackingNumber;
+    uint64_t Timestamp;
+    uint64_t OrderReferenceNumber;
+
+    friend std::ostream& operator<<(std::ostream& stream, const OrderDeleteMessage& message);
+};
+
+//! Order Replace Message
+struct OrderReplaceMessage
+{
+    char Type;
+    uint16_t StockLocate;
+    uint16_t TrackingNumber;
+    uint64_t Timestamp;
+    uint64_t OriginalOrderReferenceNumber;
+    uint64_t NewOrderReferenceNumber;
+    uint32_t Shares;
+    uint32_t Price;
+
+    friend std::ostream& operator<<(std::ostream& stream, const OrderReplaceMessage& message);
+};
+
+//! Trade Message
+struct TradeMessage
+{
+    char Type;
+    uint16_t StockLocate;
+    uint16_t TrackingNumber;
+    uint64_t Timestamp;
+    uint64_t OrderReferenceNumber;
+    char BuySellIndicator;
+    uint32_t Shares;
+    char Stock[8];
+    uint32_t Price;
+    uint64_t MatchNumber;
+
+    friend std::ostream& operator<<(std::ostream& stream, const TradeMessage& message);
+};
+
+//! Cross Trade Message
+struct CrossTradeMessage
+{
+    char Type;
+    uint16_t StockLocate;
+    uint16_t TrackingNumber;
+    uint64_t Timestamp;
+    uint64_t Shares;
+    char Stock[8];
+    uint32_t CrossPrice;
+    uint64_t MatchNumber;
+    char CrossType;
+
+    friend std::ostream& operator<<(std::ostream& stream, const CrossTradeMessage& message);
+};
+
+//! Broken Trade Message
+struct BrokenTradeMessage
+{
+    char Type;
+    uint16_t StockLocate;
+    uint16_t TrackingNumber;
+    uint64_t Timestamp;
+    uint64_t MatchNumber;
+
+    friend std::ostream& operator<<(std::ostream& stream, const BrokenTradeMessage& message);
+};
+
+//! Net Order Imbalance Indicator (NOII) Message
+struct NOIIMessage
+{
+    char Type;
+    uint16_t StockLocate;
+    uint16_t TrackingNumber;
+    uint64_t Timestamp;
+    uint64_t PairedShares;
+    uint64_t ImbalanceShares;
+    char ImbalanceDirection;
+    char Stock[8];
+    uint32_t FarPrice;
+    uint32_t NearPrice;
+    uint32_t CurrentReferencePrice;
+    char CrossType;
+    char PriceVariationIndicator;
+
+    friend std::ostream& operator<<(std::ostream& stream, const NOIIMessage& message);
+};
+
+//! Retail Price Improvement Indicator (RPII) Messsage
+struct RPIIMessage
+{
+    char Type;
+    uint16_t StockLocate;
+    uint16_t TrackingNumber;
+    uint64_t Timestamp;
+    char Stock[8];
+    char InterestFlag;
+
+    friend std::ostream& operator<<(std::ostream& stream, const RPIIMessage& message);
 };
 
 //! Unknown message
@@ -204,6 +385,18 @@ protected:
     virtual bool HandleMessage(const MWCBDeclineMessage& message) { return true; }
     virtual bool HandleMessage(const MWCBStatusMessage& message) { return true; }
     virtual bool HandleMessage(const IPOQuotingMessage& message) { return true; }
+    virtual bool HandleMessage(const AddOrderMessage& message) { return true; }
+    virtual bool HandleMessage(const AddOrderMPIDMessage& message) { return true; }
+    virtual bool HandleMessage(const OrderExecutedMessage& message) { return true; }
+    virtual bool HandleMessage(const OrderExecutedWithPriceMessage& message) { return true; }
+    virtual bool HandleMessage(const OrderCancelMessage& message) { return true; }
+    virtual bool HandleMessage(const OrderDeleteMessage& message) { return true; }
+    virtual bool HandleMessage(const OrderReplaceMessage& message) { return true; }
+    virtual bool HandleMessage(const TradeMessage& message) { return true; }
+    virtual bool HandleMessage(const CrossTradeMessage& message) { return true; }
+    virtual bool HandleMessage(const BrokenTradeMessage& message) { return true; }
+    virtual bool HandleMessage(const NOIIMessage& message) { return true; }
+    virtual bool HandleMessage(const RPIIMessage& message) { return true; }
     virtual bool HandleMessage(const UnknownMessage& message) { return true; }
 
 private:
@@ -218,6 +411,18 @@ private:
     bool ProcessMWCBDeclineMessage(void* buffer, size_t size);
     bool ProcessMWCBStatusMessage(void* buffer, size_t size);
     bool ProcessIPOQuotingMessage(void* buffer, size_t size);
+    bool ProcessAddOrderMessage(void* buffer, size_t size);
+    bool ProcessAddOrderMPIDMessage(void* buffer, size_t size);
+    bool ProcessOrderExecutedMessage(void* buffer, size_t size);
+    bool ProcessOrderExecutedWithPriceMessage(void* buffer, size_t size);
+    bool ProcessOrderCancelMessage(void* buffer, size_t size);
+    bool ProcessOrderDeleteMessage(void* buffer, size_t size);
+    bool ProcessOrderReplaceMessage(void* buffer, size_t size);
+    bool ProcessTradeMessage(void* buffer, size_t size);
+    bool ProcessCrossTradeMessage(void* buffer, size_t size);
+    bool ProcessBrokenTradeMessage(void* buffer, size_t size);
+    bool ProcessNOIIMessage(void* buffer, size_t size);
+    bool ProcessRPIIMessage(void* buffer, size_t size);
     bool ProcessUnknownMessage(void* buffer, size_t size);
 
     template <size_t N>

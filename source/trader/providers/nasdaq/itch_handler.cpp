@@ -137,6 +137,30 @@ bool ITCHHandler::ProcessMessage(void* buffer, size_t size)
             return ProcessMWCBStatusMessage(data, size);
         case 'K':
             return ProcessIPOQuotingMessage(data, size);
+        case 'A':
+            return ProcessAddOrderMessage(data, size);
+        case 'F':
+            return ProcessAddOrderMPIDMessage(data, size);
+        case 'E':
+            return ProcessOrderExecutedMessage(data, size);
+        case 'C':
+            return ProcessOrderExecutedWithPriceMessage(data, size);
+        case 'X':
+            return ProcessOrderCancelMessage(data, size);
+        case 'D':
+            return ProcessOrderDeleteMessage(data, size);
+        case 'U':
+            return ProcessOrderReplaceMessage(data, size);
+        case 'P':
+            return ProcessTradeMessage(data, size);
+        case 'Q':
+            return ProcessCrossTradeMessage(data, size);
+        case 'B':
+            return ProcessBrokenTradeMessage(data, size);
+        case 'I':
+            return ProcessNOIIMessage(data, size);
+        case 'N':
+            return ProcessRPIIMessage(data, size);
         default:
             return ProcessUnknownMessage(data, size);
     }
@@ -421,6 +445,416 @@ std::ostream& operator<<(std::ostream& stream, const IPOQuotingMessage& message)
         << "; IPOReleaseTime=" << message.IPOReleaseTime
         << "; IPOReleaseQualifier=" << message.IPOReleaseQualifier
         << "; IPOPrice=" << message.IPOPrice
+        << ")";
+}
+
+bool ITCHHandler::ProcessAddOrderMessage(void* buffer, size_t size)
+{
+    assert((size == 36) && "Invalid size of the ITCH message type 'A'");
+    if (size != 36)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    AddOrderMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    data += CppCommon::Endian::ReadBigEndian(data, message.OrderReferenceNumber);
+    message.BuySellIndicator = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.Shares);
+    data += ReadString(data, message.Stock);
+    data += CppCommon::Endian::ReadBigEndian(data, message.Price);
+
+    return HandleMessage(message);
+}
+
+std::ostream& operator<<(std::ostream& stream, const AddOrderMessage& message)
+{
+    return stream << "AddOrderMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; OrderReferenceNumber=" << message.OrderReferenceNumber
+        << "; BuySellIndicator=" << WriteChar(message.BuySellIndicator)
+        << "; Shares=" << message.Shares
+        << "; Stock=" << WriteString(message.Stock)
+        << "; Price=" << message.Price
+        << ")";
+}
+
+bool ITCHHandler::ProcessAddOrderMPIDMessage(void* buffer, size_t size)
+{
+    assert((size == 40) && "Invalid size of the ITCH message type 'F'");
+    if (size != 40)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    AddOrderMPIDMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    data += CppCommon::Endian::ReadBigEndian(data, message.OrderReferenceNumber);
+    message.BuySellIndicator = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.Shares);
+    data += ReadString(data, message.Stock);
+    data += CppCommon::Endian::ReadBigEndian(data, message.Price);
+    message.Attribution = *data++;
+
+    return HandleMessage(message);
+}
+
+std::ostream& operator<<(std::ostream& stream, const AddOrderMPIDMessage& message)
+{
+    return stream << "AddOrderMPIDMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; OrderReferenceNumber=" << message.OrderReferenceNumber
+        << "; BuySellIndicator=" << WriteChar(message.BuySellIndicator)
+        << "; Shares=" << message.Shares
+        << "; Stock=" << WriteString(message.Stock)
+        << "; Price=" << message.Price
+        << "; Attribution=" << WriteChar(message.Attribution)
+        << ")";
+}
+
+bool ITCHHandler::ProcessOrderExecutedMessage(void* buffer, size_t size)
+{
+    assert((size == 31) && "Invalid size of the ITCH message type 'E'");
+    if (size != 31)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    OrderExecutedMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    data += CppCommon::Endian::ReadBigEndian(data, message.OrderReferenceNumber);
+    data += CppCommon::Endian::ReadBigEndian(data, message.ExecutedShares);
+    data += CppCommon::Endian::ReadBigEndian(data, message.MatchNumber);
+
+    return HandleMessage(message);
+}
+
+std::ostream& operator<<(std::ostream& stream, const OrderExecutedMessage& message)
+{
+    return stream << "OrderExecutedMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; OrderReferenceNumber=" << message.OrderReferenceNumber
+        << "; ExecutedShares=" << message.ExecutedShares
+        << "; MatchNumber=" << message.MatchNumber
+        << ")";
+}
+
+bool ITCHHandler::ProcessOrderExecutedWithPriceMessage(void* buffer, size_t size)
+{
+    assert((size == 36) && "Invalid size of the ITCH message type 'C'");
+    if (size != 36)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    OrderExecutedWithPriceMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    data += CppCommon::Endian::ReadBigEndian(data, message.OrderReferenceNumber);
+    data += CppCommon::Endian::ReadBigEndian(data, message.ExecutedShares);
+    data += CppCommon::Endian::ReadBigEndian(data, message.MatchNumber);
+    message.Printable = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.ExecutionPrice);
+
+    return HandleMessage(message);
+}
+
+std::ostream& operator<<(std::ostream& stream, const OrderExecutedWithPriceMessage& message)
+{
+    return stream << "OrderExecutedWithPriceMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; OrderReferenceNumber=" << message.OrderReferenceNumber
+        << "; ExecutedShares=" << message.ExecutedShares
+        << "; MatchNumber=" << message.MatchNumber
+        << "; Printable=" << WriteChar(message.Printable)
+        << "; ExecutionPrice=" << message.ExecutionPrice
+        << ")";
+}
+
+bool ITCHHandler::ProcessOrderCancelMessage(void* buffer, size_t size)
+{
+    assert((size == 23) && "Invalid size of the ITCH message type 'X'");
+    if (size != 23)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    OrderCancelMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    data += CppCommon::Endian::ReadBigEndian(data, message.OrderReferenceNumber);
+    data += CppCommon::Endian::ReadBigEndian(data, message.CanceledShares);
+
+    return HandleMessage(message);
+}
+
+std::ostream& operator<<(std::ostream& stream, const OrderCancelMessage& message)
+{
+    return stream << "OrderCancelMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; OrderReferenceNumber=" << message.OrderReferenceNumber
+        << "; CanceledShares=" << message.CanceledShares
+        << ")";
+}
+
+bool ITCHHandler::ProcessOrderDeleteMessage(void* buffer, size_t size)
+{
+    assert((size == 19) && "Invalid size of the ITCH message type 'D'");
+    if (size != 19)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    OrderDeleteMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    data += CppCommon::Endian::ReadBigEndian(data, message.OrderReferenceNumber);
+
+    return HandleMessage(message);
+}
+
+std::ostream& operator<<(std::ostream& stream, const OrderDeleteMessage& message)
+{
+    return stream << "OrderDeleteMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; OrderReferenceNumber=" << message.OrderReferenceNumber
+        << ")";
+}
+
+bool ITCHHandler::ProcessOrderReplaceMessage(void* buffer, size_t size)
+{
+    assert((size == 35) && "Invalid size of the ITCH message type 'U'");
+    if (size != 35)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    OrderReplaceMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    data += CppCommon::Endian::ReadBigEndian(data, message.OriginalOrderReferenceNumber);
+    data += CppCommon::Endian::ReadBigEndian(data, message.NewOrderReferenceNumber);
+    data += CppCommon::Endian::ReadBigEndian(data, message.Shares);
+    data += CppCommon::Endian::ReadBigEndian(data, message.Price);
+
+    return HandleMessage(message);
+}
+
+std::ostream& operator<<(std::ostream& stream, const OrderReplaceMessage& message)
+{
+    return stream << "OrderReplaceMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; OriginalOrderReferenceNumber=" << message.OriginalOrderReferenceNumber
+        << "; NewOrderReferenceNumber=" << message.NewOrderReferenceNumber
+        << "; Shares=" << message.Shares
+        << "; Price=" << message.Price
+        << ")";
+}
+
+bool ITCHHandler::ProcessTradeMessage(void* buffer, size_t size)
+{
+    assert((size == 44) && "Invalid size of the ITCH message type 'P'");
+    if (size != 44)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    TradeMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    data += CppCommon::Endian::ReadBigEndian(data, message.OrderReferenceNumber);
+    message.BuySellIndicator = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.Shares);
+    data += ReadString(data, message.Stock);
+    data += CppCommon::Endian::ReadBigEndian(data, message.Price);
+    data += CppCommon::Endian::ReadBigEndian(data, message.MatchNumber);
+
+    return HandleMessage(message);
+}
+
+std::ostream& operator<<(std::ostream& stream, const TradeMessage& message)
+{
+    return stream << "TradeMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; OrderReferenceNumber=" << message.OrderReferenceNumber
+        << "; BuySellIndicator=" << WriteChar(message.BuySellIndicator)
+        << "; Shares=" << message.Shares
+        << "; Stock=" << WriteString(message.Stock)
+        << "; Price=" << message.Price
+        << "; MatchNumber=" << message.MatchNumber
+        << ")";
+}
+
+bool ITCHHandler::ProcessCrossTradeMessage(void* buffer, size_t size)
+{
+    assert((size == 40) && "Invalid size of the ITCH message type 'Q'");
+    if (size != 40)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    CrossTradeMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    data += CppCommon::Endian::ReadBigEndian(data, message.Shares);
+    data += ReadString(data, message.Stock);
+    data += CppCommon::Endian::ReadBigEndian(data, message.CrossPrice);
+    data += CppCommon::Endian::ReadBigEndian(data, message.MatchNumber);
+    message.CrossType = *data++;
+
+    return HandleMessage(message);
+}
+
+std::ostream& operator<<(std::ostream& stream, const CrossTradeMessage& message)
+{
+    return stream << "CrossTradeMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; Shares=" << message.Shares
+        << "; Stock=" << WriteString(message.Stock)
+        << "; CrossPrice=" << message.CrossPrice
+        << "; MatchNumber=" << message.MatchNumber
+        << "; CrossType=" << WriteChar(message.CrossType)
+        << ")";
+}
+
+bool ITCHHandler::ProcessBrokenTradeMessage(void* buffer, size_t size)
+{
+    assert((size == 19) && "Invalid size of the ITCH message type 'B'");
+    if (size != 19)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    BrokenTradeMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    data += CppCommon::Endian::ReadBigEndian(data, message.MatchNumber);
+
+    return HandleMessage(message);
+}
+
+std::ostream& operator<<(std::ostream& stream, const BrokenTradeMessage& message)
+{
+    return stream << "BrokenTradeMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; MatchNumber=" << message.MatchNumber
+        << ")";
+}
+
+bool ITCHHandler::ProcessNOIIMessage(void* buffer, size_t size)
+{
+    assert((size == 50) && "Invalid size of the ITCH message type 'I'");
+    if (size != 50)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    NOIIMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    data += CppCommon::Endian::ReadBigEndian(data, message.PairedShares);
+    data += CppCommon::Endian::ReadBigEndian(data, message.ImbalanceShares);
+    message.ImbalanceDirection = *data++;
+    data += ReadString(data, message.Stock);
+    data += CppCommon::Endian::ReadBigEndian(data, message.FarPrice);
+    data += CppCommon::Endian::ReadBigEndian(data, message.NearPrice);
+    data += CppCommon::Endian::ReadBigEndian(data, message.CurrentReferencePrice);
+    message.CrossType = *data++;
+    message.PriceVariationIndicator = *data++;
+
+    return HandleMessage(message);
+}
+
+std::ostream& operator<<(std::ostream& stream, const NOIIMessage& message)
+{
+    return stream << "NOIIMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; PairedShares=" << message.PairedShares
+        << "; ImbalanceShares=" << message.ImbalanceShares
+        << "; ImbalanceDirection=" << WriteChar(message.ImbalanceDirection)
+        << "; Stock=" << WriteString(message.Stock)
+        << "; FarPrice=" << message.FarPrice
+        << "; NearPrice=" << message.NearPrice
+        << "; CurrentReferencePrice=" << message.CurrentReferencePrice
+        << "; CrossType=" << WriteChar(message.CrossType)
+        << "; PriceVariationIndicator=" << WriteChar(message.PriceVariationIndicator)
+        << ")";
+}
+
+bool ITCHHandler::ProcessRPIIMessage(void* buffer, size_t size)
+{
+    assert((size == 20) && "Invalid size of the ITCH message type 'N'");
+    if (size != 20)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    RPIIMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    data += ReadString(data, message.Stock);
+    message.InterestFlag = *data++;
+
+    return HandleMessage(message);
+}
+
+std::ostream& operator<<(std::ostream& stream, const RPIIMessage& message)
+{
+    return stream << "RPIIMessage(Type=" << WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; Stock=" << WriteString(message.Stock)
+        << "; InterestFlag=" << WriteChar(message.InterestFlag)
         << ")";
 }
 
