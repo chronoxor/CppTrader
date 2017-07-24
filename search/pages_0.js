@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['c_2b_2b_20template_20library',['C++ Template Library',['../index.html',1,'']]]
+  ['c_2b_2b_20trader',['C++ Trader',['../index.html',1,'']]]
 ];
