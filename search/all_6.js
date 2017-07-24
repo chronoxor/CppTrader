@@ -1,5 +1,8 @@
 var searchData=
 [
+  ['imbalancedirection',['ImbalanceDirection',['../struct_cpp_trader_1_1_i_t_c_h_1_1_n_o_i_i_message.html#abd2f113d3c13aef73f558c908f514574',1,'CppTrader::ITCH::NOIIMessage']]],
+  ['imbalanceshares',['ImbalanceShares',['../struct_cpp_trader_1_1_i_t_c_h_1_1_n_o_i_i_message.html#ad48413044be8f1f4cbaa4af1ed47efa4',1,'CppTrader::ITCH::NOIIMessage']]],
+  ['interestflag',['InterestFlag',['../struct_cpp_trader_1_1_i_t_c_h_1_1_r_p_i_i_message.html#ab67a18bfa991dc119f16f97108c63405',1,'CppTrader::ITCH::RPIIMessage']]],
   ['inverseindicator',['InverseIndicator',['../struct_cpp_trader_1_1_i_t_c_h_1_1_stock_directory_message.html#a704558a8ecb10a5e48195e74dd76ba13',1,'CppTrader::ITCH::StockDirectoryMessage']]],
   ['ipoflag',['IPOFlag',['../struct_cpp_trader_1_1_i_t_c_h_1_1_stock_directory_message.html#ae4c498af294ff3bdb325cde087ce6be8',1,'CppTrader::ITCH::StockDirectoryMessage']]],
   ['ipoprice',['IPOPrice',['../struct_cpp_trader_1_1_i_t_c_h_1_1_i_p_o_quoting_message.html#a624d957de3f7b3487bc9c395adcc05d2',1,'CppTrader::ITCH::IPOQuotingMessage']]],
@@ -12,5 +15,6 @@ var searchData=
   ['itch_5fhandler_2ecpp',['itch_handler.cpp',['../itch__handler_8cpp.html',1,'']]],
   ['itch_5fhandler_2eh',['itch_handler.h',['../itch__handler_8h.html',1,'']]],
   ['itch_5fhandler_2einl',['itch_handler.inl',['../itch__handler_8inl.html',1,'']]],
-  ['itchhandler',['ITCHHandler',['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html',1,'CppTrader::ITCH::ITCHHandler'],['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#abcf8e0c8fab2fe8f9c90cb4db5b0318d',1,'CppTrader::ITCH::ITCHHandler::ITCHHandler()'],['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#aa53fd288010e9c630b605d04edbde80d',1,'CppTrader::ITCH::ITCHHandler::ITCHHandler(const ITCHHandler &amp;)=delete'],['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#a4bb56f0a4df83a2784afa237be277082',1,'CppTrader::ITCH::ITCHHandler::ITCHHandler(ITCHHandler &amp;&amp;)=default']]]
+  ['itchhandler',['ITCHHandler',['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html',1,'CppTrader::ITCH']]],
+  ['itchhandler',['ITCHHandler',['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#abcf8e0c8fab2fe8f9c90cb4db5b0318d',1,'CppTrader::ITCH::ITCHHandler::ITCHHandler()'],['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#aa53fd288010e9c630b605d04edbde80d',1,'CppTrader::ITCH::ITCHHandler::ITCHHandler(const ITCHHandler &amp;)=delete'],['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#a4bb56f0a4df83a2784afa237be277082',1,'CppTrader::ITCH::ITCHHandler::ITCHHandler(ITCHHandler &amp;&amp;)=default']]]
 ];
