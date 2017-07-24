@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['eventcode',['EventCode',['../struct_cpp_trader_1_1_i_t_c_h_1_1_system_event_message.html#a14c27edc3f89a6f163b4329cd47604e9',1,'CppTrader::ITCH::SystemEventMessage']]]
+  ['authenticity',['Authenticity',['../struct_cpp_trader_1_1_i_t_c_h_1_1_stock_directory_message.html#a4680743fa2e82a1b62aa10a75a3c1f8d',1,'CppTrader::ITCH::StockDirectoryMessage']]]
 ];
