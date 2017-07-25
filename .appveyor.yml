@@ -22,6 +22,7 @@ cache:
     - C:\cache\cygwin -> .appveyor.yml
     - C:\ProgramData\chocolatey\bin -> .appveyor.yml
     - C:\ProgramData\chocolatey\lib -> .appveyor.yml
+    - C:\ProgramData\chocolatey\cache -> .appveyor.yml
 
 # Build matrix
 environment:
@@ -43,7 +44,10 @@ matrix:
 # Scripts that run after cloning repository
 install:
   # Doxygen
-  - choco install --force doxygen.portable ghostscript graphviz miktex
+  - choco install --cache "C:\ProgramData\chocolatey\cache" --force doxygen.portable
+  - choco install --cache "C:\ProgramData\chocolatey\cache" --force ghostscript
+  - choco install --cache "C:\ProgramData\chocolatey\cache" --force graphviz
+  - choco install --cache "C:\ProgramData\chocolatey\cache" --force miktex
   # Cygwin
   - if "%type%"=="Cygwin" if not exist "C:\cygwin64" mkdir "C:\cygwin64"
   - if "%type%"=="Cygwin" appveyor DownloadFile "http://cygwin.com/setup-x86_64.exe" -FileName "C:\cygwin64\setup-x86_64.exe"
