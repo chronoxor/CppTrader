@@ -10,7 +10,6 @@
 #define CPPTRADER_DOMAIN_ORDER_H
 
 #include <cstdint>
-#include <string>
 
 namespace CppTrader {
 
