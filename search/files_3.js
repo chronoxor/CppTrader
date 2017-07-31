@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['version_2eh',['version.h',['../template_2version_8h.html',1,'(Global Namespace)'],['../trader_2version_8h.html',1,'(Global Namespace)']]]
+  ['symbol_5fmanager_2eh',['symbol_manager.h',['../symbol__manager_8h.html',1,'']]],
+  ['symbol_5fmanager_2einl',['symbol_manager.inl',['../symbol__manager_8inl.html',1,'']]]
 ];

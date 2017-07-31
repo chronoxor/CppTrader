@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['template',['Template',['../class_cpp_template_1_1_template.html#a06387bdda6aadc368b6168ff1a81032f',1,'CppTemplate::Template::Template(int filed) noexcept'],['../class_cpp_template_1_1_template.html#aff5135be217dfdc708a35367c7e25aaa',1,'CppTemplate::Template::Template(const Template &amp;) noexcept=default'],['../class_cpp_template_1_1_template.html#adeb242bed40712a89cc73ed4e8e08749',1,'CppTemplate::Template::Template(Template &amp;&amp;) noexcept=default']]]
+  ['size',['size',['../class_cpp_trader_1_1_order_manager.html#af02fae4490de7469f4a7a8d4f6d675a6',1,'CppTrader::OrderManager::size()'],['../class_cpp_trader_1_1_symbol_manager.html#ac23b33fb508e9a2c4c8f2b37371f6009',1,'CppTrader::SymbolManager::size()']]],
+  ['symbolmanager',['SymbolManager',['../class_cpp_trader_1_1_symbol_manager.html#a789c1f36c4856c4d540a8c5ba55e16ae',1,'CppTrader::SymbolManager::SymbolManager()'],['../class_cpp_trader_1_1_symbol_manager.html#ac6823afae113800c7022c10e9ebfa9e8',1,'CppTrader::SymbolManager::SymbolManager(const SymbolManager &amp;)=delete'],['../class_cpp_trader_1_1_symbol_manager.html#ae2577e4e329bc4aa2db6ccebfccdd879',1,'CppTrader::SymbolManager::SymbolManager(SymbolManager &amp;&amp;) noexcept=default']]]
 ];
