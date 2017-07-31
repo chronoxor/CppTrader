@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['empty',['empty',['../class_cpp_trader_1_1_order_manager.html#a312794a8277eceb70bd1f0f9a5cd1f9f',1,'CppTrader::OrderManager::empty()'],['../class_cpp_trader_1_1_symbol_manager.html#a6472c275b8b393b735755c555b883f4e',1,'CppTrader::SymbolManager::empty()']]],
+  ['empty',['empty',['../class_cpp_trader_1_1_order_manager.html#a766588137bffd11c1f919a5e4a1dfc14',1,'CppTrader::OrderManager::empty()'],['../class_cpp_trader_1_1_symbol_manager.html#a2c60b9864456c0a4f055739a39602553',1,'CppTrader::SymbolManager::empty()']]],
   ['etpflag',['ETPFlag',['../struct_cpp_trader_1_1_i_t_c_h_1_1_stock_directory_message.html#a183c03e0d77b74964af79d676f241d7b',1,'CppTrader::ITCH::StockDirectoryMessage']]],
   ['etpleveragefactor',['ETPLeverageFactor',['../struct_cpp_trader_1_1_i_t_c_h_1_1_stock_directory_message.html#ac389539c0cf9bf63eae104059c2e1a0a',1,'CppTrader::ITCH::StockDirectoryMessage']]],
   ['eventcode',['EventCode',['../struct_cpp_trader_1_1_i_t_c_h_1_1_system_event_message.html#a0d7fd98fcaddce754f03ea618361c3a2',1,'CppTrader::ITCH::SystemEventMessage']]],
