@@ -1,7 +1,7 @@
 var searchData=
 [
   ['reason',['Reason',['../struct_cpp_trader_1_1_i_t_c_h_1_1_stock_trading_action_message.html#acaf2ad07ef5001fd2104aba4b15e1a90',1,'CppTrader::ITCH::StockTradingActionMessage']]],
-  ['registerorder',['RegisterOrder',['../class_cpp_trader_1_1_order_manager.html#aeb2fd03d5766912d4bd670559459fdee',1,'CppTrader::OrderManager']]],
+  ['registerorder',['RegisterOrder',['../class_cpp_trader_1_1_order_book.html#aea7afe9daa38b45b5aa1b7e8384ac401',1,'CppTrader::OrderBook::RegisterOrder()'],['../class_cpp_trader_1_1_order_manager.html#aeb2fd03d5766912d4bd670559459fdee',1,'CppTrader::OrderManager::RegisterOrder()']]],
   ['registersymbol',['RegisterSymbol',['../class_cpp_trader_1_1_symbol_manager.html#a9b1b258ed3acae465bb1b79fba4f6b7f',1,'CppTrader::SymbolManager']]],
   ['regshoaction',['RegSHOAction',['../struct_cpp_trader_1_1_i_t_c_h_1_1_reg_s_h_o_message.html#a4de44e4fba5d73c2b03551593e720ade',1,'CppTrader::ITCH::RegSHOMessage']]],
   ['regshomessage',['RegSHOMessage',['../struct_cpp_trader_1_1_i_t_c_h_1_1_reg_s_h_o_message.html',1,'CppTrader::ITCH']]],
