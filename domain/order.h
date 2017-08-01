@@ -9,6 +9,8 @@
 #ifndef CPPTRADER_DOMAIN_ORDER_H
 #define CPPTRADER_DOMAIN_ORDER_H
 
+#include "containers/list.h"
+
 #include <cstdint>
 
 namespace CppTrader {
@@ -27,7 +29,7 @@ enum class OrderType : uint8_t
 };
 
 //! Order model
-struct Order
+struct Order : public CppCommon::List<Order>::Node
 {
     //! Order Id
     uint64_t Id;
