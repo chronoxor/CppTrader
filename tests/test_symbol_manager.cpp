@@ -14,16 +14,16 @@ TEST_CASE("Symbol manager", "[CppTrader]")
     REQUIRE(symbols.empty());
 
     REQUIRE(symbols.size() == 0);
-    REQUIRE(symbols.RegisterSymbol(Symbol(1, "Symbol1")));
+    REQUIRE(symbols.RegisterSymbol(1, "Symbol1"));
     REQUIRE(symbols.size() == 1);
-    REQUIRE(symbols.RegisterSymbol(Symbol(2, "Symbol2")));
+    REQUIRE(symbols.RegisterSymbol(2, "Symbol2"));
     REQUIRE(symbols.size() == 2);
-    REQUIRE(symbols.RegisterSymbol(Symbol(3, "Symbol3")));
+    REQUIRE(symbols.RegisterSymbol(3, "Symbol3"));
     REQUIRE(symbols.size() == 3);
 
-    REQUIRE(!symbols.RegisterSymbol(Symbol(1, "Symbol")));
-    REQUIRE(!symbols.RegisterSymbol(Symbol(2, "Symbol")));
-    REQUIRE(!symbols.RegisterSymbol(Symbol(3, "Symbol")));
+    REQUIRE(!symbols.RegisterSymbol(1, "Symbol"));
+    REQUIRE(!symbols.RegisterSymbol(2, "Symbol"));
+    REQUIRE(!symbols.RegisterSymbol(3, "Symbol"));
 
     REQUIRE(symbols.GetSymbol(0) == nullptr);
     REQUIRE(symbols.GetSymbol(1) != nullptr);

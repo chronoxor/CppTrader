@@ -62,18 +62,19 @@ public:
     */
     const Symbol* GetSymbolByName(const char name[8]) const noexcept;
 
-    //! Register a new symbol
-    /*!
-        \param symbol - Symbol to register
-        \return 'true' if the symbol was successfully registered, 'false' if the symbol failed to register
-    */
-    bool RegisterSymbol(const Symbol& symbol);
-    //! Unregister the symbol with the given Id
+    //! Add a new symbol
     /*!
         \param id - Symbol Id
-        \return 'true' if the symbol was successfully unregistered, 'false' if the symbol failed to unregister
+        \param name - Symbol name
+        \return 'true' if the symbol was successfully added, 'false' if the symbol failed to add
     */
-    bool UnregisterSymbol(uint32_t id);
+    bool AddSymbol(uint32_t id, const char name[8]);
+    //! Remove the symbol with the given Id
+    /*!
+        \param id - Symbol Id
+        \return 'true' if the symbol was successfully removed, 'false' if the symbol failed to remove
+    */
+    bool RemoveSymbol(uint32_t id);
 
 private:
     CppCommon::DefaultMemoryManager _default_manager;

@@ -75,6 +75,4 @@ private:
 
 } // namespace CppTrader
 
-#include "order_book.inl"
-
 #endif // CPPTRADER_ORDER_BOOK_H

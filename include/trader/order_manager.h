@@ -54,18 +54,23 @@ public:
     */
     const Order* GetOrder(uint64_t id) const noexcept;
 
-    //! Register a new order
-    /*!
-        \param order - Order to register
-        \return 'true' if the order was successfully registered, 'false' if the order failed to register
-    */
-    bool RegisterOrder(const Order& order);
-    //! Unregister the order with the given Id
+    //! Add a new order
     /*!
         \param id - Order Id
-        \return 'true' if the order was successfully unregistered, 'false' if the order failed to unregister
+        \param symbol - Symbol Id
+        \param type - Order type
+        \param side - Order side
+        \param price - Order price
+        \param quantity - Order quantity
+        \return 'true' if the order was successfully added, 'false' if the order failed to add
     */
-    bool UnregisterOrder(uint64_t id);
+    bool AddOrder(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity);
+    //! Remove the order with the given Id
+    /*!
+        \param id - Order Id
+        \return 'true' if the order was successfully removed, 'false' if the order failed to remove
+    */
+    bool RemoveOrder(uint64_t id);
 
 private:
     CppCommon::DefaultMemoryManager _default_manager;

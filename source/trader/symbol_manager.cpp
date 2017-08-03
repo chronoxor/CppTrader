@@ -10,36 +10,40 @@
 
 namespace CppTrader {
 
-bool SymbolManager::RegisterSymbol(const Symbol& symbol)
+bool SymbolManager::AddSymbol(uint32_t id, const char name[8])
 {
     // Resize the symbol container
-    if (_symbols.size() <= symbol.Id)
-        _symbols.resize(symbol.Id + 1, nullptr);
+    if (_symbols.size() <= id)
+        _symbols.resize(id + 1, nullptr);
 
-    // Check if the symbol with a given Id is already registered
-    if (_symbols[symbol.Id] != nullptr)
+    // Check if the symbol with a given Id is already added
+    if (_symbols[id] != nullptr)
         return false;
 
-    // Register symbol
-    Symbol* result = _pool.Create(symbol);
-    _symbols[result->Id] = result;
+    // Add the symbol
+    Symbol* result = _pool.Create(id, name);
+    _symbols[id] = result;
     _symbols_by_name[FastHash::Parse(result->Name)] = result;
+
     ++_size;
+
     return true;
 }
 
-bool SymbolManager::UnregisterSymbol(uint32_t id)
+bool SymbolManager::RemoveSymbol(uint32_t id)
 {
-    // Check if the symbol with a given Id is registered before
+    // Check if the symbol with a given Id is added before
     if ((_symbols.size() <= id) || (_symbols[id] == nullptr))
         return false;
 
-    // Unregister symbol
+    // Remove the symbol
     Symbol* result = _symbols[id];
     _symbols[id] = nullptr;
     _symbols_by_name.erase(FastHash::Parse(result->Name));
     _pool.Release(result);
+
     --_size;
+
     return true;
 }
 

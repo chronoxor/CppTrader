@@ -14,16 +14,16 @@ TEST_CASE("Order manager", "[CppTrader]")
     REQUIRE(orders.empty());
 
     REQUIRE(orders.size() == 0);
-    REQUIRE(orders.RegisterOrder(Order(1, 0, OrderType::LIMIT, OrderSide::BUY, 0, 0)));
+    REQUIRE(orders.RegisterOrder(1, 0, OrderType::LIMIT, OrderSide::BUY, 0, 0));
     REQUIRE(orders.size() == 1);
-    REQUIRE(orders.RegisterOrder(Order(2, 0, OrderType::LIMIT, OrderSide::BUY, 0, 0)));
+    REQUIRE(orders.RegisterOrder(2, 0, OrderType::LIMIT, OrderSide::BUY, 0, 0));
     REQUIRE(orders.size() == 2);
-    REQUIRE(orders.RegisterOrder(Order(3, 0, OrderType::LIMIT, OrderSide::BUY, 0, 0)));
+    REQUIRE(orders.RegisterOrder(3, 0, OrderType::LIMIT, OrderSide::BUY, 0, 0));
     REQUIRE(orders.size() == 3);
 
-    REQUIRE(!orders.RegisterOrder(Order(1, 0, OrderType::LIMIT, OrderSide::BUY, 0, 0)));
-    REQUIRE(!orders.RegisterOrder(Order(2, 0, OrderType::LIMIT, OrderSide::BUY, 0, 0)));
-    REQUIRE(!orders.RegisterOrder(Order(3, 0, OrderType::LIMIT, OrderSide::BUY, 0, 0)));
+    REQUIRE(!orders.RegisterOrder(1, 0, OrderType::LIMIT, OrderSide::BUY, 0, 0));
+    REQUIRE(!orders.RegisterOrder(2, 0, OrderType::LIMIT, OrderSide::BUY, 0, 0));
+    REQUIRE(!orders.RegisterOrder(3, 0, OrderType::LIMIT, OrderSide::BUY, 0, 0));
 
     REQUIRE(orders.GetOrder(0) == nullptr);
     REQUIRE(orders.GetOrder(1) != nullptr);
