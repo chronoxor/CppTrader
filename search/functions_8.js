@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['parse',['Parse',['../class_cpp_trader_1_1_fast_hash.html#a1f6b424931ae7076362d62641d1a4d2f',1,'CppTrader::FastHash']]],
-  ['process',['Process',['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#a9e08b6eb62525cf11169c4bbe63cc7ef',1,'CppTrader::ITCH::ITCHHandler']]],
-  ['processmessage',['ProcessMessage',['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#a28941a18632b083083fb214396996004',1,'CppTrader::ITCH::ITCHHandler']]]
+  ['marketmanager',['MarketManager',['../class_cpp_trader_1_1_market_manager.html#a9aad8b89f8abd1da56cde3f646924851',1,'CppTrader::MarketManager::MarketManager()'],['../class_cpp_trader_1_1_market_manager.html#a4e255cca78f825642f067c9fce70dd70',1,'CppTrader::MarketManager::MarketManager(const MarketManager &amp;)=delete'],['../class_cpp_trader_1_1_market_manager.html#a483988d18608efd31fa823b65b160909',1,'CppTrader::MarketManager::MarketManager(MarketManager &amp;&amp;) noexcept=default']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['asks',['Asks',['../class_cpp_trader_1_1_order_book.html#ac742241229a9a226a1469d5cc7049dea',1,'CppTrader::OrderBook']]]
+  ['levels',['Levels',['../class_cpp_trader_1_1_order_book.html#a38bfb3df78b002cea6ca753b5896c974',1,'CppTrader::OrderBook']]]
 ];

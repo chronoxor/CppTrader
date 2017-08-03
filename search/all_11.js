@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['version',['version',['../namespace_cpp_trader.html#ae8e27556b85c591333c48f5b8cd0aeea',1,'CppTrader']]],
-  ['version_2eh',['version.h',['../version_8h.html',1,'']]]
+  ['unknownmessage',['UnknownMessage',['../struct_cpp_trader_1_1_i_t_c_h_1_1_unknown_message.html',1,'CppTrader::ITCH']]]
 ];
