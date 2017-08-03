@@ -47,17 +47,25 @@ public:
 
     //! Add a new symbol
     /*!
-        \param id - Symbol Id
-        \param name - Symbol name
-        \return 'true' if the symbol was successfully added, 'false' if the symbol failed to add
+        \param symbol - Symbol to add
     */
-    bool AddSymbol(uint32_t id, const char name[8]);
-    //! Remove the symbol with the given Id
+    void AddSymbol(const Symbol& symbol);
+    //! Delete the symbol with the given Id
     /*!
         \param id - Symbol Id
-        \return 'true' if the symbol was successfully removed, 'false' if the symbol failed to remove
     */
-    bool RemoveSymbol(uint32_t id);
+    void DeleteSymbol(uint32_t id);
+
+    //! Add a new order
+    /*!
+        \param order - Order to add
+    */
+    void AddOrder(const Order& order);
+    //! Delete the order with the given Id
+    /*!
+        \param id - Order Id
+    */
+    void DeleteOrder(uint64_t id);
 
 private:
     CppCommon::DefaultMemoryManager _default_manager;

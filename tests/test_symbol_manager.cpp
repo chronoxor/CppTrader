@@ -14,16 +14,16 @@ TEST_CASE("Symbol manager", "[CppTrader]")
     REQUIRE(symbols.empty());
 
     REQUIRE(symbols.size() == 0);
-    REQUIRE(symbols.RegisterSymbol(1, "Symbol1"));
+    REQUIRE(symbols.AddSymbol(Symbol(1, "Symbol1")));
     REQUIRE(symbols.size() == 1);
-    REQUIRE(symbols.RegisterSymbol(2, "Symbol2"));
+    REQUIRE(symbols.AddSymbol(Symbol(2, "Symbol2")));
     REQUIRE(symbols.size() == 2);
-    REQUIRE(symbols.RegisterSymbol(3, "Symbol3"));
+    REQUIRE(symbols.AddSymbol(Symbol(3, "Symbol3")));
     REQUIRE(symbols.size() == 3);
 
-    REQUIRE(!symbols.RegisterSymbol(1, "Symbol"));
-    REQUIRE(!symbols.RegisterSymbol(2, "Symbol"));
-    REQUIRE(!symbols.RegisterSymbol(3, "Symbol"));
+    REQUIRE(!symbols.AddSymbol(Symbol(1, "Symbol")));
+    REQUIRE(!symbols.AddSymbol(Symbol(2, "Symbol")));
+    REQUIRE(!symbols.AddSymbol(Symbol(3, "Symbol")));
 
     REQUIRE(symbols.GetSymbol(0) == nullptr);
     REQUIRE(symbols.GetSymbol(1) != nullptr);
@@ -36,15 +36,15 @@ TEST_CASE("Symbol manager", "[CppTrader]")
     REQUIRE(symbols.GetSymbolByName("Symbol2") != nullptr);
     REQUIRE(symbols.GetSymbolByName("Symbol3") != nullptr);
 
-    REQUIRE(!symbols.UnregisterSymbol(0));
+    REQUIRE(!symbols.DeleteSymbol(0));
     REQUIRE(symbols.size() == 3);
-    REQUIRE(symbols.UnregisterSymbol(1));
+    REQUIRE(symbols.DeleteSymbol(1));
     REQUIRE(symbols.size() == 2);
-    REQUIRE(symbols.UnregisterSymbol(2));
+    REQUIRE(symbols.DeleteSymbol(2));
     REQUIRE(symbols.size() == 1);
-    REQUIRE(symbols.UnregisterSymbol(3));
+    REQUIRE(symbols.DeleteSymbol(3));
     REQUIRE(symbols.size() == 0);
-    REQUIRE(!symbols.UnregisterSymbol(0));
+    REQUIRE(!symbols.DeleteSymbol(0));
 
     REQUIRE(symbols.empty());
 }

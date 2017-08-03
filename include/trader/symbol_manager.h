@@ -16,6 +16,7 @@
 #include "containers/hashmap.h"
 #include "memory/allocator_pool.h"
 
+#include <cassert>
 #include <vector>
 
 namespace CppTrader {
@@ -41,7 +42,7 @@ public:
     explicit operator bool() const noexcept { return !empty(); }
 
     //! Get the symbol with the given Id
-    const Symbol* operator[](uint32_t id) { return GetSymbol(id); }
+    const Symbol* operator[](uint32_t id) const noexcept { return GetSymbol(id); }
 
     //! Is the symbol manager empty?
     bool empty() const noexcept { return _size == 0; }
@@ -64,17 +65,15 @@ public:
 
     //! Add a new symbol
     /*!
-        \param id - Symbol Id
-        \param name - Symbol name
-        \return 'true' if the symbol was successfully added, 'false' if the symbol failed to add
+        \param symbol - Symbol to add
+        \return Pointer to the new symbol
     */
-    bool AddSymbol(uint32_t id, const char name[8]);
-    //! Remove the symbol with the given Id
+    Symbol* AddSymbol(const Symbol& symbol);
+    //! Delete the symbol with the given Id
     /*!
         \param id - Symbol Id
-        \return 'true' if the symbol was successfully removed, 'false' if the symbol failed to remove
     */
-    bool RemoveSymbol(uint32_t id);
+    void DeleteSymbol(uint32_t id);
 
 private:
     CppCommon::DefaultMemoryManager _default_manager;

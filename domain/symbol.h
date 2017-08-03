@@ -22,7 +22,6 @@ struct Symbol
     //! Symbol name
     char Name[8];
 
-    Symbol() noexcept : Symbol(0, "<\?\?\?>") {}
     Symbol(uint32_t id, const char name[8]) noexcept
     {
         Id = id;

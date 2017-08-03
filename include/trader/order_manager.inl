@@ -18,7 +18,11 @@ inline OrderManager::OrderManager()
 
 inline const Order* OrderManager::GetOrder(uint64_t id) const noexcept
 {
-    auto it = _orders.find(id + 1);
+    assert((id > 0) && "Order Id must be greater than zero!");
+    if (id == 0)
+        return nullptr;
+
+    auto it = _orders.find(id);
     return ((it != _orders.end()) ? it->second : nullptr);
 }
 

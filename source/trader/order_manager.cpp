@@ -8,35 +8,44 @@
 
 #include "trader/order_manager.h"
 
+#include "errors/exceptions.h"
+#include "string/format.h"
+
 namespace CppTrader {
 
-bool OrderManager::AddOrder(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity)
+Order* OrderManager::AddOrder(const Order& order)
 {
-    // Check if the order with a given Id is already added
-    if (_orders.find(id + 1) != _orders.end())
-        return false;
+    assert((order.Id > 0) && "Order Id must be greater than zero!");
+    if (order.Id == 0)
+        throwex CppCommon::RuntimeException("Order Id must be greater than zero!");
+
+    auto it = _orders.find(order.Id);
+    assert((it == _orders.end()) && "Duplicate symbol detected!");
+    if (it != _orders.end())
+        throwex CppCommon::RuntimeException("Duplicate order detected! Order Id = {}"_format(order.Id));
 
     // Add the order
-    Order* result = _pool.Create(id + 1, symbol, type, side, price, quantity);
-    _orders[id + 1] = result;
+    Order* new_order = _pool.Create(order);
+    _orders[order.Id] = new_order;
 
-    return true;
+    return new_order;
 }
 
-bool OrderManager::RemoveOrder(uint64_t id)
+void OrderManager::DeleteOrder(uint64_t id)
 {
-    auto it = _orders.find(id + 1);
+    assert((id > 0) && "Order Id must be greater than zero!");
+    if (id == 0)
+        throwex CppCommon::RuntimeException("Order Id must be greater than zero!");
 
-    // Check if the order with a given Id is added before
+    auto it = _orders.find(id);
+    assert((it != _orders.end()) && "Order not found!");
     if (it == _orders.end())
-        return false;
+        throwex CppCommon::RuntimeException("Order not found! Order Id = {}"_format(id));
 
-    // Remove the order
-    Order* result = it->second;
+    // Delete the order
+    Order* order = it->second;
     _orders.erase(it);
-    _pool.Release(result);
-
-    return true;
+    _pool.Release(order);
 }
 
 } // namespace CppTrader

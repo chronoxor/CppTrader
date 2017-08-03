@@ -44,7 +44,6 @@ struct Order : public CppCommon::List<Order>::Node
     //! Order quantity
     uint64_t Quantity;
 
-    Order() noexcept : Order(0, 0, OrderType::LIMIT, OrderSide::BUY, 0, 0) {}
     Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity) noexcept
     {
         Id = id;

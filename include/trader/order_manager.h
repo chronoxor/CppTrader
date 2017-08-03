@@ -16,6 +16,8 @@
 #include "containers/hashmap.h"
 #include "memory/allocator_pool.h"
 
+#include <cassert>
+
 namespace CppTrader {
 
 //! Order manager
@@ -39,7 +41,7 @@ public:
     explicit operator bool() const noexcept { return !empty(); }
 
     //! Get the order with the given Id
-    const Order* operator[](uint64_t id) { return GetOrder(id); }
+    const Order* operator[](uint64_t id) const noexcept { return GetOrder(id); }
 
     //! Is the order manager empty?
     bool empty() const noexcept { return _orders.empty(); }
@@ -56,21 +58,15 @@ public:
 
     //! Add a new order
     /*!
-        \param id - Order Id
-        \param symbol - Symbol Id
-        \param type - Order type
-        \param side - Order side
-        \param price - Order price
-        \param quantity - Order quantity
-        \return 'true' if the order was successfully added, 'false' if the order failed to add
+        \param order - Order to add
+        \return Pointer to the new order
     */
-    bool AddOrder(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity);
-    //! Remove the order with the given Id
+    Order* AddOrder(const Order& order);
+    //! Delete the order with the given Id
     /*!
         \param id - Order Id
-        \return 'true' if the order was successfully removed, 'false' if the order failed to remove
     */
-    bool RemoveOrder(uint64_t id);
+    void DeleteOrder(uint64_t id);
 
 private:
     CppCommon::DefaultMemoryManager _default_manager;

@@ -24,11 +24,11 @@ namespace CppTrader {
 */
 class OrderBook
 {
+    friend class MarketManager;
+
 public:
-    //! Bids container
-    typedef CppCommon::BinTreeAVL<Level, std::less<Level>> Bids;
-    //! Asks container
-    typedef CppCommon::BinTreeAVL<Level, std::greater<Level>> Asks;
+    //! Price level container
+    typedef CppCommon::BinTreeAVL<Level, std::less<Level>> Levels;
 
     OrderBook();
     OrderBook(const OrderBook&) = delete;
@@ -48,29 +48,21 @@ public:
     size_t size() const noexcept { return _bids.size() + _asks.size(); }
 
     //! Get the order book bids container
-    const Bids& bids() const noexcept { return _bids; }
+    const Levels& bids() const noexcept { return _bids; }
     //! Get the order book asks container
-    const Asks& asks() const noexcept { return _asks; }
-
-    //! Register a new order
-    /*!
-        \param order - Order to register
-        \return 'true' if the order was successfully registered, 'false' if the order failed to register
-    */
-    bool RegisterOrder(const Order& order);
-    //! Unregister the order with the given Id
-    /*!
-        \param id - Order Id
-        \return 'true' if the order was successfully unregistered, 'false' if the order failed to unregister
-    */
-    bool UnregisterOrder(uint64_t id);
+    const Levels& asks() const noexcept { return _asks; }
 
 private:
     CppCommon::DefaultMemoryManager _default_manager;
     CppCommon::PoolMemoryManager<CppCommon::DefaultMemoryManager> _pool_manager;
     CppCommon::PoolAllocator<Level, CppCommon::DefaultMemoryManager> _pool;
-    Bids _bids;
-    Asks _asks;
+    Levels _bids;
+    Levels _asks;
+
+    Levels::iterator FindLevel(OrderSide side, uint64_t price) noexcept;
+
+    void AddOrder(Order* order);
+    void DeleteOrder(Order* order);
 };
 
 } // namespace CppTrader

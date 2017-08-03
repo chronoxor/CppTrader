@@ -8,43 +8,44 @@
 
 #include "trader/symbol_manager.h"
 
+#include "errors/exceptions.h"
+#include "string/format.h"
+
 namespace CppTrader {
 
-bool SymbolManager::AddSymbol(uint32_t id, const char name[8])
+Symbol* SymbolManager::AddSymbol(const Symbol& symbol)
 {
     // Resize the symbol container
-    if (_symbols.size() <= id)
-        _symbols.resize(id + 1, nullptr);
+    if (_symbols.size() <= symbol.Id)
+        _symbols.resize(symbol.Id + 1, nullptr);
 
-    // Check if the symbol with a given Id is already added
-    if (_symbols[id] != nullptr)
-        return false;
+    assert((_symbols[symbol.Id] == nullptr) && "Duplicate symbol detected!");
+    if (_symbols[symbol.Id] != nullptr)
+        throwex CppCommon::RuntimeException("Duplicate symbol detected! Symbol Id = {}"_format(symbol.Id));
 
     // Add the symbol
-    Symbol* result = _pool.Create(id, name);
-    _symbols[id] = result;
-    _symbols_by_name[FastHash::Parse(result->Name)] = result;
+    Symbol* new_symbol = _pool.Create(symbol);
+    _symbols[symbol.Id] = new_symbol;
+    _symbols_by_name[FastHash::Parse(symbol.Name)] = new_symbol;
 
     ++_size;
 
-    return true;
+    return new_symbol;
 }
 
-bool SymbolManager::RemoveSymbol(uint32_t id)
+void SymbolManager::DeleteSymbol(uint32_t id)
 {
-    // Check if the symbol with a given Id is added before
+    assert(((id < _symbols.size()) && (_symbols[id] != nullptr)) && "Symbol not found!");
     if ((_symbols.size() <= id) || (_symbols[id] == nullptr))
-        return false;
+        throwex CppCommon::RuntimeException("Symbol not found! Symbol Id = {}"_format(id));
 
-    // Remove the symbol
-    Symbol* result = _symbols[id];
+    // Delete the symbol
+    Symbol* symbol = _symbols[id];
     _symbols[id] = nullptr;
-    _symbols_by_name.erase(FastHash::Parse(result->Name));
-    _pool.Release(result);
+    _symbols_by_name.erase(FastHash::Parse(symbol->Name));
+    _pool.Release(symbol);
 
     --_size;
-
-    return true;
 }
 
 } // namespace CppTrader
