@@ -13,6 +13,16 @@
 
 namespace CppTrader {
 
+SymbolManager::~SymbolManager()
+{
+    for (auto symbol : _symbols)
+        if (symbol != nullptr)
+            _pool.Release(symbol);
+     _symbols.clear();
+    _symbols_by_name.clear();
+    _size = 0;
+}
+
 Symbol* SymbolManager::AddSymbol(const Symbol& symbol)
 {
     // Resize the symbol container

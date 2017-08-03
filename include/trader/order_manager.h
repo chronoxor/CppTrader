@@ -32,7 +32,7 @@ public:
     OrderManager();
     OrderManager(const OrderManager&) = delete;
     OrderManager(OrderManager&&) noexcept = default;
-    ~OrderManager() = default;
+    ~OrderManager();
 
     OrderManager& operator=(const OrderManager&) = delete;
     OrderManager& operator=(OrderManager&&) noexcept = default;

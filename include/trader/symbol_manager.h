@@ -33,7 +33,7 @@ public:
     SymbolManager();
     SymbolManager(const SymbolManager&) = delete;
     SymbolManager(SymbolManager&&) noexcept = default;
-    ~SymbolManager() = default;
+    ~SymbolManager();
 
     SymbolManager& operator=(const SymbolManager&) = delete;
     SymbolManager& operator=(SymbolManager&&) noexcept = default;

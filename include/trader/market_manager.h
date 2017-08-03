@@ -25,10 +25,10 @@ namespace CppTrader {
 class MarketManager
 {
 public:
-    MarketManager() = default;
+    MarketManager();
     MarketManager(const MarketManager&) = delete;
     MarketManager(MarketManager&&) noexcept = default;
-    ~MarketManager() = default;
+    ~MarketManager();
 
     MarketManager& operator=(const MarketManager&) = delete;
     MarketManager& operator=(MarketManager&&) noexcept = default;

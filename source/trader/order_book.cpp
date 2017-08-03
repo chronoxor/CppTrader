@@ -10,6 +10,17 @@
 
 namespace CppTrader {
 
+OrderBook::~OrderBook()
+{
+    for (auto& bid : _bids)
+        _pool.Release(&bid);
+    _bids.clear();
+
+    for (auto& ask : _asks)
+        _pool.Release(&ask);
+    _asks.clear();
+}
+
 OrderBook::Levels::iterator OrderBook::FindLevel(OrderSide side, uint64_t price) noexcept
 {
     Level required(price, 0, 0);
@@ -36,10 +47,10 @@ void OrderBook::AddOrder(Order* order)
 {
     // Find the price level for the order
     Levels::iterator it_level = FindLevel(order->Side, order->Price);
-    Level* level = &(*it_level);
+    Level* level = nullptr;
 
     // Create a new price level if no one found
-    if (level == nullptr)
+    if (!it_level)
     {
         level = _pool.Create(order->Price, 0, 0);
         if (order->Side == OrderSide::BUY)
@@ -47,6 +58,8 @@ void OrderBook::AddOrder(Order* order)
         else
             _asks.insert(*level);
     }
+    else
+        level = &(*it_level);
 
     // Update price level size and volume
     ++level->Size;
@@ -60,11 +73,13 @@ void OrderBook::DeleteOrder(Order* order)
 {
     // Find the price level for the order
     Levels::iterator it_level = FindLevel(order->Side, order->Price);
-    Level* level = &(*it_level);
+    Level* level = nullptr;
 
     // Delete the order from the price level
-    if (level != nullptr)
+    if (it_level)
     {
+        level = &(*it_level);
+
         // Update price level size and volume
         --level->Size;
         level->Volume -= order->Quantity;
@@ -79,6 +94,7 @@ void OrderBook::DeleteOrder(Order* order)
                 _bids.erase(it_level);
             else
                 _asks.erase(it_level);
+            _pool.Release(level);
         }
     }
 }

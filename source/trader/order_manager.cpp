@@ -13,6 +13,13 @@
 
 namespace CppTrader {
 
+OrderManager::~OrderManager()
+{
+    for (auto order : _orders)
+        _pool.Release(order.second);
+     _orders.clear();
+}
+
 Order* OrderManager::AddOrder(const Order& order)
 {
     assert((order.Id > 0) && "Order Id must be greater than zero!");

@@ -33,7 +33,7 @@ public:
     OrderBook();
     OrderBook(const OrderBook&) = delete;
     OrderBook(OrderBook&&) noexcept = default;
-    ~OrderBook() = default;
+    ~OrderBook();
 
     OrderBook& operator=(const OrderBook&) = delete;
     OrderBook& operator=(OrderBook&&) noexcept = default;
@@ -66,5 +66,7 @@ private:
 };
 
 } // namespace CppTrader
+
+#include "order_book.inl"
 
 #endif // CPPTRADER_ORDER_BOOK_H

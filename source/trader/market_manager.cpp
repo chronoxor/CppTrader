@@ -13,6 +13,14 @@
 
 namespace CppTrader {
 
+MarketManager::~MarketManager()
+{
+    for (auto order_book : _order_book)
+        if (order_book != nullptr)
+            _pool.Release(order_book);
+     _order_book.clear();
+}
+
 void MarketManager::AddSymbol(const Symbol& symbol)
 {
     // Add the new symbol into the symbol manager
