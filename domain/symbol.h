@@ -9,7 +9,7 @@
 #ifndef CPPTRADER_DOMAIN_SYMBOL_H
 #define CPPTRADER_DOMAIN_SYMBOL_H
 
-#include "utility/stream.h"
+#include "utility/iostream.h"
 
 #include <cstdint>
 #include <cstring>

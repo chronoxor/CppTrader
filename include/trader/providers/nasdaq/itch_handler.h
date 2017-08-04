@@ -10,7 +10,7 @@
 #define CPPTRADER_ITCH_HANDLER_H
 
 #include "utility/endian.h"
-#include "utility/stream.h"
+#include "utility/iostream.h"
 
 #include <vector>
 
