@@ -62,6 +62,22 @@ public:
         \return Pointer to the new order
     */
     Order* AddOrder(const Order& order);
+    //! Replace the order with a similar order but different Id, price and quantity
+    /*!
+        \param id - Order Id
+        \param new_id - Order Id to replace
+        \param new_price - Order price to replace
+        \param new_quantity - Order quantity to replace
+        \return Pointer to the replaced order
+    */
+    Order* ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_price, uint64_t new_quantity);
+    //! Replace the order with a new one
+    /*!
+        \param id - Order Id
+        \param new_order - Order to replace
+        \return Pointer to the replaced order
+    */
+    Order* ReplaceOrder(uint64_t id, const Order& new_order);
     //! Delete the order with the given Id
     /*!
         \param id - Order Id

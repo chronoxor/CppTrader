@@ -43,86 +43,86 @@ OrderBook::Levels::iterator OrderBook::FindLevel(OrderSide side, uint64_t price)
     }
 }
 
-void OrderBook::AddOrder(Order* order)
+void OrderBook::AddOrder(Order* order_ptr)
 {
     // Find the price level for the order
-    Levels::iterator it_level = FindLevel(order->Side, order->Price);
-    Level* level = nullptr;
+    Levels::iterator level_it = FindLevel(order_ptr->Side, order_ptr->Price);
+    Level* level_ptr = nullptr;
 
     // Create a new price level if no one found
-    if (!it_level)
+    if (!level_it)
     {
-        level = _pool.Create(order->Price);
-        if (order->Side == OrderSide::BUY)
-            _bids.insert(*level);
+        level_ptr = _pool.Create(order_ptr->Price);
+        if (order_ptr->Side == OrderSide::BUY)
+            _bids.insert(*level_ptr);
         else
-            _asks.insert(*level);
+            _asks.insert(*level_ptr);
     }
     else
-        level = &(*it_level);
+        level_ptr = &(*level_it);
 
     // Update the price level volume
-    level->Volume += order->Quantity;
+    level_ptr->Volume += order_ptr->Quantity;
 
     // Link the new order to the orders list of the price level
-    level->Orders.push_back(*order);
+    level_ptr->Orders.push_back(*order_ptr);
 }
 
-void OrderBook::ReduceOrder(Order* order, uint64_t quantity)
+void OrderBook::ReduceOrder(Order* order_ptr, uint64_t quantity)
 {
     // Find the price level for the order
-    Levels::iterator it_level = FindLevel(order->Side, order->Price);
-    Level* level = nullptr;
+    Levels::iterator level_it = FindLevel(order_ptr->Side, order_ptr->Price);
+    Level* level_ptr = nullptr;
 
     // Reduce the order in the price level
-    if (it_level)
+    if (level_it)
     {
-        level = &(*it_level);
+        level_ptr = &(*level_it);
 
         // Update the price level volume
-        level->Volume -= quantity;
+        level_ptr->Volume -= quantity;
 
         // Unlink the empty order from the orders list of the price level
-        if (order->Quantity == 0)
-            level->Orders.pop_current(*order);
+        if ((order_ptr->Quantity - quantity) == 0)
+            level_ptr->Orders.pop_current(*order_ptr);
 
         // Delete the empty price level
-        if (level->Volume == 0)
+        if (level_ptr->Volume == 0)
         {
-            if (order->Side == OrderSide::BUY)
-                _bids.erase(it_level);
+            if (order_ptr->Side == OrderSide::BUY)
+                _bids.erase(level_it);
             else
-                _asks.erase(it_level);
-            _pool.Release(level);
+                _asks.erase(level_it);
+            _pool.Release(level_ptr);
         }
     }
 }
 
-void OrderBook::DeleteOrder(Order* order)
+void OrderBook::DeleteOrder(Order* order_ptr)
 {
     // Find the price level for the order
-    Levels::iterator it_level = FindLevel(order->Side, order->Price);
-    Level* level = nullptr;
+    Levels::iterator level_it = FindLevel(order_ptr->Side, order_ptr->Price);
+    Level* level_ptr = nullptr;
 
     // Delete the order from the price level
-    if (it_level)
+    if (level_it)
     {
-        level = &(*it_level);
+        level_ptr = &(*level_it);
 
         // Update the price level volume
-        level->Volume -= order->Quantity;
+        level_ptr->Volume -= order_ptr->Quantity;
 
         // Unlink the order from the orders list of the price level
-        level->Orders.pop_current(*order);
+        level_ptr->Orders.pop_current(*order_ptr);
 
         // Delete the empty price level
-        if (level->Volume == 0)
+        if (level_ptr->Volume == 0)
         {
-            if (order->Side == OrderSide::BUY)
-                _bids.erase(it_level);
+            if (order_ptr->Side == OrderSide::BUY)
+                _bids.erase(level_it);
             else
-                _asks.erase(it_level);
-            _pool.Release(level);
+                _asks.erase(level_it);
+            _pool.Release(level_ptr);
         }
     }
 }

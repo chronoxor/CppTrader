@@ -49,6 +49,12 @@ protected:
         return true;
     }
 
+    bool HandleMessage(const CppTrader::ITCH::OrderReplaceMessage& message) override
+    {
+        _market.ReplaceOrder(message.OriginalOrderReferenceNumber, message.NewOrderReferenceNumber, message.Price, message.Shares);
+        return true;
+    }
+
 private:
     CppTrader::MarketManager& _market;
 };

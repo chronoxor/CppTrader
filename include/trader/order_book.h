@@ -61,9 +61,9 @@ private:
 
     Levels::iterator FindLevel(OrderSide side, uint64_t price) noexcept;
 
-    void AddOrder(Order* order);
-    void ReduceOrder(Order* order, uint64_t quantity);
-    void DeleteOrder(Order* order);
+    void AddOrder(Order* order_ptr);
+    void ReduceOrder(Order* order_ptr, uint64_t quantity);
+    void DeleteOrder(Order* order_ptr);
 };
 
 } // namespace CppTrader

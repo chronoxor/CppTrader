@@ -61,12 +61,33 @@ public:
         \param order - Order to add
     */
     void AddOrder(const Order& order);
-    //! Reduce the the order by the given quantity with the given Id
+    //! Reduce the order by the given quantity with the given Id
     /*!
         \param id - Order Id
         \param quantity - Order quantity to reduce
     */
     void ReduceOrder(uint64_t id, uint64_t quantity);
+    //! Modify the order with the given Id
+    /*!
+        \param id - Order Id
+        \param new_price - Order price to modify
+        \param new_quantity - Order quantity to modify
+    */
+    void ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity);
+    //! Replace the order with a similar order but different Id, price and quantity
+    /*!
+        \param id - Order Id
+        \param new_id - Order Id to replace
+        \param new_price - Order price to replace
+        \param new_quantity - Order quantity to replace
+    */
+    void ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_price, uint64_t new_quantity);
+    //! Replace the order with a new one
+    /*!
+        \param id - Order Id
+        \param new_order - Order to replace
+    */
+    void ReplaceOrder(uint64_t id, const Order& new_order);
     //! Delete the order with the given Id
     /*!
         \param id - Order Id

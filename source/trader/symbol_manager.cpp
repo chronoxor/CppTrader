@@ -15,10 +15,10 @@ namespace CppTrader {
 
 SymbolManager::~SymbolManager()
 {
-    for (auto symbol : _symbols)
-        if (symbol != nullptr)
-            _pool.Release(symbol);
-     _symbols.clear();
+    for (auto symbol_ptr : _symbols)
+        if (symbol_ptr != nullptr)
+            _pool.Release(symbol_ptr);
+    _symbols.clear();
     _symbols_by_name.clear();
     _size = 0;
 }
@@ -34,13 +34,13 @@ Symbol* SymbolManager::AddSymbol(const Symbol& symbol)
         throwex CppCommon::RuntimeException("Duplicate symbol detected! Symbol Id = {}"_format(symbol.Id));
 
     // Add the symbol
-    Symbol* new_symbol = _pool.Create(symbol);
-    _symbols[symbol.Id] = new_symbol;
-    _symbols_by_name[FastHash::Parse(symbol.Name)] = new_symbol;
+    Symbol* symbol_ptr = _pool.Create(symbol);
+    _symbols[symbol_ptr->Id] = symbol_ptr;
+    _symbols_by_name[FastHash::Parse(symbol_ptr->Name)] = symbol_ptr;
 
     ++_size;
 
-    return new_symbol;
+    return symbol_ptr;
 }
 
 void SymbolManager::DeleteSymbol(uint32_t id)
@@ -50,10 +50,10 @@ void SymbolManager::DeleteSymbol(uint32_t id)
         throwex CppCommon::RuntimeException("Symbol not found! Symbol Id = {}"_format(id));
 
     // Delete the symbol
-    Symbol* symbol = _symbols[id];
+    Symbol* symbol_ptr = _symbols[id];
     _symbols[id] = nullptr;
-    _symbols_by_name.erase(FastHash::Parse(symbol->Name));
-    _pool.Release(symbol);
+    _symbols_by_name.erase(FastHash::Parse(symbol_ptr->Name));
+    _pool.Release(symbol_ptr);
 
     --_size;
 }
