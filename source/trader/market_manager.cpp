@@ -42,7 +42,7 @@ void MarketManager::AddSymbol(const Symbol& symbol)
         throwex CppCommon::RuntimeException("Duplicate order book detected! Symbol Id = {}"_format(symbol.Id));
 
     // Add the order book
-    OrderBook* order_book_ptr = _pool.Create();
+    OrderBook* order_book_ptr = _pool.Create(*symbol_ptr);
     if (order_book_ptr == nullptr)
         return;
 

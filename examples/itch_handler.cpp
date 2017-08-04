@@ -12,7 +12,7 @@
 
 #include <iostream>
 
-class MyHandler : public CppTrader::ITCH::ITCHHandler
+class MyITCHHandler : public CppTrader::ITCH::ITCHHandler
 {
 protected:
     bool onMessage(const CppTrader::ITCH::SystemEventMessage& message) override { return OutputMessage(message); }
@@ -48,7 +48,7 @@ private:
 
 int main(int argc, char** argv)
 {
-    MyHandler handler;
+    MyITCHHandler itch_handler;
 
     // Perform input
     size_t size;
@@ -57,7 +57,7 @@ int main(int argc, char** argv)
     while ((size = input.Read(buffer, sizeof(buffer))) > 0)
     {
         // Process the buffer
-        handler.Process(buffer, size);
+        itch_handler.Process(buffer, size);
     }
 
     return 0;

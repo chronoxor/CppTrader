@@ -1,6 +1,6 @@
 /*!
     \file order.h
-    \brief Order domain model
+    \brief Order domain model definition
     \author Ivan Shynkarenka
     \date 31.07.2017
     \copyright MIT License
@@ -10,9 +10,9 @@
 #define CPPTRADER_DOMAIN_ORDER_H
 
 #include "containers/list.h"
+#include "utility/stream.h"
 
 #include <cstdint>
-#include <iostream>
 
 namespace CppTrader {
 
@@ -22,12 +22,14 @@ enum class OrderSide : uint8_t
     BUY,
     SELL
 };
+std::ostream& operator<<(std::ostream& stream, OrderSide side);
 
 //! Order type
 enum class OrderType : uint8_t
 {
     LIMIT
 };
+std::ostream& operator<<(std::ostream& stream, OrderType type);
 
 //! Order model
 struct Order : public CppCommon::List<Order>::Node
@@ -60,8 +62,12 @@ struct Order : public CppCommon::List<Order>::Node
 
     Order& operator=(const Order&) noexcept = default;
     Order& operator=(Order&&) noexcept = default;
+
+    friend std::ostream& operator<<(std::ostream& stream, const Order& order);
 };
 
 } // namespace CppTrader
+
+#include "order.inl"
 
 #endif // CPPTRADER_DOMAIN_ORDER_H

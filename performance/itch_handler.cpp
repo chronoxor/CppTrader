@@ -14,10 +14,10 @@
 using namespace CppCommon;
 using namespace CppTrader::ITCH;
 
-class MyHandler : public ITCHHandler
+class MyITCHHandler : public ITCHHandler
 {
 public:
-    MyHandler() : _messages(0), _errors(0) {}
+    MyITCHHandler() : _messages(0), _errors(0) {}
 
     size_t messages() const { return _messages; }
     size_t errors() const { return _errors; }
@@ -66,7 +66,7 @@ int main(int argc, char** argv)
         parser.exit();
     }
 
-    MyHandler handler;
+    MyITCHHandler itch_handler;
 
     // Open the input file or stdin
     std::unique_ptr<Reader> input(new StdInput());
@@ -85,15 +85,15 @@ int main(int argc, char** argv)
     while ((size = input->Read(buffer, sizeof(buffer))) > 0)
     {
         // Process the buffer
-        handler.Process(buffer, size);
+        itch_handler.Process(buffer, size);
     }
     uint64_t timestamp_stop = Timestamp::nano();
     std::cout << "Done!" << std::endl;
 
     std::cout << std::endl;
 
-    size_t total_messages = handler.messages();
-    size_t total_errors = handler.errors();
+    size_t total_messages = itch_handler.messages();
+    size_t total_errors = itch_handler.errors();
 
     std::cout << "Processing time: " << CppBenchmark::ReporterConsole::GenerateTimePeriod(timestamp_stop - timestamp_start) << std::endl;
     std::cout << "Total messages: " << total_messages << std::endl;

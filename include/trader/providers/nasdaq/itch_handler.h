@@ -10,8 +10,8 @@
 #define CPPTRADER_ITCH_HANDLER_H
 
 #include "utility/endian.h"
+#include "utility/stream.h"
 
-#include <iostream>
 #include <vector>
 
 namespace CppTrader {

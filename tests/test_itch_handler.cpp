@@ -11,10 +11,12 @@
 using namespace CppCommon;
 using namespace CppTrader::ITCH;
 
-class MyHandler : public ITCHHandler
+namespace {
+
+class MyITCHHandler : public ITCHHandler
 {
 public:
-    MyHandler() : _messages(0), _errors(0) {}
+    MyITCHHandler() : _messages(0), _errors(0) {}
 
     size_t messages() const { return _messages; }
     size_t errors() const { return _errors; }
@@ -47,9 +49,11 @@ private:
     size_t _errors;
 };
 
+} // namespace
+
 TEST_CASE("ITCHHandler", "[CppTrader][Providers][NASDAQ]")
 {
-    MyHandler handler;
+    MyITCHHandler itch_handler;
 
     // Open the input file
     File input("../../tools/itch/sample.itch");
@@ -64,10 +68,10 @@ TEST_CASE("ITCHHandler", "[CppTrader][Providers][NASDAQ]")
     while ((size = input.Read(buffer, sizeof(buffer))) > 0)
     {
         // Process the buffer
-        handler.Process(buffer, size);
+        itch_handler.Process(buffer, size);
     }
 
     // Check results
-    REQUIRE(handler.messages() == 1563071);
-    REQUIRE(handler.errors() == 0);
+    REQUIRE(itch_handler.messages() == 1563071);
+    REQUIRE(itch_handler.errors() == 0);
 }

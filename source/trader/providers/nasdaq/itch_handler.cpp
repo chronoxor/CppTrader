@@ -10,43 +10,6 @@
 
 #include <cassert>
 
-namespace {
-
-class WriteChar
-{
-public:
-    explicit WriteChar(char ch) : _ch(ch) {}
-
-    friend std::ostream& operator<<(std::ostream& stream, const WriteChar& writer)
-    {
-        return stream << '\'' << writer._ch << '\'';
-    }
-
-private:
-    char _ch;
-};
-
-class WriteString
-{
-public:
-    template <size_t N>
-    explicit WriteString(const char (&str)[N]) : _str(str), _size(N) {}
-
-    friend std::ostream& operator<<(std::ostream& stream, const WriteString& writer)
-    {
-        stream << '"';
-        stream.write(writer._str, writer._size);
-        stream << '"';
-        return stream;
-    }
-
-private:
-    const char* _str;
-    size_t _size;
-};
-
-}
-
 namespace CppTrader {
 namespace ITCH {
 
@@ -217,11 +180,11 @@ bool ITCHHandler::ProcessSystemEventMessage(void* buffer, size_t size)
 
 std::ostream& operator<<(std::ostream& stream, const SystemEventMessage& message)
 {
-    return stream << "SystemEventMessage(Type=" << WriteChar(message.Type)
+    return stream << "SystemEventMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
-        << "; EventCode=" << WriteChar(message.EventCode)
+        << "; EventCode=" << CppCommon::WriteChar(message.EventCode)
         << ")";
 }
 
@@ -258,24 +221,24 @@ bool ITCHHandler::ProcessStockDirectoryMessage(void* buffer, size_t size)
 
 std::ostream& operator<<(std::ostream& stream, const StockDirectoryMessage& message)
 {
-    return stream << "StockDirectoryMessage(Type=" << WriteChar(message.Type)
+    return stream << "StockDirectoryMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
-        << "; Stock=" << WriteString(message.Stock)
-        << "; MarketCategory=" << WriteChar(message.MarketCategory)
-        << "; FinancialStatusIndicator=" << WriteChar(message.FinancialStatusIndicator)
+        << "; Stock=" << CppCommon::WriteString(message.Stock)
+        << "; MarketCategory=" << CppCommon::WriteChar(message.MarketCategory)
+        << "; FinancialStatusIndicator=" << CppCommon::WriteChar(message.FinancialStatusIndicator)
         << "; RoundLotSize=" << message.RoundLotSize
-        << "; RoundLotsOnly=" << WriteChar(message.RoundLotsOnly)
-        << "; IssueClassification=" << WriteChar(message.IssueClassification)
-        << "; IssueSubType=" << WriteString(message.IssueSubType)
-        << "; Authenticity=" << WriteChar(message.Authenticity)
-        << "; ShortSaleThresholdIndicator=" << WriteChar(message.ShortSaleThresholdIndicator)
-        << "; IPOFlag=" << WriteChar(message.IPOFlag)
-        << "; LULDReferencePriceTier=" << WriteChar(message.LULDReferencePriceTier)
-        << "; ETPFlag=" << WriteChar(message.ETPFlag)
+        << "; RoundLotsOnly=" << CppCommon::WriteChar(message.RoundLotsOnly)
+        << "; IssueClassification=" << CppCommon::WriteChar(message.IssueClassification)
+        << "; IssueSubType=" << CppCommon::WriteString(message.IssueSubType)
+        << "; Authenticity=" << CppCommon::WriteChar(message.Authenticity)
+        << "; ShortSaleThresholdIndicator=" << CppCommon::WriteChar(message.ShortSaleThresholdIndicator)
+        << "; IPOFlag=" << CppCommon::WriteChar(message.IPOFlag)
+        << "; LULDReferencePriceTier=" << CppCommon::WriteChar(message.LULDReferencePriceTier)
+        << "; ETPFlag=" << CppCommon::WriteChar(message.ETPFlag)
         << "; ETPLeverageFactor=" << message.ETPLeverageFactor
-        << "; InverseIndicator=" << WriteChar(message.InverseIndicator)
+        << "; InverseIndicator=" << CppCommon::WriteChar(message.InverseIndicator)
         << ")";
 }
 
@@ -302,14 +265,14 @@ bool ITCHHandler::ProcessStockTradingActionMessage(void* buffer, size_t size)
 
 std::ostream& operator<<(std::ostream& stream, const StockTradingActionMessage& message)
 {
-    return stream << "StockTradingActionMessage(Type=" << WriteChar(message.Type)
+    return stream << "StockTradingActionMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
-        << "; Stock=" << WriteString(message.Stock)
-        << "; TradingState=" << WriteChar(message.TradingState)
-        << "; Reserved=" << WriteChar(message.Reserved)
-        << "; Reason=" << WriteChar(message.Reason)
+        << "; Stock=" << CppCommon::WriteString(message.Stock)
+        << "; TradingState=" << CppCommon::WriteChar(message.TradingState)
+        << "; Reserved=" << CppCommon::WriteChar(message.Reserved)
+        << "; Reason=" << CppCommon::WriteChar(message.Reason)
         << ")";
 }
 
@@ -334,12 +297,12 @@ bool ITCHHandler::ProcessRegSHOMessage(void* buffer, size_t size)
 
 std::ostream& operator<<(std::ostream& stream, const RegSHOMessage& message)
 {
-    return stream << "RegSHOMessage(Type=" << WriteChar(message.Type)
+    return stream << "RegSHOMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
-        << "; Stock=" << WriteString(message.Stock)
-        << "; RegSHOAction=" << WriteChar(message.RegSHOAction)
+        << "; Stock=" << CppCommon::WriteString(message.Stock)
+        << "; RegSHOAction=" << CppCommon::WriteChar(message.RegSHOAction)
         << ")";
 }
 
@@ -367,15 +330,15 @@ bool ITCHHandler::ProcessMarketParticipantPositionMessage(void* buffer, size_t s
 
 std::ostream& operator<<(std::ostream& stream, const MarketParticipantPositionMessage& message)
 {
-    return stream << "MarketParticipantPositionMessage(Type=" << WriteChar(message.Type)
+    return stream << "MarketParticipantPositionMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
-        << "; MPID=" << WriteString(message.MPID)
-        << "; Stock=" << WriteString(message.Stock)
-        << "; PrimaryMarketMaker=" << WriteChar(message.PrimaryMarketMaker)
-        << "; MarketMakerMode=" << WriteChar(message.MarketMakerMode)
-        << "; MarketParticipantState=" << WriteChar(message.MarketParticipantState)
+        << "; MPID=" << CppCommon::WriteString(message.MPID)
+        << "; Stock=" << CppCommon::WriteString(message.Stock)
+        << "; PrimaryMarketMaker=" << CppCommon::WriteChar(message.PrimaryMarketMaker)
+        << "; MarketMakerMode=" << CppCommon::WriteChar(message.MarketMakerMode)
+        << "; MarketParticipantState=" << CppCommon::WriteChar(message.MarketParticipantState)
         << ")";
 }
 
@@ -401,7 +364,7 @@ bool ITCHHandler::ProcessMWCBDeclineMessage(void* buffer, size_t size)
 
 std::ostream& operator<<(std::ostream& stream, const MWCBDeclineMessage& message)
 {
-    return stream << "MWCBDeclineMessage(Type=" << WriteChar(message.Type)
+    return stream << "MWCBDeclineMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
@@ -431,7 +394,7 @@ bool ITCHHandler::ProcessMWCBStatusMessage(void* buffer, size_t size)
 
 std::ostream& operator<<(std::ostream& stream, const MWCBStatusMessage& message)
 {
-    return stream << "MWCBStatusMessage(Type=" << WriteChar(message.Type)
+    return stream << "MWCBStatusMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
@@ -462,11 +425,11 @@ bool ITCHHandler::ProcessIPOQuotingMessage(void* buffer, size_t size)
 
 std::ostream& operator<<(std::ostream& stream, const IPOQuotingMessage& message)
 {
-    return stream << "IPOQuotingMessage(Type=" << WriteChar(message.Type)
+    return stream << "IPOQuotingMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
-        << "; Stock=" << WriteString(message.Stock)
+        << "; Stock=" << CppCommon::WriteString(message.Stock)
         << "; IPOReleaseTime=" << message.IPOReleaseTime
         << "; IPOReleaseQualifier=" << message.IPOReleaseQualifier
         << "; IPOPrice=" << message.IPOPrice
@@ -497,14 +460,14 @@ bool ITCHHandler::ProcessAddOrderMessage(void* buffer, size_t size)
 
 std::ostream& operator<<(std::ostream& stream, const AddOrderMessage& message)
 {
-    return stream << "AddOrderMessage(Type=" << WriteChar(message.Type)
+    return stream << "AddOrderMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
         << "; OrderReferenceNumber=" << message.OrderReferenceNumber
-        << "; BuySellIndicator=" << WriteChar(message.BuySellIndicator)
+        << "; BuySellIndicator=" << CppCommon::WriteChar(message.BuySellIndicator)
         << "; Shares=" << message.Shares
-        << "; Stock=" << WriteString(message.Stock)
+        << "; Stock=" << CppCommon::WriteString(message.Stock)
         << "; Price=" << message.Price
         << ")";
 }
@@ -534,16 +497,16 @@ bool ITCHHandler::ProcessAddOrderMPIDMessage(void* buffer, size_t size)
 
 std::ostream& operator<<(std::ostream& stream, const AddOrderMPIDMessage& message)
 {
-    return stream << "AddOrderMPIDMessage(Type=" << WriteChar(message.Type)
+    return stream << "AddOrderMPIDMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
         << "; OrderReferenceNumber=" << message.OrderReferenceNumber
-        << "; BuySellIndicator=" << WriteChar(message.BuySellIndicator)
+        << "; BuySellIndicator=" << CppCommon::WriteChar(message.BuySellIndicator)
         << "; Shares=" << message.Shares
-        << "; Stock=" << WriteString(message.Stock)
+        << "; Stock=" << CppCommon::WriteString(message.Stock)
         << "; Price=" << message.Price
-        << "; Attribution=" << WriteChar(message.Attribution)
+        << "; Attribution=" << CppCommon::WriteChar(message.Attribution)
         << ")";
 }
 
@@ -569,7 +532,7 @@ bool ITCHHandler::ProcessOrderExecutedMessage(void* buffer, size_t size)
 
 std::ostream& operator<<(std::ostream& stream, const OrderExecutedMessage& message)
 {
-    return stream << "OrderExecutedMessage(Type=" << WriteChar(message.Type)
+    return stream << "OrderExecutedMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
@@ -603,14 +566,14 @@ bool ITCHHandler::ProcessOrderExecutedWithPriceMessage(void* buffer, size_t size
 
 std::ostream& operator<<(std::ostream& stream, const OrderExecutedWithPriceMessage& message)
 {
-    return stream << "OrderExecutedWithPriceMessage(Type=" << WriteChar(message.Type)
+    return stream << "OrderExecutedWithPriceMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
         << "; OrderReferenceNumber=" << message.OrderReferenceNumber
         << "; ExecutedShares=" << message.ExecutedShares
         << "; MatchNumber=" << message.MatchNumber
-        << "; Printable=" << WriteChar(message.Printable)
+        << "; Printable=" << CppCommon::WriteChar(message.Printable)
         << "; ExecutionPrice=" << message.ExecutionPrice
         << ")";
 }
@@ -636,7 +599,7 @@ bool ITCHHandler::ProcessOrderCancelMessage(void* buffer, size_t size)
 
 std::ostream& operator<<(std::ostream& stream, const OrderCancelMessage& message)
 {
-    return stream << "OrderCancelMessage(Type=" << WriteChar(message.Type)
+    return stream << "OrderCancelMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
@@ -665,7 +628,7 @@ bool ITCHHandler::ProcessOrderDeleteMessage(void* buffer, size_t size)
 
 std::ostream& operator<<(std::ostream& stream, const OrderDeleteMessage& message)
 {
-    return stream << "OrderDeleteMessage(Type=" << WriteChar(message.Type)
+    return stream << "OrderDeleteMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
@@ -696,7 +659,7 @@ bool ITCHHandler::ProcessOrderReplaceMessage(void* buffer, size_t size)
 
 std::ostream& operator<<(std::ostream& stream, const OrderReplaceMessage& message)
 {
-    return stream << "OrderReplaceMessage(Type=" << WriteChar(message.Type)
+    return stream << "OrderReplaceMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
@@ -732,14 +695,14 @@ bool ITCHHandler::ProcessTradeMessage(void* buffer, size_t size)
 
 std::ostream& operator<<(std::ostream& stream, const TradeMessage& message)
 {
-    return stream << "TradeMessage(Type=" << WriteChar(message.Type)
+    return stream << "TradeMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
         << "; OrderReferenceNumber=" << message.OrderReferenceNumber
-        << "; BuySellIndicator=" << WriteChar(message.BuySellIndicator)
+        << "; BuySellIndicator=" << CppCommon::WriteChar(message.BuySellIndicator)
         << "; Shares=" << message.Shares
-        << "; Stock=" << WriteString(message.Stock)
+        << "; Stock=" << CppCommon::WriteString(message.Stock)
         << "; Price=" << message.Price
         << "; MatchNumber=" << message.MatchNumber
         << ")";
@@ -769,15 +732,15 @@ bool ITCHHandler::ProcessCrossTradeMessage(void* buffer, size_t size)
 
 std::ostream& operator<<(std::ostream& stream, const CrossTradeMessage& message)
 {
-    return stream << "CrossTradeMessage(Type=" << WriteChar(message.Type)
+    return stream << "CrossTradeMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
         << "; Shares=" << message.Shares
-        << "; Stock=" << WriteString(message.Stock)
+        << "; Stock=" << CppCommon::WriteString(message.Stock)
         << "; CrossPrice=" << message.CrossPrice
         << "; MatchNumber=" << message.MatchNumber
-        << "; CrossType=" << WriteChar(message.CrossType)
+        << "; CrossType=" << CppCommon::WriteChar(message.CrossType)
         << ")";
 }
 
@@ -801,7 +764,7 @@ bool ITCHHandler::ProcessBrokenTradeMessage(void* buffer, size_t size)
 
 std::ostream& operator<<(std::ostream& stream, const BrokenTradeMessage& message)
 {
-    return stream << "BrokenTradeMessage(Type=" << WriteChar(message.Type)
+    return stream << "BrokenTradeMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
@@ -837,19 +800,19 @@ bool ITCHHandler::ProcessNOIIMessage(void* buffer, size_t size)
 
 std::ostream& operator<<(std::ostream& stream, const NOIIMessage& message)
 {
-    return stream << "NOIIMessage(Type=" << WriteChar(message.Type)
+    return stream << "NOIIMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
         << "; PairedShares=" << message.PairedShares
         << "; ImbalanceShares=" << message.ImbalanceShares
-        << "; ImbalanceDirection=" << WriteChar(message.ImbalanceDirection)
-        << "; Stock=" << WriteString(message.Stock)
+        << "; ImbalanceDirection=" << CppCommon::WriteChar(message.ImbalanceDirection)
+        << "; Stock=" << CppCommon::WriteString(message.Stock)
         << "; FarPrice=" << message.FarPrice
         << "; NearPrice=" << message.NearPrice
         << "; CurrentReferencePrice=" << message.CurrentReferencePrice
-        << "; CrossType=" << WriteChar(message.CrossType)
-        << "; PriceVariationIndicator=" << WriteChar(message.PriceVariationIndicator)
+        << "; CrossType=" << CppCommon::WriteChar(message.CrossType)
+        << "; PriceVariationIndicator=" << CppCommon::WriteChar(message.PriceVariationIndicator)
         << ")";
 }
 
@@ -874,12 +837,12 @@ bool ITCHHandler::ProcessRPIIMessage(void* buffer, size_t size)
 
 std::ostream& operator<<(std::ostream& stream, const RPIIMessage& message)
 {
-    return stream << "RPIIMessage(Type=" << WriteChar(message.Type)
+    return stream << "RPIIMessage(Type=" << CppCommon::WriteChar(message.Type)
         << "; StockLocate=" << message.StockLocate
         << "; TrackingNumber=" << message.TrackingNumber
         << "; Timestamp=" << message.Timestamp
-        << "; Stock=" << WriteString(message.Stock)
-        << "; InterestFlag=" << WriteChar(message.InterestFlag)
+        << "; Stock=" << CppCommon::WriteString(message.Stock)
+        << "; InterestFlag=" << CppCommon::WriteChar(message.InterestFlag)
         << ")";
 }
 
@@ -899,7 +862,7 @@ bool ITCHHandler::ProcessUnknownMessage(void* buffer, size_t size)
 
 std::ostream& operator<<(std::ostream& stream, const UnknownMessage& message)
 {
-    return stream << "UnknownMessage(Type=" << WriteChar(message.Type) << ")";
+    return stream << "UnknownMessage(Type=" << CppCommon::WriteChar(message.Type) << ")";
 }
 
 } // namespace ITCH

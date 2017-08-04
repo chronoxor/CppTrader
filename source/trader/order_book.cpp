@@ -67,7 +67,7 @@ std::pair<Level*, bool> OrderBook::AddOrder(Order* order_ptr)
     // Link the new order to the orders list of the price level
     level_ptr->Orders.push_back(*order_ptr);
 
-    return std::make_pair(level_ptr, ((order_ptr->Side == OrderSide::BUY) ? (level_ptr == _bids.highest()) : (level_ptr == _asks.lowest())));
+    return std::make_pair(level_ptr, ((order_ptr->Side == OrderSide::BUY) ? ((level_ptr == _bids.highest()) || _bids.empty()) : ((level_ptr == _asks.lowest()) || _asks.empty())));
 }
 
 std::pair<Level*, bool> OrderBook::ReduceOrder(Order* order_ptr, uint64_t quantity)
@@ -98,7 +98,7 @@ std::pair<Level*, bool> OrderBook::ReduceOrder(Order* order_ptr, uint64_t quanti
             _pool.Release(level_ptr);
         }
 
-        return std::make_pair(level_ptr, ((order_ptr->Side == OrderSide::BUY) ? (level_ptr == _bids.highest()) : (level_ptr == _asks.lowest())));
+        return std::make_pair(level_ptr, ((order_ptr->Side == OrderSide::BUY) ? ((level_ptr == _bids.highest()) || _bids.empty()) : ((level_ptr == _asks.lowest()) || _asks.empty())));
     }
 
     return std::make_pair(nullptr, false);
@@ -131,7 +131,7 @@ std::pair<Level*, bool> OrderBook::DeleteOrder(Order* order_ptr)
             _pool.Release(level_ptr);
         }
 
-        return std::make_pair(level_ptr, ((order_ptr->Side == OrderSide::BUY) ? (level_ptr == _bids.highest()) : (level_ptr == _asks.lowest())));
+        return std::make_pair(level_ptr, ((order_ptr->Side == OrderSide::BUY) ? ((level_ptr == _bids.highest()) || _bids.empty()) : ((level_ptr == _asks.lowest()) || _asks.empty())));
     }
 
     return std::make_pair(nullptr, false);

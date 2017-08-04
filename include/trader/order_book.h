@@ -10,6 +10,7 @@
 #define CPPTRADER_ORDER_BOOK_H
 
 #include "../../domain/level.h"
+#include "../../domain/symbol.h"
 
 #include "containers/bintree_avl.h"
 #include "memory/allocator_pool.h"
@@ -30,7 +31,7 @@ public:
     //! Price level container
     typedef CppCommon::BinTreeAVL<Level, std::less<Level>> Levels;
 
-    OrderBook();
+    OrderBook(const Symbol& symbol);
     OrderBook(const OrderBook&) = delete;
     OrderBook(OrderBook&&) noexcept = default;
     ~OrderBook();
@@ -52,7 +53,13 @@ public:
     //! Get the order book asks container
     const Levels& asks() const noexcept { return _asks; }
 
+    //! Get the order book symbol
+    const Symbol& symbol() const noexcept { return _symbol; }
+
+    friend std::ostream& operator<<(std::ostream& stream, const OrderBook& order_book);
+
 private:
+    const Symbol& _symbol;
     CppCommon::DefaultMemoryManager _default_manager;
     CppCommon::PoolMemoryManager<CppCommon::DefaultMemoryManager> _pool_manager;
     CppCommon::PoolAllocator<Level, CppCommon::DefaultMemoryManager> _pool;

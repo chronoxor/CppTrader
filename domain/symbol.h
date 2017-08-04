@@ -1,6 +1,6 @@
 /*!
     \file symbol.h
-    \brief Symbol domain model
+    \brief Symbol domain model definition
     \author Ivan Shynkarenka
     \date 31.07.2017
     \copyright MIT License
@@ -9,9 +9,10 @@
 #ifndef CPPTRADER_DOMAIN_SYMBOL_H
 #define CPPTRADER_DOMAIN_SYMBOL_H
 
+#include "utility/stream.h"
+
 #include <cstdint>
 #include <cstring>
-#include <iostream>
 
 namespace CppTrader {
 
@@ -35,12 +36,7 @@ struct Symbol
     Symbol& operator=(const Symbol&) noexcept = default;
     Symbol& operator=(Symbol&&) noexcept = default;
 
-    friend std::ostream& operator<<(std::ostream& stream, const Symbol& symbol)
-    {
-        return stream << "Symbol(Id=" << symbol.Id
-            << "; Name=" << WriteString(symbol.Name)
-            << ")";
-    }
+    friend std::ostream& operator<<(std::ostream& stream, const Symbol& symbol);
 };
 
 } // namespace CppTrader

@@ -1,6 +1,6 @@
 /*!
     \file level.h
-    \brief Price level domain model
+    \brief Price level domain model definition
     \author Ivan Shynkarenka
     \date 02.08.2017
     \copyright MIT License
@@ -51,8 +51,12 @@ struct Level : public CppCommon::BinTreeAVL<Level>::Node
     { return level1.Price <= level2.Price; }
     friend bool operator>=(const Level& level1, const Level& level2) noexcept
     { return level1.Price >= level2.Price; }
+
+    friend std::ostream& operator<<(std::ostream& stream, const Level& level);
 };
 
 } // namespace CppTrader
+
+#include "level.inl"
 
 #endif // CPPTRADER_DOMAIN_LEVEL_H

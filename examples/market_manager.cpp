@@ -13,10 +13,44 @@
 
 #include <iostream>
 
-class ITCHHandler : public CppTrader::ITCH::ITCHHandler
+class MyMarketHandler : public CppTrader::MarketHandler
+{
+protected:
+    void onAddSymbol(const CppTrader::Symbol& symbol) override
+    { std::cout << "Add symbol: " << symbol << std::endl; }
+    void onDeleteSymbol(const CppTrader::Symbol& symbol) override
+    { std::cout << "Delete symbol: " << symbol << std::endl; }
+
+    void onAddOrder(const CppTrader::Order& order) override
+    { std::cout << "Add order: " << order << std::endl; }
+    void onReduceOrder(const CppTrader::Order& order, uint64_t quantity) override
+    { std::cout << "Reduce order: " << order << " by " << quantity << std::endl; }
+    void onModifyOrder(const CppTrader::Order& order, uint64_t new_price, uint64_t new_quantity) override
+    { std::cout << "Modify order: " << order << " with new price " << new_price << " and quantity " << new_quantity << std::endl; }
+    void onReplaceOrder(const CppTrader::Order& order, uint64_t new_id, uint64_t new_price, uint64_t new_quantity) override
+    { std::cout << "Replace order: " << order << " with new Id " << new_id << ", price " << new_price << " and quantity " << new_quantity << std::endl; }
+    void onReplaceOrder(const CppTrader::Order& order, const CppTrader::Order& new_order) override
+    { std::cout << "Replace order: " << order << " with new order " << new_order << std::endl; }
+    void onUpdateOrder(const CppTrader::Order& order) override
+    { std::cout << "Update order: " << order << std::endl; }
+    void onDeleteOrder(const CppTrader::Order& order) override
+    { std::cout << "Delete order: " << order << std::endl; }
+
+    void onExecuteOrder(const CppTrader::Order& order, uint64_t price, uint64_t quantity) override
+    { std::cout << "Execute order: " << order << " with price " << price << " and quantity " << quantity << std::endl; }
+
+    void onAddOrderBook(const CppTrader::OrderBook& order_book) override
+    { std::cout << "Add order book: " << order_book << std::endl; }
+    void onDeleteOrderBook(const CppTrader::OrderBook& order_book) override
+    { std::cout << "Delete order book: " << order_book << std::endl; }
+    void onUpdateOrderBook(const CppTrader::OrderBook& order_book, const CppTrader::Level& level, bool top) override
+    { std::cout << "Update order book: " << order_book << " - "<< level << (top ? " - Top of the book!" : "") << std::endl; }
+};
+
+class MyITCHHandler : public CppTrader::ITCH::ITCHHandler
 {
 public:
-    ITCHHandler(CppTrader::MarketManager& market) : _market(market) {}
+    MyITCHHandler(CppTrader::MarketManager& market) : _market(market) {}
 
 protected:
     bool onMessage(const CppTrader::ITCH::StockDirectoryMessage& message) override
@@ -73,8 +107,9 @@ private:
 
 int main(int argc, char** argv)
 {
-    CppTrader::MarketManager market;
-    ITCHHandler handler(market);
+    MyMarketHandler market_handler;
+    CppTrader::MarketManager market(market_handler);
+    MyITCHHandler itch_handler(market);
 
     // Perform input
     size_t size;
@@ -83,7 +118,7 @@ int main(int argc, char** argv)
     while ((size = input.Read(buffer, sizeof(buffer))) > 0)
     {
         // Process the buffer
-        handler.Process(buffer, size);
+        itch_handler.Process(buffer, size);
     }
 
     return 0;
