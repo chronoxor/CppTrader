@@ -27,11 +27,11 @@ class MarketManager
 public:
     MarketManager();
     MarketManager(const MarketManager&) = delete;
-    MarketManager(MarketManager&&) noexcept = default;
+    MarketManager(MarketManager&&) = default;
     ~MarketManager();
 
     MarketManager& operator=(const MarketManager&) = delete;
-    MarketManager& operator=(MarketManager&&) noexcept = default;
+    MarketManager& operator=(MarketManager&&) = default;
 
     //! Get the symbol manager
     const SymbolManager& symbols() const noexcept { return _symbols; }
@@ -61,12 +61,12 @@ public:
         \param order - Order to add
     */
     void AddOrder(const Order& order);
-    //! Cancel the part of the order with the given Id
+    //! Reduce the the order by the given quantity with the given Id
     /*!
         \param id - Order Id
-        \param quantity - Order quantity to cancel
+        \param quantity - Order quantity to reduce
     */
-    void CancelOrder(uint64_t id, uint64_t quantity);
+    void ReduceOrder(uint64_t id, uint64_t quantity);
     //! Delete the order with the given Id
     /*!
         \param id - Order Id

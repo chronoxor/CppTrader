@@ -61,25 +61,25 @@ void OrderBook::AddOrder(Order* order)
     else
         level = &(*it_level);
 
-    // Update price level volume
+    // Update the price level volume
     level->Volume += order->Quantity;
 
     // Link the new order to the orders list of the price level
     level->Orders.push_back(*order);
 }
 
-void OrderBook::CancelOrder(Order* order, uint64_t quantity)
+void OrderBook::ReduceOrder(Order* order, uint64_t quantity)
 {
     // Find the price level for the order
     Levels::iterator it_level = FindLevel(order->Side, order->Price);
     Level* level = nullptr;
 
-    // Cancel the order in the price level
+    // Reduce the order in the price level
     if (it_level)
     {
         level = &(*it_level);
 
-        // Update price level volume
+        // Update the price level volume
         level->Volume -= quantity;
 
         // Unlink the empty order from the orders list of the price level
@@ -109,7 +109,7 @@ void OrderBook::DeleteOrder(Order* order)
     {
         level = &(*it_level);
 
-        // Update price level volume
+        // Update the price level volume
         level->Volume -= order->Quantity;
 
         // Unlink the order from the orders list of the price level

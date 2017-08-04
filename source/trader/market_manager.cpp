@@ -74,29 +74,29 @@ void MarketManager::AddOrder(const Order& order)
     }
 }
 
-void MarketManager::CancelOrder(uint64_t id, uint64_t quantity)
+void MarketManager::ReduceOrder(uint64_t id, uint64_t quantity)
 {
     // Validate order parameters
     if (quantity == 0)
         return;
 
-    // Get the order to cancel from the order manager
+    // Get the order to reduce from the order manager
     Order* order = (Order*)_orders.GetOrder(id);
     if (order == nullptr)
         return;
 
-    // Calculate the minimal possible order quantity to cancel
+    // Calculate the minimal possible order quantity to reduce
     quantity = std::min(quantity, order->Quantity);
 
-    // Get the valid order book for the canceling order
+    // Get the valid order book for the reducing order
     OrderBook* order_book = (OrderBook*)GetOrderBook(order->SymbolId);
     if (order_book != nullptr)
     {
-        // Cancel the order quantity
+        // Reduce the order quantity
         order->Quantity -= quantity;
 
-        // Cancel the order in the order book
-        order_book->CancelOrder(order, quantity);
+        // Reduce the order in the order book
+        order_book->ReduceOrder(order, quantity);
     }
 
     // Delete the empty order from the order manager
