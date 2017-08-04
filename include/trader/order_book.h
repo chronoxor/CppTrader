@@ -62,6 +62,7 @@ private:
     Levels::iterator FindLevel(OrderSide side, uint64_t price) noexcept;
 
     void AddOrder(Order* order);
+    void CancelOrder(Order* order, uint64_t quantity);
     void DeleteOrder(Order* order);
 };
 

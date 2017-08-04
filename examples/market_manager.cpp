@@ -37,6 +37,12 @@ protected:
         return true;
     }
 
+    bool HandleMessage(const CppTrader::ITCH::OrderCancelMessage& message) override
+    {
+        _market.CancelOrder(message.OrderReferenceNumber, message.CanceledShares);
+        return true;
+    }
+
     bool HandleMessage(const CppTrader::ITCH::OrderDeleteMessage& message) override
     {
         _market.DeleteOrder(message.OrderReferenceNumber);

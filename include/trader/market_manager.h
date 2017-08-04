@@ -61,6 +61,12 @@ public:
         \param order - Order to add
     */
     void AddOrder(const Order& order);
+    //! Cancel the part of the order with the given Id
+    /*!
+        \param id - Order Id
+        \param quantity - Order quantity to cancel
+    */
+    void CancelOrder(uint64_t id, uint64_t quantity);
     //! Delete the order with the given Id
     /*!
         \param id - Order Id

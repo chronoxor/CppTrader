@@ -23,7 +23,7 @@ OrderBook::~OrderBook()
 
 OrderBook::Levels::iterator OrderBook::FindLevel(OrderSide side, uint64_t price) noexcept
 {
-    Level required(price, 0, 0);
+    Level required(price);
 
     if (side == OrderSide::BUY)
     {
@@ -52,7 +52,7 @@ void OrderBook::AddOrder(Order* order)
     // Create a new price level if no one found
     if (!it_level)
     {
-        level = _pool.Create(order->Price, 0, 0);
+        level = _pool.Create(order->Price);
         if (order->Side == OrderSide::BUY)
             _bids.insert(*level);
         else
@@ -61,12 +61,41 @@ void OrderBook::AddOrder(Order* order)
     else
         level = &(*it_level);
 
-    // Update price level size and volume
-    ++level->Size;
+    // Update price level volume
     level->Volume += order->Quantity;
 
     // Link the new order to the orders list of the price level
     level->Orders.push_back(*order);
+}
+
+void OrderBook::CancelOrder(Order* order, uint64_t quantity)
+{
+    // Find the price level for the order
+    Levels::iterator it_level = FindLevel(order->Side, order->Price);
+    Level* level = nullptr;
+
+    // Cancel the order in the price level
+    if (it_level)
+    {
+        level = &(*it_level);
+
+        // Update price level volume
+        level->Volume -= quantity;
+
+        // Unlink the empty order from the orders list of the price level
+        if (order->Quantity == 0)
+            level->Orders.pop_current(*order);
+
+        // Delete the empty price level
+        if (level->Volume == 0)
+        {
+            if (order->Side == OrderSide::BUY)
+                _bids.erase(it_level);
+            else
+                _asks.erase(it_level);
+            _pool.Release(level);
+        }
+    }
 }
 
 void OrderBook::DeleteOrder(Order* order)
@@ -80,8 +109,7 @@ void OrderBook::DeleteOrder(Order* order)
     {
         level = &(*it_level);
 
-        // Update price level size and volume
-        --level->Size;
+        // Update price level volume
         level->Volume -= order->Quantity;
 
         // Unlink the order from the orders list of the price level

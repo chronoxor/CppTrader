@@ -56,6 +56,10 @@ void MarketManager::DeleteSymbol(uint32_t id)
 
 void MarketManager::AddOrder(const Order& order)
 {
+    // Validate order parameters
+    if (order.Quantity == 0)
+        return;
+
     // Add the new order into the order manager
     Order* new_order = _orders.AddOrder(order);
     if (new_order == nullptr)
@@ -68,6 +72,36 @@ void MarketManager::AddOrder(const Order& order)
         // Add the new order into the order book
         order_book->AddOrder(new_order);
     }
+}
+
+void MarketManager::CancelOrder(uint64_t id, uint64_t quantity)
+{
+    // Validate order parameters
+    if (quantity == 0)
+        return;
+
+    // Get the order to cancel from the order manager
+    Order* order = (Order*)_orders.GetOrder(id);
+    if (order == nullptr)
+        return;
+
+    // Calculate the minimal possible order quantity to cancel
+    quantity = std::min(quantity, order->Quantity);
+
+    // Get the valid order book for the canceling order
+    OrderBook* order_book = (OrderBook*)GetOrderBook(order->SymbolId);
+    if (order_book != nullptr)
+    {
+        // Cancel the order quantity
+        order->Quantity -= quantity;
+
+        // Cancel the order in the order book
+        order_book->CancelOrder(order, quantity);
+    }
+
+    // Delete the empty order from the order manager
+    if (order->Quantity == 0)
+        _orders.DeleteOrder(order->Id);
 }
 
 void MarketManager::DeleteOrder(uint64_t id)

@@ -20,19 +20,16 @@ struct Level : public CppCommon::BinTreeAVL<Level>::Node
 {
     //! Level price
     uint64_t Price;
-    //! Level size
-    uint64_t Size;
     //! Level volume
     uint64_t Volume;
 
     //! Price level orders
     CppCommon::List<Order> Orders;
 
-    Level(uint64_t price, uint64_t size, uint64_t volume) noexcept
+    Level(uint64_t price) noexcept
     {
         Price = price;
-        Size = size;
-        Volume = volume;
+        Volume = 0;
     }
     Level(const Level&) noexcept = default;
     Level(Level&&) noexcept = default;
