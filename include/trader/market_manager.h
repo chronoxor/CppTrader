@@ -9,6 +9,7 @@
 #ifndef CPPTRADER_MARKET_MANAGER_H
 #define CPPTRADER_MARKET_MANAGER_H
 
+#include "market_handler.h"
 #include "order_book.h"
 #include "order_manager.h"
 #include "symbol_manager.h"
@@ -26,6 +27,7 @@ class MarketManager
 {
 public:
     MarketManager();
+    MarketManager(MarketHandler& market_handler);
     MarketManager(const MarketManager&) = delete;
     MarketManager(MarketManager&&) = default;
     ~MarketManager();
@@ -50,7 +52,7 @@ public:
         \param symbol - Symbol to add
     */
     void AddSymbol(const Symbol& symbol);
-    //! Delete the symbol with the given Id
+    //! Delete the symbol
     /*!
         \param id - Symbol Id
     */
@@ -61,13 +63,13 @@ public:
         \param order - Order to add
     */
     void AddOrder(const Order& order);
-    //! Reduce the order by the given quantity with the given Id
+    //! Reduce the order by the given quantity
     /*!
         \param id - Order Id
         \param quantity - Order quantity to reduce
     */
     void ReduceOrder(uint64_t id, uint64_t quantity);
-    //! Modify the order with the given Id
+    //! Modify the order
     /*!
         \param id - Order Id
         \param new_price - Order price to modify
@@ -88,13 +90,29 @@ public:
         \param new_order - Order to replace
     */
     void ReplaceOrder(uint64_t id, const Order& new_order);
-    //! Delete the order with the given Id
+    //! Delete the order
     /*!
         \param id - Order Id
     */
     void DeleteOrder(uint64_t id);
 
+    //! Execute the order
+    /*!
+        \param id - Order Id
+        \param quantity - Order executed quantity
+    */
+    void ExecuteOrder(uint64_t id, uint64_t quantity);
+    //! Execute the order
+    /*!
+        \param id - Order Id
+        \param price - Order executed price
+        \param quantity - Order executed quantity
+    */
+    void ExecuteOrder(uint64_t id, uint64_t price, uint64_t quantity);
+
 private:
+    static MarketHandler _default_handler;
+    MarketHandler& _market_handler;
     CppCommon::DefaultMemoryManager _default_manager;
     CppCommon::PoolMemoryManager<CppCommon::DefaultMemoryManager> _pool_manager;
     CppCommon::PoolAllocator<OrderBook, CppCommon::DefaultMemoryManager> _pool;
@@ -102,6 +120,8 @@ private:
     OrderManager _orders;
     std::vector<OrderBook*> _order_book;
 };
+
+/*! \example market_manager.cpp Market manager example */
 
 } // namespace CppTrader
 

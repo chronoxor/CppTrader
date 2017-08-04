@@ -78,7 +78,7 @@ public:
         \return Pointer to the replaced order
     */
     Order* ReplaceOrder(uint64_t id, const Order& new_order);
-    //! Delete the order with the given Id
+    //! Delete the order
     /*!
         \param id - Order Id
     */

@@ -20,27 +20,27 @@ public:
     size_t errors() const { return _errors; }
 
 protected:
-    bool HandleMessage(const SystemEventMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const StockDirectoryMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const StockTradingActionMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const RegSHOMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const MarketParticipantPositionMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const MWCBDeclineMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const MWCBStatusMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const IPOQuotingMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const AddOrderMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const AddOrderMPIDMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const OrderExecutedMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const OrderExecutedWithPriceMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const OrderCancelMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const OrderDeleteMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const OrderReplaceMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const TradeMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const CrossTradeMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const BrokenTradeMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const NOIIMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const RPIIMessage& message) override { ++_messages; return true; }
-    bool HandleMessage(const UnknownMessage& message) override { ++_errors; return true; }
+    bool onMessage(const SystemEventMessage& message) override { ++_messages; return true; }
+    bool onMessage(const StockDirectoryMessage& message) override { ++_messages; return true; }
+    bool onMessage(const StockTradingActionMessage& message) override { ++_messages; return true; }
+    bool onMessage(const RegSHOMessage& message) override { ++_messages; return true; }
+    bool onMessage(const MarketParticipantPositionMessage& message) override { ++_messages; return true; }
+    bool onMessage(const MWCBDeclineMessage& message) override { ++_messages; return true; }
+    bool onMessage(const MWCBStatusMessage& message) override { ++_messages; return true; }
+    bool onMessage(const IPOQuotingMessage& message) override { ++_messages; return true; }
+    bool onMessage(const AddOrderMessage& message) override { ++_messages; return true; }
+    bool onMessage(const AddOrderMPIDMessage& message) override { ++_messages; return true; }
+    bool onMessage(const OrderExecutedMessage& message) override { ++_messages; return true; }
+    bool onMessage(const OrderExecutedWithPriceMessage& message) override { ++_messages; return true; }
+    bool onMessage(const OrderCancelMessage& message) override { ++_messages; return true; }
+    bool onMessage(const OrderDeleteMessage& message) override { ++_messages; return true; }
+    bool onMessage(const OrderReplaceMessage& message) override { ++_messages; return true; }
+    bool onMessage(const TradeMessage& message) override { ++_messages; return true; }
+    bool onMessage(const CrossTradeMessage& message) override { ++_messages; return true; }
+    bool onMessage(const BrokenTradeMessage& message) override { ++_messages; return true; }
+    bool onMessage(const NOIIMessage& message) override { ++_messages; return true; }
+    bool onMessage(const RPIIMessage& message) override { ++_messages; return true; }
+    bool onMessage(const UnknownMessage& message) override { ++_errors; return true; }
 
 private:
     size_t _messages;

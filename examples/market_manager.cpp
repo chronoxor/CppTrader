@@ -19,37 +19,49 @@ public:
     ITCHHandler(CppTrader::MarketManager& market) : _market(market) {}
 
 protected:
-    bool HandleMessage(const CppTrader::ITCH::StockDirectoryMessage& message) override
+    bool onMessage(const CppTrader::ITCH::StockDirectoryMessage& message) override
     {
         _market.AddSymbol(CppTrader::Symbol(message.StockLocate, message.Stock));
         return true;
     }
 
-    bool HandleMessage(const CppTrader::ITCH::AddOrderMessage& message) override
+    bool onMessage(const CppTrader::ITCH::AddOrderMessage& message) override
     {
         _market.AddOrder(CppTrader::Order(message.OrderReferenceNumber, message.StockLocate, CppTrader::OrderType::LIMIT, (message.BuySellIndicator == 'B') ? CppTrader::OrderSide::BUY : CppTrader::OrderSide::SELL, message.Price, message.Shares));
         return true;
     }
 
-    bool HandleMessage(const CppTrader::ITCH::AddOrderMPIDMessage& message) override
+    bool onMessage(const CppTrader::ITCH::AddOrderMPIDMessage& message) override
     {
         _market.AddOrder(CppTrader::Order(message.OrderReferenceNumber, message.StockLocate, CppTrader::OrderType::LIMIT, (message.BuySellIndicator == 'B') ? CppTrader::OrderSide::BUY : CppTrader::OrderSide::SELL, message.Price, message.Shares));
         return true;
     }
 
-    bool HandleMessage(const CppTrader::ITCH::OrderCancelMessage& message) override
+    bool onMessage(const CppTrader::ITCH::OrderExecutedMessage& message) override
+    {
+        _market.ExecuteOrder(message.OrderReferenceNumber, message.ExecutedShares);
+        return true;
+    }
+
+    bool onMessage(const CppTrader::ITCH::OrderExecutedWithPriceMessage& message) override
+    {
+        _market.ExecuteOrder(message.OrderReferenceNumber, message.ExecutionPrice, message.ExecutedShares);
+        return true;
+    }
+
+    bool onMessage(const CppTrader::ITCH::OrderCancelMessage& message) override
     {
         _market.ReduceOrder(message.OrderReferenceNumber, message.CanceledShares);
         return true;
     }
 
-    bool HandleMessage(const CppTrader::ITCH::OrderDeleteMessage& message) override
+    bool onMessage(const CppTrader::ITCH::OrderDeleteMessage& message) override
     {
         _market.DeleteOrder(message.OrderReferenceNumber);
         return true;
     }
 
-    bool HandleMessage(const CppTrader::ITCH::OrderReplaceMessage& message) override
+    bool onMessage(const CppTrader::ITCH::OrderReplaceMessage& message) override
     {
         _market.ReplaceOrder(message.OriginalOrderReferenceNumber, message.NewOrderReferenceNumber, message.Price, message.Shares);
         return true;

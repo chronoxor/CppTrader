@@ -43,7 +43,7 @@ OrderBook::Levels::iterator OrderBook::FindLevel(OrderSide side, uint64_t price)
     }
 }
 
-void OrderBook::AddOrder(Order* order_ptr)
+std::pair<Level*, bool> OrderBook::AddOrder(Order* order_ptr)
 {
     // Find the price level for the order
     Levels::iterator level_it = FindLevel(order_ptr->Side, order_ptr->Price);
@@ -66,9 +66,11 @@ void OrderBook::AddOrder(Order* order_ptr)
 
     // Link the new order to the orders list of the price level
     level_ptr->Orders.push_back(*order_ptr);
+
+    return std::make_pair(level_ptr, ((order_ptr->Side == OrderSide::BUY) ? (level_ptr == _bids.highest()) : (level_ptr == _asks.lowest())));
 }
 
-void OrderBook::ReduceOrder(Order* order_ptr, uint64_t quantity)
+std::pair<Level*, bool> OrderBook::ReduceOrder(Order* order_ptr, uint64_t quantity)
 {
     // Find the price level for the order
     Levels::iterator level_it = FindLevel(order_ptr->Side, order_ptr->Price);
@@ -83,7 +85,7 @@ void OrderBook::ReduceOrder(Order* order_ptr, uint64_t quantity)
         level_ptr->Volume -= quantity;
 
         // Unlink the empty order from the orders list of the price level
-        if ((order_ptr->Quantity - quantity) == 0)
+        if (order_ptr->Quantity == 0)
             level_ptr->Orders.pop_current(*order_ptr);
 
         // Delete the empty price level
@@ -95,10 +97,14 @@ void OrderBook::ReduceOrder(Order* order_ptr, uint64_t quantity)
                 _asks.erase(level_it);
             _pool.Release(level_ptr);
         }
+
+        return std::make_pair(level_ptr, ((order_ptr->Side == OrderSide::BUY) ? (level_ptr == _bids.highest()) : (level_ptr == _asks.lowest())));
     }
+
+    return std::make_pair(nullptr, false);
 }
 
-void OrderBook::DeleteOrder(Order* order_ptr)
+std::pair<Level*, bool> OrderBook::DeleteOrder(Order* order_ptr)
 {
     // Find the price level for the order
     Levels::iterator level_it = FindLevel(order_ptr->Side, order_ptr->Price);
@@ -124,7 +130,11 @@ void OrderBook::DeleteOrder(Order* order_ptr)
                 _asks.erase(level_it);
             _pool.Release(level_ptr);
         }
+
+        return std::make_pair(level_ptr, ((order_ptr->Side == OrderSide::BUY) ? (level_ptr == _bids.highest()) : (level_ptr == _asks.lowest())));
     }
+
+    return std::make_pair(nullptr, false);
 }
 
 } // namespace CppTrader

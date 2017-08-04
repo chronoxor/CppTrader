@@ -12,6 +12,7 @@
 #include "containers/list.h"
 
 #include <cstdint>
+#include <iostream>
 
 namespace CppTrader {
 

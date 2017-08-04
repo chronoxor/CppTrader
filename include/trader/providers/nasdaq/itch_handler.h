@@ -377,27 +377,27 @@ public:
 
 protected:
     // Message handlers
-    virtual bool HandleMessage(const SystemEventMessage& message) { return true; }
-    virtual bool HandleMessage(const StockDirectoryMessage& message) { return true; }
-    virtual bool HandleMessage(const StockTradingActionMessage& message) { return true; }
-    virtual bool HandleMessage(const RegSHOMessage& message) { return true; }
-    virtual bool HandleMessage(const MarketParticipantPositionMessage& message) { return true; }
-    virtual bool HandleMessage(const MWCBDeclineMessage& message) { return true; }
-    virtual bool HandleMessage(const MWCBStatusMessage& message) { return true; }
-    virtual bool HandleMessage(const IPOQuotingMessage& message) { return true; }
-    virtual bool HandleMessage(const AddOrderMessage& message) { return true; }
-    virtual bool HandleMessage(const AddOrderMPIDMessage& message) { return true; }
-    virtual bool HandleMessage(const OrderExecutedMessage& message) { return true; }
-    virtual bool HandleMessage(const OrderExecutedWithPriceMessage& message) { return true; }
-    virtual bool HandleMessage(const OrderCancelMessage& message) { return true; }
-    virtual bool HandleMessage(const OrderDeleteMessage& message) { return true; }
-    virtual bool HandleMessage(const OrderReplaceMessage& message) { return true; }
-    virtual bool HandleMessage(const TradeMessage& message) { return true; }
-    virtual bool HandleMessage(const CrossTradeMessage& message) { return true; }
-    virtual bool HandleMessage(const BrokenTradeMessage& message) { return true; }
-    virtual bool HandleMessage(const NOIIMessage& message) { return true; }
-    virtual bool HandleMessage(const RPIIMessage& message) { return true; }
-    virtual bool HandleMessage(const UnknownMessage& message) { return true; }
+    virtual bool onMessage(const SystemEventMessage& message) { return true; }
+    virtual bool onMessage(const StockDirectoryMessage& message) { return true; }
+    virtual bool onMessage(const StockTradingActionMessage& message) { return true; }
+    virtual bool onMessage(const RegSHOMessage& message) { return true; }
+    virtual bool onMessage(const MarketParticipantPositionMessage& message) { return true; }
+    virtual bool onMessage(const MWCBDeclineMessage& message) { return true; }
+    virtual bool onMessage(const MWCBStatusMessage& message) { return true; }
+    virtual bool onMessage(const IPOQuotingMessage& message) { return true; }
+    virtual bool onMessage(const AddOrderMessage& message) { return true; }
+    virtual bool onMessage(const AddOrderMPIDMessage& message) { return true; }
+    virtual bool onMessage(const OrderExecutedMessage& message) { return true; }
+    virtual bool onMessage(const OrderExecutedWithPriceMessage& message) { return true; }
+    virtual bool onMessage(const OrderCancelMessage& message) { return true; }
+    virtual bool onMessage(const OrderDeleteMessage& message) { return true; }
+    virtual bool onMessage(const OrderReplaceMessage& message) { return true; }
+    virtual bool onMessage(const TradeMessage& message) { return true; }
+    virtual bool onMessage(const CrossTradeMessage& message) { return true; }
+    virtual bool onMessage(const BrokenTradeMessage& message) { return true; }
+    virtual bool onMessage(const NOIIMessage& message) { return true; }
+    virtual bool onMessage(const RPIIMessage& message) { return true; }
+    virtual bool onMessage(const UnknownMessage& message) { return true; }
 
 private:
     size_t _size;

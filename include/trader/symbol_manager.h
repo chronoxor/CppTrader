@@ -69,7 +69,7 @@ public:
         \return Pointer to the new symbol
     */
     Symbol* AddSymbol(const Symbol& symbol);
-    //! Delete the symbol with the given Id
+    //! Delete the symbol
     /*!
         \param id - Symbol Id
     */

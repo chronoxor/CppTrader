@@ -212,7 +212,7 @@ bool ITCHHandler::ProcessSystemEventMessage(void* buffer, size_t size)
     data += ReadTimestamp(data, message.Timestamp);
     message.EventCode = *data++;
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const SystemEventMessage& message)
@@ -253,7 +253,7 @@ bool ITCHHandler::ProcessStockDirectoryMessage(void* buffer, size_t size)
     data += CppCommon::Endian::ReadBigEndian(data, message.ETPLeverageFactor);
     message.InverseIndicator = *data++;
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const StockDirectoryMessage& message)
@@ -297,7 +297,7 @@ bool ITCHHandler::ProcessStockTradingActionMessage(void* buffer, size_t size)
     message.Reserved = *data++;
     message.Reason = *data++;
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const StockTradingActionMessage& message)
@@ -329,7 +329,7 @@ bool ITCHHandler::ProcessRegSHOMessage(void* buffer, size_t size)
     data += ReadString(data, message.Stock);
     message.RegSHOAction = *data++;
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const RegSHOMessage& message)
@@ -362,7 +362,7 @@ bool ITCHHandler::ProcessMarketParticipantPositionMessage(void* buffer, size_t s
     message.MarketMakerMode = *data++;
     message.MarketParticipantState = *data++;
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const MarketParticipantPositionMessage& message)
@@ -396,7 +396,7 @@ bool ITCHHandler::ProcessMWCBDeclineMessage(void* buffer, size_t size)
     data += CppCommon::Endian::ReadBigEndian(data, message.Level2);
     data += CppCommon::Endian::ReadBigEndian(data, message.Level3);
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const MWCBDeclineMessage& message)
@@ -426,7 +426,7 @@ bool ITCHHandler::ProcessMWCBStatusMessage(void* buffer, size_t size)
     data += ReadTimestamp(data, message.Timestamp);
     message.BreachedLevel = *data++;
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const MWCBStatusMessage& message)
@@ -457,7 +457,7 @@ bool ITCHHandler::ProcessIPOQuotingMessage(void* buffer, size_t size)
     message.IPOReleaseQualifier = *data++;
     data += CppCommon::Endian::ReadBigEndian(data, message.IPOPrice);
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const IPOQuotingMessage& message)
@@ -492,7 +492,7 @@ bool ITCHHandler::ProcessAddOrderMessage(void* buffer, size_t size)
     data += ReadString(data, message.Stock);
     data += CppCommon::Endian::ReadBigEndian(data, message.Price);
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const AddOrderMessage& message)
@@ -529,7 +529,7 @@ bool ITCHHandler::ProcessAddOrderMPIDMessage(void* buffer, size_t size)
     data += CppCommon::Endian::ReadBigEndian(data, message.Price);
     message.Attribution = *data++;
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const AddOrderMPIDMessage& message)
@@ -564,7 +564,7 @@ bool ITCHHandler::ProcessOrderExecutedMessage(void* buffer, size_t size)
     data += CppCommon::Endian::ReadBigEndian(data, message.ExecutedShares);
     data += CppCommon::Endian::ReadBigEndian(data, message.MatchNumber);
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const OrderExecutedMessage& message)
@@ -598,7 +598,7 @@ bool ITCHHandler::ProcessOrderExecutedWithPriceMessage(void* buffer, size_t size
     message.Printable = *data++;
     data += CppCommon::Endian::ReadBigEndian(data, message.ExecutionPrice);
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const OrderExecutedWithPriceMessage& message)
@@ -631,7 +631,7 @@ bool ITCHHandler::ProcessOrderCancelMessage(void* buffer, size_t size)
     data += CppCommon::Endian::ReadBigEndian(data, message.OrderReferenceNumber);
     data += CppCommon::Endian::ReadBigEndian(data, message.CanceledShares);
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const OrderCancelMessage& message)
@@ -660,7 +660,7 @@ bool ITCHHandler::ProcessOrderDeleteMessage(void* buffer, size_t size)
     data += ReadTimestamp(data, message.Timestamp);
     data += CppCommon::Endian::ReadBigEndian(data, message.OrderReferenceNumber);
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const OrderDeleteMessage& message)
@@ -691,7 +691,7 @@ bool ITCHHandler::ProcessOrderReplaceMessage(void* buffer, size_t size)
     data += CppCommon::Endian::ReadBigEndian(data, message.Shares);
     data += CppCommon::Endian::ReadBigEndian(data, message.Price);
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const OrderReplaceMessage& message)
@@ -727,7 +727,7 @@ bool ITCHHandler::ProcessTradeMessage(void* buffer, size_t size)
     data += CppCommon::Endian::ReadBigEndian(data, message.Price);
     data += CppCommon::Endian::ReadBigEndian(data, message.MatchNumber);
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const TradeMessage& message)
@@ -764,7 +764,7 @@ bool ITCHHandler::ProcessCrossTradeMessage(void* buffer, size_t size)
     data += CppCommon::Endian::ReadBigEndian(data, message.MatchNumber);
     message.CrossType = *data++;
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const CrossTradeMessage& message)
@@ -796,7 +796,7 @@ bool ITCHHandler::ProcessBrokenTradeMessage(void* buffer, size_t size)
     data += ReadTimestamp(data, message.Timestamp);
     data += CppCommon::Endian::ReadBigEndian(data, message.MatchNumber);
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const BrokenTradeMessage& message)
@@ -832,7 +832,7 @@ bool ITCHHandler::ProcessNOIIMessage(void* buffer, size_t size)
     message.CrossType = *data++;
     message.PriceVariationIndicator = *data++;
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const NOIIMessage& message)
@@ -869,7 +869,7 @@ bool ITCHHandler::ProcessRPIIMessage(void* buffer, size_t size)
     data += ReadString(data, message.Stock);
     message.InterestFlag = *data++;
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const RPIIMessage& message)
@@ -894,7 +894,7 @@ bool ITCHHandler::ProcessUnknownMessage(void* buffer, size_t size)
     UnknownMessage message;
     message.Type = *data;
 
-    return HandleMessage(message);
+    return onMessage(message);
 }
 
 std::ostream& operator<<(std::ostream& stream, const UnknownMessage& message)

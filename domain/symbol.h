@@ -11,6 +11,7 @@
 
 #include <cstdint>
 #include <cstring>
+#include <iostream>
 
 namespace CppTrader {
 
@@ -33,8 +34,17 @@ struct Symbol
 
     Symbol& operator=(const Symbol&) noexcept = default;
     Symbol& operator=(Symbol&&) noexcept = default;
+
+    friend std::ostream& operator<<(std::ostream& stream, const Symbol& symbol)
+    {
+        return stream << "Symbol(Id=" << symbol.Id
+            << "; Name=" << WriteString(symbol.Name)
+            << ")";
+    }
 };
 
 } // namespace CppTrader
+
+#include "symbol.inl"
 
 #endif // CPPTRADER_DOMAIN_SYMBOL_H
