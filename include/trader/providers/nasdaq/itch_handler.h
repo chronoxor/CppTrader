@@ -17,7 +17,7 @@
 namespace CppTrader {
 
 /*!
-    \namespace ITCH
+    \namespace CppTrader::ITCH
     \brief ITCH protocol definitions
 */
 namespace ITCH {
