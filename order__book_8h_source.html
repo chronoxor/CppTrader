@@ -136,14 +136,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    Levels::iterator FindLevel(OrderSide side, uint64_t price) noexcept;</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordtype">void</span> AddOrder(Order* order);</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">void</span> DeleteOrder(Order* order);</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;};</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;} <span class="comment">// namespace CppTrader</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="order__book_8inl.html">order_book.inl</a>&quot;</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="preprocessor">#endif // CPPTRADER_ORDER_BOOK_H</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">void</span> CancelOrder(Order* order, uint64_t quantity);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">void</span> DeleteOrder(Order* order);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;};</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;} <span class="comment">// namespace CppTrader</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="order__book_8inl.html">order_book.inl</a>&quot;</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="preprocessor">#endif // CPPTRADER_ORDER_BOOK_H</span></div>
 <div class="ttc" id="class_cpp_trader_1_1_order_book_html"><div class="ttname"><a href="class_cpp_trader_1_1_order_book.html">CppTrader::OrderBook</a></div><div class="ttdoc">Order book. </div><div class="ttdef"><b>Definition:</b> <a href="order__book_8h_source.html#l00025">order_book.h:25</a></div></div>
 <div class="ttc" id="class_cpp_trader_1_1_order_book_html_afcdf58287f740c5dc6564f46db9273e9"><div class="ttname"><a href="class_cpp_trader_1_1_order_book.html#afcdf58287f740c5dc6564f46db9273e9">CppTrader::OrderBook::empty</a></div><div class="ttdeci">bool empty() const noexcept</div><div class="ttdoc">Is the order book empty? </div><div class="ttdef"><b>Definition:</b> <a href="order__book_8h_source.html#l00045">order_book.h:45</a></div></div>
 <div class="ttc" id="class_cpp_trader_1_1_order_book_html_a4dcd025c487a8021350d7f245e8039da"><div class="ttname"><a href="class_cpp_trader_1_1_order_book.html#a4dcd025c487a8021350d7f245e8039da">CppTrader::OrderBook::asks</a></div><div class="ttdeci">const Levels &amp; asks() const noexcept</div><div class="ttdoc">Get the order book asks container. </div><div class="ttdef"><b>Definition:</b> <a href="order__book_8h_source.html#l00053">order_book.h:53</a></div></div>

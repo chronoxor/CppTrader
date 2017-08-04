@@ -1,6 +1,7 @@
 var searchData=
 [
   ['canceledshares',['CanceledShares',['../struct_cpp_trader_1_1_i_t_c_h_1_1_order_cancel_message.html#a010f2d7dc1677036b584f70ec551ba45',1,'CppTrader::ITCH::OrderCancelMessage']]],
+  ['cancelorder',['CancelOrder',['../class_cpp_trader_1_1_market_manager.html#ade45382d34d772fd396d26a8cd93ae51',1,'CppTrader::MarketManager']]],
   ['cpptrader',['CppTrader',['../namespace_cpp_trader.html',1,'']]],
   ['crossprice',['CrossPrice',['../struct_cpp_trader_1_1_i_t_c_h_1_1_cross_trade_message.html#afe62775e274c9f9582ae678618ee6f13',1,'CppTrader::ITCH::CrossTradeMessage']]],
   ['crosstrademessage',['CrossTradeMessage',['../struct_cpp_trader_1_1_i_t_c_h_1_1_cross_trade_message.html',1,'CppTrader::ITCH']]],

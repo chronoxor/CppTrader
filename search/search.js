@@ -11,7 +11,7 @@ var indexSectionsWithContent =
   1: "abcfimnorstu",
   2: "ci",
   3: "fimosv",
-  4: "abdefghimoprs~",
+  4: "abcdefghimoprs~",
   5: "abcefilmnoprstv",
   6: "l",
   7: "mo",

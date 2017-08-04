@@ -133,6 +133,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a2e42352f0b517d43b773c666dd8dad46"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cpp_trader_1_1_market_manager.html#a2e42352f0b517d43b773c666dd8dad46">AddOrder</a> (const Order &amp;order)</td></tr>
 <tr class="memdesc:a2e42352f0b517d43b773c666dd8dad46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a new order.  <a href="#a2e42352f0b517d43b773c666dd8dad46">More...</a><br/></td></tr>
 <tr class="separator:a2e42352f0b517d43b773c666dd8dad46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade45382d34d772fd396d26a8cd93ae51"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cpp_trader_1_1_market_manager.html#ade45382d34d772fd396d26a8cd93ae51">CancelOrder</a> (uint64_t id, uint64_t quantity)</td></tr>
+<tr class="memdesc:ade45382d34d772fd396d26a8cd93ae51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cancel the part of the order with the given Id.  <a href="#ade45382d34d772fd396d26a8cd93ae51">More...</a><br/></td></tr>
+<tr class="separator:ade45382d34d772fd396d26a8cd93ae51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00c715b203f2460d0c8624cadfc84a56"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cpp_trader_1_1_market_manager.html#a00c715b203f2460d0c8624cadfc84a56">DeleteOrder</a> (uint64_t id)</td></tr>
 <tr class="memdesc:a00c715b203f2460d0c8624cadfc84a56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete the order with the given Id.  <a href="#a00c715b203f2460d0c8624cadfc84a56">More...</a><br/></td></tr>
 <tr class="separator:a00c715b203f2460d0c8624cadfc84a56"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -287,6 +290,43 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ade45382d34d772fd396d26a8cd93ae51"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CppTrader::MarketManager::CancelOrder </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>quantity</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Cancel the part of the order with the given Id. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>- Order Id </td></tr>
+    <tr><td class="paramname">quantity</td><td>- Order quantity to cancel </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="market__manager_8cpp_source.html#l00077">77</a> of file <a class="el" href="market__manager_8cpp_source.html">market_manager.cpp</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="a00c715b203f2460d0c8624cadfc84a56"></a>
 <div class="memitem">
 <div class="memproto">
@@ -309,7 +349,7 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="market__manager_8cpp_source.html#l00073">73</a> of file <a class="el" href="market__manager_8cpp_source.html">market_manager.cpp</a>.</p>
+<p>Definition at line <a class="el" href="market__manager_8cpp_source.html#l00107">107</a> of file <a class="el" href="market__manager_8cpp_source.html">market_manager.cpp</a>.</p>
 
 </div>
 </div>

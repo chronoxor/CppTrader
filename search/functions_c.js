@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['size',['size',['../class_cpp_trader_1_1_order_book.html#a084e27c0baae36786308c019a2dbe91f',1,'CppTrader::OrderBook::size()'],['../class_cpp_trader_1_1_order_manager.html#af02fae4490de7469f4a7a8d4f6d675a6',1,'CppTrader::OrderManager::size()'],['../class_cpp_trader_1_1_symbol_manager.html#ac23b33fb508e9a2c4c8f2b37371f6009',1,'CppTrader::SymbolManager::size()']]],
-  ['symbolmanager',['SymbolManager',['../class_cpp_trader_1_1_symbol_manager.html#a789c1f36c4856c4d540a8c5ba55e16ae',1,'CppTrader::SymbolManager::SymbolManager()'],['../class_cpp_trader_1_1_symbol_manager.html#ac6823afae113800c7022c10e9ebfa9e8',1,'CppTrader::SymbolManager::SymbolManager(const SymbolManager &amp;)=delete'],['../class_cpp_trader_1_1_symbol_manager.html#ae2577e4e329bc4aa2db6ccebfccdd879',1,'CppTrader::SymbolManager::SymbolManager(SymbolManager &amp;&amp;) noexcept=default']]],
-  ['symbols',['symbols',['../class_cpp_trader_1_1_market_manager.html#a9273ac04f81b2cd822799e810b771233',1,'CppTrader::MarketManager']]]
+  ['reset',['Reset',['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#adf8689a926d593223192552bcde3f09f',1,'CppTrader::ITCH::ITCHHandler']]]
 ];

@@ -126,25 +126,28 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_cpp_trader_1_1_market_manager.html#a2e42352f0b517d43b773c666dd8dad46">AddOrder</a>(<span class="keyword">const</span> Order&amp; order);</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_cpp_trader_1_1_market_manager.html#a00c715b203f2460d0c8624cadfc84a56">DeleteOrder</a>(uint64_t <span class="keywordtype">id</span>);</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    CppCommon::DefaultMemoryManager _default_manager;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    CppCommon::PoolMemoryManager&lt;CppCommon::DefaultMemoryManager&gt; _pool_manager;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    CppCommon::PoolAllocator&lt;OrderBook, CppCommon::DefaultMemoryManager&gt; _pool;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <a class="code" href="class_cpp_trader_1_1_symbol_manager.html">SymbolManager</a> _symbols;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <a class="code" href="class_cpp_trader_1_1_order_manager.html">OrderManager</a> _orders;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    std::vector&lt;OrderBook*&gt; _order_book;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;};</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;} <span class="comment">// namespace CppTrader</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="market__manager_8inl.html">market_manager.inl</a>&quot;</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="preprocessor">#endif // CPPTRADER_MARKET_MANAGER_H</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_cpp_trader_1_1_market_manager.html#ade45382d34d772fd396d26a8cd93ae51">CancelOrder</a>(uint64_t <span class="keywordtype">id</span>, uint64_t quantity);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_cpp_trader_1_1_market_manager.html#a00c715b203f2460d0c8624cadfc84a56">DeleteOrder</a>(uint64_t <span class="keywordtype">id</span>);</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    CppCommon::DefaultMemoryManager _default_manager;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    CppCommon::PoolMemoryManager&lt;CppCommon::DefaultMemoryManager&gt; _pool_manager;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    CppCommon::PoolAllocator&lt;OrderBook, CppCommon::DefaultMemoryManager&gt; _pool;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <a class="code" href="class_cpp_trader_1_1_symbol_manager.html">SymbolManager</a> _symbols;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <a class="code" href="class_cpp_trader_1_1_order_manager.html">OrderManager</a> _orders;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    std::vector&lt;OrderBook*&gt; _order_book;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;};</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;} <span class="comment">// namespace CppTrader</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="market__manager_8inl.html">market_manager.inl</a>&quot;</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="preprocessor">#endif // CPPTRADER_MARKET_MANAGER_H</span></div>
+<div class="ttc" id="class_cpp_trader_1_1_market_manager_html_ade45382d34d772fd396d26a8cd93ae51"><div class="ttname"><a href="class_cpp_trader_1_1_market_manager.html#ade45382d34d772fd396d26a8cd93ae51">CppTrader::MarketManager::CancelOrder</a></div><div class="ttdeci">void CancelOrder(uint64_t id, uint64_t quantity)</div><div class="ttdoc">Cancel the part of the order with the given Id. </div><div class="ttdef"><b>Definition:</b> <a href="market__manager_8cpp_source.html#l00077">market_manager.cpp:77</a></div></div>
 <div class="ttc" id="class_cpp_trader_1_1_order_book_html"><div class="ttname"><a href="class_cpp_trader_1_1_order_book.html">CppTrader::OrderBook</a></div><div class="ttdoc">Order book. </div><div class="ttdef"><b>Definition:</b> <a href="order__book_8h_source.html#l00025">order_book.h:25</a></div></div>
 <div class="ttc" id="class_cpp_trader_1_1_order_manager_html"><div class="ttname"><a href="class_cpp_trader_1_1_order_manager.html">CppTrader::OrderManager</a></div><div class="ttdoc">Order manager. </div><div class="ttdef"><b>Definition:</b> <a href="order__manager_8h_source.html#l00029">order_manager.h:29</a></div></div>
-<div class="ttc" id="class_cpp_trader_1_1_market_manager_html_a00c715b203f2460d0c8624cadfc84a56"><div class="ttname"><a href="class_cpp_trader_1_1_market_manager.html#a00c715b203f2460d0c8624cadfc84a56">CppTrader::MarketManager::DeleteOrder</a></div><div class="ttdeci">void DeleteOrder(uint64_t id)</div><div class="ttdoc">Delete the order with the given Id. </div><div class="ttdef"><b>Definition:</b> <a href="market__manager_8cpp_source.html#l00073">market_manager.cpp:73</a></div></div>
+<div class="ttc" id="class_cpp_trader_1_1_market_manager_html_a00c715b203f2460d0c8624cadfc84a56"><div class="ttname"><a href="class_cpp_trader_1_1_market_manager.html#a00c715b203f2460d0c8624cadfc84a56">CppTrader::MarketManager::DeleteOrder</a></div><div class="ttdeci">void DeleteOrder(uint64_t id)</div><div class="ttdoc">Delete the order with the given Id. </div><div class="ttdef"><b>Definition:</b> <a href="market__manager_8cpp_source.html#l00107">market_manager.cpp:107</a></div></div>
 <div class="ttc" id="class_cpp_trader_1_1_market_manager_html_af210009ad3888b0631471b2526a37ae1"><div class="ttname"><a href="class_cpp_trader_1_1_market_manager.html#af210009ad3888b0631471b2526a37ae1">CppTrader::MarketManager::orders</a></div><div class="ttdeci">const OrderManager &amp; orders() const noexcept</div><div class="ttdoc">Get the order manager. </div><div class="ttdef"><b>Definition:</b> <a href="market__manager_8h_source.html#l00039">market_manager.h:39</a></div></div>
 <div class="ttc" id="class_cpp_trader_1_1_market_manager_html_a9ff481659d4fedd5d0bfd846c70a6dc0"><div class="ttname"><a href="class_cpp_trader_1_1_market_manager.html#a9ff481659d4fedd5d0bfd846c70a6dc0">CppTrader::MarketManager::DeleteSymbol</a></div><div class="ttdeci">void DeleteSymbol(uint32_t id)</div><div class="ttdoc">Delete the symbol with the given Id. </div><div class="ttdef"><b>Definition:</b> <a href="market__manager_8cpp_source.html#l00042">market_manager.cpp:42</a></div></div>
 <div class="ttc" id="order__manager_8h_html"><div class="ttname"><a href="order__manager_8h.html">order_manager.h</a></div><div class="ttdoc">Order manager definition. </div></div>
