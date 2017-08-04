@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['deleteorder',['DeleteOrder',['../class_cpp_trader_1_1_market_manager.html#a00c715b203f2460d0c8624cadfc84a56',1,'CppTrader::MarketManager::DeleteOrder()'],['../class_cpp_trader_1_1_order_manager.html#a1d1514163c96f454a5fd406c46d392a6',1,'CppTrader::OrderManager::DeleteOrder()']]],
-  ['deletesymbol',['DeleteSymbol',['../class_cpp_trader_1_1_market_manager.html#a9ff481659d4fedd5d0bfd846c70a6dc0',1,'CppTrader::MarketManager::DeleteSymbol()'],['../class_cpp_trader_1_1_symbol_manager.html#a734bbb8ab230e1df9382d066c3f9eefa',1,'CppTrader::SymbolManager::DeleteSymbol()']]]
+  ['empty',['empty',['../class_cpp_trader_1_1_order_book.html#afcdf58287f740c5dc6564f46db9273e9',1,'CppTrader::OrderBook::empty()'],['../class_cpp_trader_1_1_order_manager.html#a766588137bffd11c1f919a5e4a1dfc14',1,'CppTrader::OrderManager::empty()'],['../class_cpp_trader_1_1_symbol_manager.html#a2c60b9864456c0a4f055739a39602553',1,'CppTrader::SymbolManager::empty()']]]
 ];

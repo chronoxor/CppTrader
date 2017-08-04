@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['empty',['empty',['../class_cpp_trader_1_1_order_book.html#afcdf58287f740c5dc6564f46db9273e9',1,'CppTrader::OrderBook::empty()'],['../class_cpp_trader_1_1_order_manager.html#a766588137bffd11c1f919a5e4a1dfc14',1,'CppTrader::OrderManager::empty()'],['../class_cpp_trader_1_1_symbol_manager.html#a2c60b9864456c0a4f055739a39602553',1,'CppTrader::SymbolManager::empty()']]]
+  ['fasthash',['FastHash',['../class_cpp_trader_1_1_fast_hash.html#a5aafc4aedfdc888415c7409a22b713c1',1,'CppTrader::FastHash::FastHash()=default'],['../class_cpp_trader_1_1_fast_hash.html#a2e9605ddcaf38c3425742b0640821171',1,'CppTrader::FastHash::FastHash(const FastHash &amp;)=default'],['../class_cpp_trader_1_1_fast_hash.html#a2c7cf230c2a5c952d5205cd8d3ddf44e',1,'CppTrader::FastHash::FastHash(FastHash &amp;&amp;) noexcept=default']]]
 ];

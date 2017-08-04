@@ -159,29 +159,29 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    }</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;}</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
-<div class="line"><a name="l00077"></a><span class="lineno"><a class="line" href="class_cpp_trader_1_1_market_manager.html#ade45382d34d772fd396d26a8cd93ae51">   77</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="class_cpp_trader_1_1_market_manager.html#ade45382d34d772fd396d26a8cd93ae51">MarketManager::CancelOrder</a>(uint64_t <span class="keywordtype">id</span>, uint64_t quantity)</div>
+<div class="line"><a name="l00077"></a><span class="lineno"><a class="line" href="class_cpp_trader_1_1_market_manager.html#ab5174e2b66a5090f9d2e35ca0101a4a0">   77</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="class_cpp_trader_1_1_market_manager.html#ab5174e2b66a5090f9d2e35ca0101a4a0">MarketManager::ReduceOrder</a>(uint64_t <span class="keywordtype">id</span>, uint64_t quantity)</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;{</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="comment">// Validate order parameters</span></div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordflow">if</span> (quantity == 0)</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="comment">// Get the order to cancel from the order manager</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="comment">// Get the order to reduce from the order manager</span></div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    Order* order = (Order*)_orders.<a class="code" href="class_cpp_trader_1_1_order_manager.html#a40506cfa3738077c90f3226ba6533175">GetOrder</a>(<span class="keywordtype">id</span>);</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordflow">if</span> (order == <span class="keyword">nullptr</span>)</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="comment">// Calculate the minimal possible order quantity to cancel</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="comment">// Calculate the minimal possible order quantity to reduce</span></div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    quantity = std::min(quantity, order-&gt;Quantity);</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="comment">// Get the valid order book for the canceling order</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="comment">// Get the valid order book for the reducing order</span></div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <a class="code" href="class_cpp_trader_1_1_order_book.html">OrderBook</a>* order_book = (<a class="code" href="class_cpp_trader_1_1_order_book.html">OrderBook</a>*)<a class="code" href="class_cpp_trader_1_1_market_manager.html#adcb5ca0fa5a2413e4f58bf32a4bd03ed">GetOrderBook</a>(order-&gt;SymbolId);</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordflow">if</span> (order_book != <span class="keyword">nullptr</span>)</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    {</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        <span class="comment">// Cancel the order quantity</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        <span class="comment">// Reduce the order quantity</span></div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        order-&gt;Quantity -= quantity;</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="comment">// Cancel the order in the order book</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        order_book-&gt;CancelOrder(order, quantity);</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="comment">// Reduce the order in the order book</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        order_book-&gt;ReduceOrder(order, quantity);</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    }</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="comment">// Delete the empty order from the order manager</span></div>
@@ -209,7 +209,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;}</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;} <span class="comment">// namespace CppTrader</span></div>
-<div class="ttc" id="class_cpp_trader_1_1_market_manager_html_ade45382d34d772fd396d26a8cd93ae51"><div class="ttname"><a href="class_cpp_trader_1_1_market_manager.html#ade45382d34d772fd396d26a8cd93ae51">CppTrader::MarketManager::CancelOrder</a></div><div class="ttdeci">void CancelOrder(uint64_t id, uint64_t quantity)</div><div class="ttdoc">Cancel the part of the order with the given Id. </div><div class="ttdef"><b>Definition:</b> <a href="market__manager_8cpp_source.html#l00077">market_manager.cpp:77</a></div></div>
+<div class="ttc" id="class_cpp_trader_1_1_market_manager_html_ab5174e2b66a5090f9d2e35ca0101a4a0"><div class="ttname"><a href="class_cpp_trader_1_1_market_manager.html#ab5174e2b66a5090f9d2e35ca0101a4a0">CppTrader::MarketManager::ReduceOrder</a></div><div class="ttdeci">void ReduceOrder(uint64_t id, uint64_t quantity)</div><div class="ttdoc">Reduce the the order by the given quantity with the given Id. </div><div class="ttdef"><b>Definition:</b> <a href="market__manager_8cpp_source.html#l00077">market_manager.cpp:77</a></div></div>
 <div class="ttc" id="class_cpp_trader_1_1_order_book_html"><div class="ttname"><a href="class_cpp_trader_1_1_order_book.html">CppTrader::OrderBook</a></div><div class="ttdoc">Order book. </div><div class="ttdef"><b>Definition:</b> <a href="order__book_8h_source.html#l00025">order_book.h:25</a></div></div>
 <div class="ttc" id="class_cpp_trader_1_1_order_manager_html_a40506cfa3738077c90f3226ba6533175"><div class="ttname"><a href="class_cpp_trader_1_1_order_manager.html#a40506cfa3738077c90f3226ba6533175">CppTrader::OrderManager::GetOrder</a></div><div class="ttdeci">const Order * GetOrder(uint64_t id) const noexcept</div><div class="ttdoc">Get the order with the given Id. </div><div class="ttdef"><b>Definition:</b> <a href="order__manager_8inl_source.html#l00019">order_manager.inl:19</a></div></div>
 <div class="ttc" id="class_cpp_trader_1_1_symbol_manager_html_a3afb1f2dc753ceea9a94f6c5d9bc827b"><div class="ttname"><a href="class_cpp_trader_1_1_symbol_manager.html#a3afb1f2dc753ceea9a94f6c5d9bc827b">CppTrader::SymbolManager::AddSymbol</a></div><div class="ttdeci">Symbol * AddSymbol(const Symbol &amp;symbol)</div><div class="ttdoc">Add a new symbol. </div><div class="ttdef"><b>Definition:</b> <a href="symbol__manager_8cpp_source.html#l00026">symbol_manager.cpp:26</a></div></div>
