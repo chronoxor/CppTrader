@@ -1,11 +1,13 @@
 var searchData=
 [
-  ['pairedshares',['PairedShares',['../struct_cpp_trader_1_1_i_t_c_h_1_1_n_o_i_i_message.html#a4ccf53d33819e16fd4776bd7546a2445',1,'CppTrader::ITCH::NOIIMessage']]],
-  ['parse',['Parse',['../class_cpp_trader_1_1_fast_hash.html#a1f6b424931ae7076362d62641d1a4d2f',1,'CppTrader::FastHash']]],
-  ['price',['Price',['../struct_cpp_trader_1_1_i_t_c_h_1_1_add_order_message.html#a11a26fd8f4bb7d07a22a41c804b5c159',1,'CppTrader::ITCH::AddOrderMessage::Price()'],['../struct_cpp_trader_1_1_i_t_c_h_1_1_add_order_m_p_i_d_message.html#ab6f7d81011906ffcf7f62484abaebe1c',1,'CppTrader::ITCH::AddOrderMPIDMessage::Price()'],['../struct_cpp_trader_1_1_i_t_c_h_1_1_order_replace_message.html#a1a1a4ce9af64d7eda99ef7878db0a23c',1,'CppTrader::ITCH::OrderReplaceMessage::Price()'],['../struct_cpp_trader_1_1_i_t_c_h_1_1_trade_message.html#ac3f51169b321e9f5e6c2849e527b3d40',1,'CppTrader::ITCH::TradeMessage::Price()']]],
-  ['pricevariationindicator',['PriceVariationIndicator',['../struct_cpp_trader_1_1_i_t_c_h_1_1_n_o_i_i_message.html#a095b915e3c8e0c9e5a1bb248ab7eb58a',1,'CppTrader::ITCH::NOIIMessage']]],
-  ['primarymarketmaker',['PrimaryMarketMaker',['../struct_cpp_trader_1_1_i_t_c_h_1_1_market_participant_position_message.html#aa7d067335af8fc1e81f2cfd2c70ac76a',1,'CppTrader::ITCH::MarketParticipantPositionMessage']]],
-  ['printable',['Printable',['../struct_cpp_trader_1_1_i_t_c_h_1_1_order_executed_with_price_message.html#a9b5b3ddb6bcf631a5932806d528a9b8f',1,'CppTrader::ITCH::OrderExecutedWithPriceMessage']]],
-  ['process',['Process',['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#a9e08b6eb62525cf11169c4bbe63cc7ef',1,'CppTrader::ITCH::ITCHHandler']]],
-  ['processmessage',['ProcessMessage',['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#a28941a18632b083083fb214396996004',1,'CppTrader::ITCH::ITCHHandler']]]
+  ['reason',['Reason',['../struct_cpp_trader_1_1_i_t_c_h_1_1_stock_trading_action_message.html#acaf2ad07ef5001fd2104aba4b15e1a90',1,'CppTrader::ITCH::StockTradingActionMessage']]],
+  ['reduceorder',['ReduceOrder',['../class_cpp_trader_1_1_market_manager.html#ab5174e2b66a5090f9d2e35ca0101a4a0',1,'CppTrader::MarketManager']]],
+  ['regshoaction',['RegSHOAction',['../struct_cpp_trader_1_1_i_t_c_h_1_1_reg_s_h_o_message.html#a4de44e4fba5d73c2b03551593e720ade',1,'CppTrader::ITCH::RegSHOMessage']]],
+  ['regshomessage',['RegSHOMessage',['../struct_cpp_trader_1_1_i_t_c_h_1_1_reg_s_h_o_message.html',1,'CppTrader::ITCH']]],
+  ['replaceorder',['ReplaceOrder',['../class_cpp_trader_1_1_market_manager.html#aebfb6bc5a525c3e2f90e9180ecbdc82f',1,'CppTrader::MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_price, uint64_t new_quantity)'],['../class_cpp_trader_1_1_market_manager.html#ac46f3038662dd4b0a1e88a5ccf458956',1,'CppTrader::MarketManager::ReplaceOrder(uint64_t id, const Order &amp;new_order)'],['../class_cpp_trader_1_1_order_manager.html#ac677719bbe6495f4da36386aeeacee11',1,'CppTrader::OrderManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_price, uint64_t new_quantity)'],['../class_cpp_trader_1_1_order_manager.html#a7671c5222c3aa1d795f5ae22c4e62b49',1,'CppTrader::OrderManager::ReplaceOrder(uint64_t id, const Order &amp;new_order)']]],
+  ['reserved',['Reserved',['../struct_cpp_trader_1_1_i_t_c_h_1_1_stock_trading_action_message.html#a51ffd0972bdb3c7a9341de6325243d45',1,'CppTrader::ITCH::StockTradingActionMessage']]],
+  ['reset',['Reset',['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#adf8689a926d593223192552bcde3f09f',1,'CppTrader::ITCH::ITCHHandler']]],
+  ['roundlotsize',['RoundLotSize',['../struct_cpp_trader_1_1_i_t_c_h_1_1_stock_directory_message.html#a0b13675a57ef15894386062e1e4c2166',1,'CppTrader::ITCH::StockDirectoryMessage']]],
+  ['roundlotsonly',['RoundLotsOnly',['../struct_cpp_trader_1_1_i_t_c_h_1_1_stock_directory_message.html#aa83b53d30f912c864421a13348df7e67',1,'CppTrader::ITCH::StockDirectoryMessage']]],
+  ['rpiimessage',['RPIIMessage',['../struct_cpp_trader_1_1_i_t_c_h_1_1_r_p_i_i_message.html',1,'CppTrader::ITCH']]]
 ];
