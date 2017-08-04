@@ -96,8 +96,8 @@ int main(int argc, char** argv)
     size_t total_errors = itch_handler.errors();
 
     std::cout << "Processing time: " << CppBenchmark::ReporterConsole::GenerateTimePeriod(timestamp_stop - timestamp_start) << std::endl;
-    std::cout << "Total messages: " << total_messages << std::endl;
-    std::cout << "Messages throughput: " << total_messages * 1000000000 / (timestamp_stop - timestamp_start) << " messages per second" << std::endl;
+    std::cout << "Total ITCH messages: " << total_messages << std::endl;
+    std::cout << "ITCH messages throughput: " << total_messages * 1000000000 / (timestamp_stop - timestamp_start) << " messages per second" << std::endl;
     std::cout << "Errors: " << total_errors << std::endl;
 
     return 0;
