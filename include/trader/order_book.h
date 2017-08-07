@@ -52,6 +52,11 @@ public:
     //! Get the order book asks container
     const Levels& asks() const noexcept { return _asks; }
 
+    //! Get the order book best bid price level
+    const Level* best_bid() const noexcept { return _best_bid; }
+    //! Get the order book best ask price level
+    const Level* best_ask() const noexcept { return _best_ask; }
+
     //! Get the order book symbol
     const Symbol& symbol() const noexcept { return _symbol; }
 
