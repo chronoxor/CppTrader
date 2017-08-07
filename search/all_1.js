@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['best_5fask',['best_ask',['../class_cpp_trader_1_1_order_book.html#aa0b7847d5d53f5adf938fcdc02b312d6',1,'CppTrader::OrderBook']]],
-  ['best_5fbid',['best_bid',['../class_cpp_trader_1_1_order_book.html#a7598b6635840c321e4a3355065a0bfd2',1,'CppTrader::OrderBook']]],
-  ['bids',['bids',['../class_cpp_trader_1_1_order_book.html#afbf04d98ebcc6b69f7cee115c522047d',1,'CppTrader::OrderBook']]],
+  ['best_5fask',['best_ask',['../class_cpp_trader_1_1_order_book.html#a4009205412a39be60278df619b5c343f',1,'CppTrader::OrderBook']]],
+  ['best_5fbid',['best_bid',['../class_cpp_trader_1_1_order_book.html#ab98eaee2dead01078b4c089fb61438b9',1,'CppTrader::OrderBook']]],
+  ['bids',['bids',['../class_cpp_trader_1_1_order_book.html#a7ad6d2d0797a05b449610a2af112b01c',1,'CppTrader::OrderBook']]],
   ['breachedlevel',['BreachedLevel',['../struct_cpp_trader_1_1_i_t_c_h_1_1_m_w_c_b_status_message.html#a6a35fed90db2baae1b457ea28aafe196',1,'CppTrader::ITCH::MWCBStatusMessage']]],
   ['brokentrademessage',['BrokenTradeMessage',['../struct_cpp_trader_1_1_i_t_c_h_1_1_broken_trade_message.html',1,'CppTrader::ITCH']]],
   ['buy',['BUY',['../namespace_cpp_trader.html#a9c12ff4987347bcd962a10467ab2ec87ac45b496ec0828772c8088e4118f09b33',1,'CppTrader']]],
