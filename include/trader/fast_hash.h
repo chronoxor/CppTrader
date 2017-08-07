@@ -9,6 +9,7 @@
 #ifndef CPPTRADER_FAST_HASH_H
 #define CPPTRADER_FAST_HASH_H
 
+#include <cstddef>
 #include <cstdint>
 
 namespace CppTrader {
