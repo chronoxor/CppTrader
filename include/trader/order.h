@@ -52,8 +52,6 @@ struct Order : public CppCommon::List<Order>::Node
 
     //! Price level
     Level* Level;
-    //! Order book
-    OrderBook* OrderBook;
 
     Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity) noexcept;
     Order(const Order&) noexcept = default;

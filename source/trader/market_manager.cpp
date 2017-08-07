@@ -152,9 +152,6 @@ void MarketManager::AddOrder(const Order& order)
     {
         // Add the new order into the order book
         UpdateOrderBook(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
-
-        // Cache the order book in the given order
-        order_ptr->OrderBook = order_book_ptr;
     }
 }
 
@@ -188,7 +185,7 @@ void MarketManager::ReduceOrder(uint64_t id, uint64_t quantity)
     _market_handler.onUpdateOrder(*order_ptr);
 
     // Get the valid order book for the reducing order
-    OrderBook* order_book_ptr = order_ptr->OrderBook;
+    OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Reduce the order in the order book
@@ -227,7 +224,7 @@ void MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_qu
     std::pair<Level*, bool> order_book_update(nullptr, false);
 
     // Get the valid order book for the modifying order
-    OrderBook* order_book_ptr = order_ptr->OrderBook;
+    OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Delete the order from the order book
@@ -293,7 +290,7 @@ void MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_pric
     std::pair<Level*, bool> order_book_update(nullptr, false);
 
     // Get the valid order book for the replacing order
-    OrderBook* order_book_ptr = order_ptr->OrderBook;
+    OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Delete the old order from the order book
@@ -366,7 +363,7 @@ void MarketManager::ReplaceOrder(uint64_t id, const Order& new_order)
     std::pair<Level*, bool> order_book_update(nullptr, false);
 
     // Get the valid order book for the replacing order
-    OrderBook* order_book_ptr = order_ptr->OrderBook;
+    OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Delete the old order from the order book
@@ -431,7 +428,7 @@ void MarketManager::DeleteOrder(uint64_t id)
     Order* order_ptr = (Order*)order_it->second;
 
     // Get the valid order book for the deleting order
-    OrderBook* order_book_ptr = order_ptr->OrderBook;
+    OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Delete the order from the order book
@@ -481,7 +478,7 @@ void MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
     _market_handler.onUpdateOrder(*order_ptr);
 
     // Get the valid order book for the executing order
-    OrderBook* order_book_ptr = order_ptr->OrderBook;
+    OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Reduce the order in the order book
@@ -535,7 +532,7 @@ void MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quantity)
     _market_handler.onUpdateOrder(*order_ptr);
 
     // Get the valid order book for the executing order
-    OrderBook* order_book_ptr = order_ptr->OrderBook;
+    OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Reduce the order in the order book

@@ -41,7 +41,6 @@ inline Order::Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side
     Price = price;
     Quantity = quantity;
     Level = nullptr;
-    OrderBook = nullptr;
 }
 
 inline std::ostream& operator<<(std::ostream& stream, const Order& order)
