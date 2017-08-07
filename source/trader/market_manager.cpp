@@ -17,17 +17,22 @@ MarketHandler MarketManager::_default;
 
 MarketManager::~MarketManager()
 {
-    // Release symbols
-    for (auto symbol_ptr : _symbols)
-        if (symbol_ptr != nullptr)
-            _symbol_pool.Release(symbol_ptr);
-    _symbols.clear();
+    // Release orders
+    for (auto order : _orders)
+        _order_pool.Release(order.second);
+    _orders.clear();
 
     // Release order books
     for (auto order_book_ptr : _order_books)
         if (order_book_ptr != nullptr)
             _order_book_pool.Release(order_book_ptr);
     _order_books.clear();
+
+    // Release symbols
+    for (auto symbol_ptr : _symbols)
+        if (symbol_ptr != nullptr)
+            _symbol_pool.Release(symbol_ptr);
+    _symbols.clear();
 }
 
 void MarketManager::AddSymbol(const Symbol& symbol)
