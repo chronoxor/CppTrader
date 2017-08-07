@@ -75,11 +75,7 @@ Level* OrderBook::DeleteLevel(Order* order_ptr, Level* level_ptr)
     {
         // Update best bid price level
         if (level_ptr == _best_bid)
-        {
-            auto it = Levels::reverse_iterator(&_bids, _best_bid);
-            ++it;
-            _best_bid = it.operator->();
-        }
+            _best_bid = _best_bid->parent;
 
         _bids.erase(Levels::iterator(&_bids, level_ptr));
     }
@@ -87,11 +83,7 @@ Level* OrderBook::DeleteLevel(Order* order_ptr, Level* level_ptr)
     {
         // Update best ask price level
         if (level_ptr == _best_ask)
-        {
-            auto it = Levels::iterator(&_asks, _best_ask);
-            ++it;
-            _best_ask = it.operator->();
-        }
+            _best_ask = _best_ask->parent;
 
         _asks.erase(Levels::iterator(&_asks, level_ptr));
     }
