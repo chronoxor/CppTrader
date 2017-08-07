@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['systemeventcodes',['SystemEventCodes',['../namespace_cpp_trader_1_1_i_t_c_h.html#a272b8b25803d506b8ef95ddc97c0b95b',1,'CppTrader::ITCH']]]
+  ['orderside',['OrderSide',['../namespace_cpp_trader.html#a9c12ff4987347bcd962a10467ab2ec87',1,'CppTrader']]],
+  ['ordertype',['OrderType',['../namespace_cpp_trader.html#aa18cdf656ad277fcf2e707422ccd148e',1,'CppTrader']]]
 ];

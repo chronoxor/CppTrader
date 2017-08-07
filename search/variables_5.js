@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['id',['Id',['../struct_cpp_trader_1_1_order.html#a221526975ed3d6212249d3b2a4202956',1,'CppTrader::Order::Id()'],['../struct_cpp_trader_1_1_symbol.html#a0d76d18c5c2656131319efe0be41b276',1,'CppTrader::Symbol::Id()']]],
   ['imbalancedirection',['ImbalanceDirection',['../struct_cpp_trader_1_1_i_t_c_h_1_1_n_o_i_i_message.html#abd2f113d3c13aef73f558c908f514574',1,'CppTrader::ITCH::NOIIMessage']]],
   ['imbalanceshares',['ImbalanceShares',['../struct_cpp_trader_1_1_i_t_c_h_1_1_n_o_i_i_message.html#ad48413044be8f1f4cbaa4af1ed47efa4',1,'CppTrader::ITCH::NOIIMessage']]],
   ['interestflag',['InterestFlag',['../struct_cpp_trader_1_1_i_t_c_h_1_1_r_p_i_i_message.html#ab67a18bfa991dc119f16f97108c63405',1,'CppTrader::ITCH::RPIIMessage']]],

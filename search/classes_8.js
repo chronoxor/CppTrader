@@ -1,5 +1,10 @@
 var searchData=
 [
-  ['regshomessage',['RegSHOMessage',['../struct_cpp_trader_1_1_i_t_c_h_1_1_reg_s_h_o_message.html',1,'CppTrader::ITCH']]],
-  ['rpiimessage',['RPIIMessage',['../struct_cpp_trader_1_1_i_t_c_h_1_1_r_p_i_i_message.html',1,'CppTrader::ITCH']]]
+  ['order',['Order',['../struct_cpp_trader_1_1_order.html',1,'CppTrader']]],
+  ['orderbook',['OrderBook',['../class_cpp_trader_1_1_order_book.html',1,'CppTrader']]],
+  ['ordercancelmessage',['OrderCancelMessage',['../struct_cpp_trader_1_1_i_t_c_h_1_1_order_cancel_message.html',1,'CppTrader::ITCH']]],
+  ['orderdeletemessage',['OrderDeleteMessage',['../struct_cpp_trader_1_1_i_t_c_h_1_1_order_delete_message.html',1,'CppTrader::ITCH']]],
+  ['orderexecutedmessage',['OrderExecutedMessage',['../struct_cpp_trader_1_1_i_t_c_h_1_1_order_executed_message.html',1,'CppTrader::ITCH']]],
+  ['orderexecutedwithpricemessage',['OrderExecutedWithPriceMessage',['../struct_cpp_trader_1_1_i_t_c_h_1_1_order_executed_with_price_message.html',1,'CppTrader::ITCH']]],
+  ['orderreplacemessage',['OrderReplaceMessage',['../struct_cpp_trader_1_1_i_t_c_h_1_1_order_replace_message.html',1,'CppTrader::ITCH']]]
 ];

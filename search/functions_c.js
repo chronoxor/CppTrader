@@ -1,10 +1,5 @@
 var searchData=
 [
-  ['_7efasthash',['~FastHash',['../class_cpp_trader_1_1_fast_hash.html#aca8b37dbd2c01109b0ee19a06ce571ab',1,'CppTrader::FastHash']]],
-  ['_7eitchhandler',['~ITCHHandler',['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#a47e4a9b6eecb2f8ad81fd6adb921ba4a',1,'CppTrader::ITCH::ITCHHandler']]],
-  ['_7emarkethandler',['~MarketHandler',['../class_cpp_trader_1_1_market_handler.html#a304c14a6a11316743e9e04737fbc7386',1,'CppTrader::MarketHandler']]],
-  ['_7emarketmanager',['~MarketManager',['../class_cpp_trader_1_1_market_manager.html#a5cf708a10eb7c540b689513408bdfc16',1,'CppTrader::MarketManager']]],
-  ['_7eorderbook',['~OrderBook',['../class_cpp_trader_1_1_order_book.html#ae599e2bc7abdefd3f283f9590bf82051',1,'CppTrader::OrderBook']]],
-  ['_7eordermanager',['~OrderManager',['../class_cpp_trader_1_1_order_manager.html#a263be5e79b90cfeade523315a50b3cfa',1,'CppTrader::OrderManager']]],
-  ['_7esymbolmanager',['~SymbolManager',['../class_cpp_trader_1_1_symbol_manager.html#adde79db7f0673fb207b2a751fdd2f80e',1,'CppTrader::SymbolManager']]]
+  ['size',['size',['../class_cpp_trader_1_1_order_book.html#a084e27c0baae36786308c019a2dbe91f',1,'CppTrader::OrderBook']]],
+  ['symbol',['Symbol',['../struct_cpp_trader_1_1_symbol.html#a015b2810b4fc614a2fdad47292072093',1,'CppTrader::Symbol::Symbol(uint32_t id, const char name[8]) noexcept'],['../struct_cpp_trader_1_1_symbol.html#a025c627cc0052244f1b280fae41323ef',1,'CppTrader::Symbol::Symbol(const Symbol &amp;) noexcept=default'],['../struct_cpp_trader_1_1_symbol.html#ac7b7780281cab43367e3f8963417f5ca',1,'CppTrader::Symbol::Symbol(Symbol &amp;&amp;) noexcept=default'],['../class_cpp_trader_1_1_order_book.html#a4690d5f51c704dc5d9ad59838c578802',1,'CppTrader::OrderBook::symbol()']]]
 ];
