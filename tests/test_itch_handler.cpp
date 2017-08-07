@@ -16,7 +16,10 @@ namespace {
 class MyITCHHandler : public ITCHHandler
 {
 public:
-    MyITCHHandler() : _messages(0), _errors(0) {}
+    MyITCHHandler()
+        : _messages(0),
+          _errors(0)
+    {}
 
     size_t messages() const { return _messages; }
     size_t errors() const { return _errors; }
@@ -72,6 +75,6 @@ TEST_CASE("ITCHHandler", "[CppTrader][Providers][NASDAQ]")
     }
 
     // Check results
-    REQUIRE(itch_handler.messages() == 1563071);
     REQUIRE(itch_handler.errors() == 0);
+    REQUIRE(itch_handler.messages() == 1563071);
 }
