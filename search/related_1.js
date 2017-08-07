@@ -6,6 +6,5 @@ var searchData=
   ['operator_3c_3d',['operator&lt;=',['../struct_cpp_trader_1_1_level.html#a1dd06f575fade88d21012d1c505666ab',1,'CppTrader::Level']]],
   ['operator_3d_3d',['operator==',['../struct_cpp_trader_1_1_level.html#acc5b42e2b5fff17aae95a06f8ea71e7e',1,'CppTrader::Level']]],
   ['operator_3e',['operator&gt;',['../struct_cpp_trader_1_1_level.html#a1fb4f9deab20ab2bd2a8cd63d2ed173e',1,'CppTrader::Level']]],
-  ['operator_3e_3d',['operator&gt;=',['../struct_cpp_trader_1_1_level.html#ab3eaaee26b42fa01dc1dadc9e4f04590',1,'CppTrader::Level']]],
-  ['orderbook',['OrderBook',['../struct_cpp_trader_1_1_order.html#a8879bbc354af59f515ce709c13cf3b6b',1,'CppTrader::Order']]]
+  ['operator_3e_3d',['operator&gt;=',['../struct_cpp_trader_1_1_level.html#ab3eaaee26b42fa01dc1dadc9e4f04590',1,'CppTrader::Level']]]
 ];
