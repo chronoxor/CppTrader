@@ -36,6 +36,8 @@ std::ostream& operator<<(std::ostream& stream, OrderType type);
 //! Order
 struct Order : public CppCommon::List<Order>::Node
 {
+    friend class OrderBook;
+
     //! Order Id
     uint64_t Id;
     //! Symbol Id
@@ -49,9 +51,6 @@ struct Order : public CppCommon::List<Order>::Node
     //! Order quantity
     uint64_t Quantity;
 
-    //! Price level
-    Level* Level;
-
     Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity) noexcept;
     Order(const Order&) noexcept = default;
     Order(Order&&) noexcept = default;
@@ -61,13 +60,13 @@ struct Order : public CppCommon::List<Order>::Node
     Order& operator=(Order&&) noexcept = default;
 
     friend std::ostream& operator<<(std::ostream& stream, const Order& order);
+
+private:
+    Level* _level;
 };
 
 } // namespace CppTrader
 
 #include "order.inl"
-
-// Resolve forward declaration issue
-#include "level.h"
 
 #endif // CPPTRADER_ORDER_H

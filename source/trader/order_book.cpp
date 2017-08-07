@@ -92,7 +92,7 @@ Level* OrderBook::DeleteLevel(Order* order_ptr, Level* level_ptr)
     _level_pool.Release(level_ptr);
 
     // Clear the price level in the given order
-    order_ptr->Level = nullptr;
+    order_ptr->_level = nullptr;
 
     return nullptr;
 }
@@ -116,7 +116,7 @@ std::pair<Level*, bool> OrderBook::AddOrder(Order* order_ptr)
     level_ptr->Orders.push_back(*order_ptr);
 
     // Cache the price level in the given order
-    order_ptr->Level = level_ptr;
+    order_ptr->_level = level_ptr;
 
     // Price level was changed. Return top of the book modification flag.
     return std::make_pair(level_ptr, (level_ptr == ((order_ptr->Side == OrderSide::BUY) ? _best_bid : _best_ask)));
@@ -125,7 +125,7 @@ std::pair<Level*, bool> OrderBook::AddOrder(Order* order_ptr)
 std::pair<Level*, bool> OrderBook::ReduceOrder(Order* order_ptr, uint64_t quantity)
 {
     // Find the price level for the order
-    Level* level_ptr = order_ptr->Level;
+    Level* level_ptr = order_ptr->_level;
 
     // Reduce the order in the price level
     if (level_ptr != nullptr)
@@ -152,7 +152,7 @@ std::pair<Level*, bool> OrderBook::ReduceOrder(Order* order_ptr, uint64_t quanti
 std::pair<Level*, bool> OrderBook::DeleteOrder(Order* order_ptr)
 {
     // Find the price level for the order
-    Level* level_ptr = order_ptr->Level;
+    Level* level_ptr = order_ptr->_level;
 
     // Delete the order from the price level
     if (level_ptr != nullptr)

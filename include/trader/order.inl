@@ -33,6 +33,7 @@ inline std::ostream& operator<<(std::ostream& stream, OrderType type)
 }
 
 inline Order::Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity) noexcept
+    : _level(nullptr)
 {
     Id = id;
     SymbolId = symbol;
@@ -40,7 +41,6 @@ inline Order::Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side
     Side = side;
     Price = price;
     Quantity = quantity;
-    Level = nullptr;
 }
 
 inline std::ostream& operator<<(std::ostream& stream, const Order& order)
