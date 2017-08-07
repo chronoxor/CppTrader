@@ -23,7 +23,7 @@ OrderBook::~OrderBook()
     _asks.clear();
 }
 
-OrderBook::Levels::iterator OrderBook::FindLevel(OrderSide side, uint64_t price) noexcept
+Level* OrderBook::FindLevel(OrderSide side, uint64_t price) noexcept
 {
     Level required(price);
 
@@ -31,17 +31,17 @@ OrderBook::Levels::iterator OrderBook::FindLevel(OrderSide side, uint64_t price)
     {
         auto it = _bids.find(required);
         if (it != _bids.end())
-            return it;
+            return it.operator->();
         else
-            return _bids.end();
+            return nullptr;
     }
     else
     {
         auto it = _asks.find(required);
         if (it != _asks.end())
-            return it;
+            return it.operator->();
         else
-            return _asks.end();
+            return nullptr;
     }
 }
 
@@ -100,14 +100,11 @@ Level* OrderBook::DeleteLevel(Order* order_ptr, Level* level_ptr)
 std::pair<Level*, bool> OrderBook::AddOrder(Order* order_ptr)
 {
     // Find the price level for the order
-    Levels::iterator level_it = FindLevel(order_ptr->Side, order_ptr->Price);
-    Level* level_ptr = nullptr;
+    Level* level_ptr = FindLevel(order_ptr->Side, order_ptr->Price);
 
     // Create a new price level if no one found
-    if (!level_it)
+    if (level_ptr == nullptr)
         level_ptr = AddLevel(order_ptr);
-    else
-        level_ptr = &(*level_it);
 
     // Update the price level volume
     level_ptr->Volume += order_ptr->Quantity;

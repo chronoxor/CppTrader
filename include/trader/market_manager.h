@@ -9,9 +9,8 @@
 #ifndef CPPTRADER_MARKET_MANAGER_H
 #define CPPTRADER_MARKET_MANAGER_H
 
-#include "market_handler.h"
-
 #include "fast_hash.h"
+#include "market_handler.h"
 
 #include "containers/hashmap.h"
 #include "memory/allocator_pool.h"

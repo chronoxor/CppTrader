@@ -77,8 +77,7 @@ private:
     Level* _best_bid;
     Level* _best_ask;
 
-    Levels::iterator FindLevel(OrderSide side, uint64_t price) noexcept;
-
+    Level* FindLevel(OrderSide side, uint64_t price) noexcept;
     Level* AddLevel(Order* order_ptr);
     Level* DeleteLevel(Order* order_ptr, Level* level_ptr);
 
