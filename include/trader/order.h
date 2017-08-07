@@ -17,7 +17,6 @@
 namespace CppTrader {
 
 struct Level;
-class OrderBook;
 
 //! Order side
 enum class OrderSide : uint8_t
@@ -67,5 +66,8 @@ struct Order : public CppCommon::List<Order>::Node
 } // namespace CppTrader
 
 #include "order.inl"
+
+// Resolve forward declaration issue
+#include "level.h"
 
 #endif // CPPTRADER_ORDER_H

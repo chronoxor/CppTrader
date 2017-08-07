@@ -9,6 +9,8 @@
 
 #include "filesystem/file.h"
 
+#include <algorithm>
+
 using namespace CppCommon;
 using namespace CppTrader;
 using namespace CppTrader::ITCH;
@@ -18,15 +20,23 @@ namespace {
 class MyMarketHandler : public MarketHandler
 {
 public:
-    MyMarketHandler() : _updates(0) {}
+    MyMarketHandler()
+        : _updates(0),
+          _symbols(0),
+          _max_symbols(0),
+          _order_books(0),
+          _max_order_books(0)
+    {}
 
     size_t updates() const { return _updates; }
+    size_t max_symbols() const { return _max_symbols; }
+    size_t max_order_books() const { return _max_order_books; }
 
 protected:
-    void onAddSymbol(const Symbol& symbol) override { ++_updates; }
-    void onDeleteSymbol(const Symbol& symbol) override { ++_updates; }
-    void onAddOrderBook(const OrderBook& order_book) override { ++_updates; }
-    void onDeleteOrderBook(const OrderBook& order_book) override { ++_updates; }
+    void onAddSymbol(const Symbol& symbol) override { ++_updates; ++_symbols; _max_symbols = std::max(_symbols, _max_symbols); }
+    void onDeleteSymbol(const Symbol& symbol) override { ++_updates; --_symbols; }
+    void onAddOrderBook(const OrderBook& order_book) override { ++_updates; ++_order_books; _max_order_books = std::max(_order_books, _max_order_books); }
+    void onDeleteOrderBook(const OrderBook& order_book) override { ++_updates; --_order_books; }
     void onUpdateOrderBook(const OrderBook& order_book, const Level& level, bool top) override { ++_updates; }
     void onAddOrder(const Order& order) override { ++_updates; }
     void onReduceOrder(const Order& order, uint64_t quantity) override { ++_updates; }
@@ -39,12 +49,20 @@ protected:
 
 private:
     size_t _updates;
+    size_t _symbols;
+    size_t _max_symbols;
+    size_t _order_books;
+    size_t _max_order_books;
 };
 
 class MyITCHHandler : public ITCHHandler
 {
 public:
-    MyITCHHandler(MarketManager& market) : _market(market), _messages(0), _errors(0) {}
+    MyITCHHandler(MarketManager& market)
+        : _market(market),
+          _messages(0),
+          _errors(0)
+    {}
 
     size_t messages() const { return _messages; }
     size_t errors() const { return _errors; }
@@ -106,4 +124,8 @@ TEST_CASE("Market manager", "[CppTrader]")
     REQUIRE(market_handler.updates() == 229008);
     REQUIRE(itch_handler.messages() == 1563071);
     REQUIRE(itch_handler.errors() == 0);
+
+    // Check market statistics
+    REQUIRE(market_handler.max_symbols() == 8352);
+    REQUIRE(market_handler.max_order_books() == 8352);
 }
