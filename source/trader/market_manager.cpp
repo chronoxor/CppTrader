@@ -18,7 +18,7 @@ MarketHandler MarketManager::_default;
 MarketManager::~MarketManager()
 {
     // Release orders
-    for (auto order : _orders)
+    for (auto& order : _orders)
         _order_pool.Release(order.second);
     _orders.clear();
 
