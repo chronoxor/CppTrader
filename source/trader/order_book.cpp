@@ -29,6 +29,7 @@ Level* OrderBook::FindLevel(OrderSide side, uint64_t price) noexcept
 
     if (side == OrderSide::BUY)
     {
+        // Try to find required price level in the bid collection
         auto it = _bids.find(required);
         if (it != _bids.end())
             return it.operator->();
@@ -37,6 +38,7 @@ Level* OrderBook::FindLevel(OrderSide side, uint64_t price) noexcept
     }
     else
     {
+        // Try to find required price level in the ask collection
         auto it = _asks.find(required);
         if (it != _asks.end())
             return it.operator->();
@@ -47,10 +49,12 @@ Level* OrderBook::FindLevel(OrderSide side, uint64_t price) noexcept
 
 Level* OrderBook::AddLevel(Order* order_ptr)
 {
+    // Create a new price level
     Level* level_ptr = _level_pool.Create(order_ptr->Price);
 
     if (order_ptr->Side == OrderSide::BUY)
     {
+        // Insert the price level into the bid collection
         _bids.insert(*level_ptr);
 
         // Update best bid price level
@@ -59,6 +63,7 @@ Level* OrderBook::AddLevel(Order* order_ptr)
     }
     else
     {
+        // Insert the price level into the ask collection
         _asks.insert(*level_ptr);
 
         // Update best ask price level
@@ -77,6 +82,7 @@ Level* OrderBook::DeleteLevel(Order* order_ptr, Level* level_ptr)
         if (level_ptr == _best_bid)
             _best_bid = _best_bid->parent;
 
+        // Erase the price level from the bid collection
         _bids.erase(Levels::iterator(&_bids, level_ptr));
     }
     else
@@ -85,6 +91,7 @@ Level* OrderBook::DeleteLevel(Order* order_ptr, Level* level_ptr)
         if (level_ptr == _best_ask)
             _best_ask = _best_ask->parent;
 
+        // Erase the price level from the ask collection
         _asks.erase(Levels::iterator(&_asks, level_ptr));
     }
 

@@ -36,7 +36,7 @@ void MarketManager::AddSymbol(const Symbol& symbol)
     if (_symbols.size() <= symbol.Id)
         _symbols.resize(symbol.Id + 1, nullptr);
 
-    // Create the symbol
+    // Create a new symbol
     Symbol* symbol_ptr = _symbol_pool.Create(symbol);
 
     // Insert the symbol
@@ -86,7 +86,7 @@ void MarketManager::AddOrderBook(const Symbol& symbol)
     if (_order_books.size() <= symbol.Id)
         _order_books.resize(symbol.Id + 1, nullptr);
 
-    // Create the order book
+    // Create a new order book
     OrderBook* order_book_ptr = _order_book_pool.Create(*symbol_ptr);
 
     // Insert the order book
@@ -132,7 +132,7 @@ void MarketManager::AddOrder(const Order& order)
     if (order.Quantity == 0)
         throwex CppCommon::ArgumentException("Order quantity must be greater than zero!");
 
-    // Create the order
+    // Create a new order
     Order* order_ptr = _order_pool.Create(order);
 
     // Insert the order
@@ -555,21 +555,15 @@ void MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quantity)
 
 void MarketManager::UpdateOrderBook(const OrderBook& order_book, const std::pair<Level*, bool>& order_book_update1, const std::pair<Level*, bool>& order_book_update2)
 {
+    // Merge two order book updates into the single one and call the corresponding handler
     if ((order_book_update1.first != nullptr) && (order_book_update2.first != nullptr))
-    {
-        // Call the corresponding handler
         _market_handler.onUpdateOrderBook(order_book, *order_book_update2.first, order_book_update1.second || order_book_update2.second);
-    }
+    // Call the oder book update handler for the first update only
     else if (order_book_update1.first != nullptr)
-    {
-        // Call the corresponding handler
         _market_handler.onUpdateOrderBook(order_book, *order_book_update1.first, order_book_update1.second);
-    }
+    // Call the oder book update handler for the second update only
     else if (order_book_update2.first != nullptr)
-    {
-        // Call the corresponding handler
         _market_handler.onUpdateOrderBook(order_book, *order_book_update2.first, order_book_update2.second);
-    }
 }
 
 } // namespace CppTrader
