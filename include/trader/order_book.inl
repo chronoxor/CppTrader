@@ -10,9 +10,11 @@ namespace CppTrader {
 
 inline OrderBook::OrderBook(const Symbol& symbol)
     : _symbol(symbol),
-      _default_manager(),
-      _pool_manager(_default_manager, 1024),
-      _pool(_pool_manager)
+      _auxiliary_memory_manager(),
+      _level_memory_manager(_auxiliary_memory_manager, 1024),
+      _level_pool(_level_memory_manager),
+      _best_bid(nullptr),
+      _best_ask(nullptr)
 {
 }
 

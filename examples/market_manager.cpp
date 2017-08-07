@@ -21,6 +21,13 @@ protected:
     void onDeleteSymbol(const CppTrader::Symbol& symbol) override
     { std::cout << "Delete symbol: " << symbol << std::endl; }
 
+    void onAddOrderBook(const CppTrader::OrderBook& order_book) override
+    { std::cout << "Add order book: " << order_book << std::endl; }
+    void onDeleteOrderBook(const CppTrader::OrderBook& order_book) override
+    { std::cout << "Delete order book: " << order_book << std::endl; }
+    void onUpdateOrderBook(const CppTrader::OrderBook& order_book, const CppTrader::Level& level, bool top) override
+    { std::cout << "Update order book: " << order_book << " - "<< level << (top ? " - Top of the book!" : "") << std::endl; }
+
     void onAddOrder(const CppTrader::Order& order) override
     { std::cout << "Add order: " << order << std::endl; }
     void onReduceOrder(const CppTrader::Order& order, uint64_t quantity) override
@@ -38,13 +45,6 @@ protected:
 
     void onExecuteOrder(const CppTrader::Order& order, uint64_t price, uint64_t quantity) override
     { std::cout << "Execute order: " << order << " with price " << price << " and quantity " << quantity << std::endl; }
-
-    void onAddOrderBook(const CppTrader::OrderBook& order_book) override
-    { std::cout << "Add order book: " << order_book << std::endl; }
-    void onDeleteOrderBook(const CppTrader::OrderBook& order_book) override
-    { std::cout << "Delete order book: " << order_book << std::endl; }
-    void onUpdateOrderBook(const CppTrader::OrderBook& order_book, const CppTrader::Level& level, bool top) override
-    { std::cout << "Update order book: " << order_book << " - "<< level << (top ? " - Top of the book!" : "") << std::endl; }
 };
 
 class MyITCHHandler : public CppTrader::ITCH::ITCHHandler
@@ -55,7 +55,9 @@ public:
 protected:
     bool onMessage(const CppTrader::ITCH::StockDirectoryMessage& message) override
     {
-        _market.AddSymbol(CppTrader::Symbol(message.StockLocate, message.Stock));
+        CppTrader::Symbol symbol(message.StockLocate, message.Stock);
+        _market.AddSymbol(symbol);
+        _market.AddOrderBook(symbol);
         return true;
     }
 

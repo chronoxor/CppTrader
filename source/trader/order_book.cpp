@@ -12,12 +12,14 @@ namespace CppTrader {
 
 OrderBook::~OrderBook()
 {
+    // Release bid price levels
     for (auto& bid : _bids)
-        _pool.Release(&bid);
+        _level_pool.Release(&bid);
     _bids.clear();
 
+    // Release ask price levels
     for (auto& ask : _asks)
-        _pool.Release(&ask);
+        _level_pool.Release(&ask);
     _asks.clear();
 }
 
@@ -43,6 +45,66 @@ OrderBook::Levels::iterator OrderBook::FindLevel(OrderSide side, uint64_t price)
     }
 }
 
+Level* OrderBook::AddLevel(Order* order_ptr)
+{
+    Level* level_ptr = _level_pool.Create(order_ptr->Price);
+
+    if (order_ptr->Side == OrderSide::BUY)
+    {
+        _bids.insert(*level_ptr);
+
+        // Update best bid price level
+        if ((_best_bid == nullptr) || (level_ptr->Price > _best_bid->Price))
+            _best_bid = level_ptr;
+    }
+    else
+    {
+        _asks.insert(*level_ptr);
+
+        // Update best ask price level
+        if ((_best_ask == nullptr) || (level_ptr->Price < _best_ask->Price))
+            _best_ask = level_ptr;
+    }
+
+    return level_ptr;
+}
+
+Level* OrderBook::DeleteLevel(Order* order_ptr, Level* level_ptr)
+{
+    if (order_ptr->Side == OrderSide::BUY)
+    {
+        // Update best bid price level
+        if (level_ptr == _best_bid)
+        {
+            auto it = Levels::reverse_iterator(&_bids, _best_bid);
+            ++it;
+            _best_bid = it.operator->();
+        }
+
+        _bids.erase(Levels::iterator(&_bids, level_ptr));
+    }
+    else
+    {
+        // Update best ask price level
+        if (level_ptr == _best_ask)
+        {
+            auto it = Levels::iterator(&_asks, _best_ask);
+            ++it;
+            _best_ask = it.operator->();
+        }
+
+        _asks.erase(Levels::iterator(&_asks, level_ptr));
+    }
+
+    // Release the price level
+    _level_pool.Release(level_ptr);
+
+    // Clear the price level in the given order
+    order_ptr->Level = nullptr;
+
+    return nullptr;
+}
+
 std::pair<Level*, bool> OrderBook::AddOrder(Order* order_ptr)
 {
     // Find the price level for the order
@@ -51,13 +113,7 @@ std::pair<Level*, bool> OrderBook::AddOrder(Order* order_ptr)
 
     // Create a new price level if no one found
     if (!level_it)
-    {
-        level_ptr = _pool.Create(order_ptr->Price);
-        if (order_ptr->Side == OrderSide::BUY)
-            _bids.insert(*level_ptr);
-        else
-            _asks.insert(*level_ptr);
-    }
+        level_ptr = AddLevel(order_ptr);
     else
         level_ptr = &(*level_it);
 
@@ -67,20 +123,21 @@ std::pair<Level*, bool> OrderBook::AddOrder(Order* order_ptr)
     // Link the new order to the orders list of the price level
     level_ptr->Orders.push_back(*order_ptr);
 
-    return std::make_pair(level_ptr, ((order_ptr->Side == OrderSide::BUY) ? ((level_ptr == _bids.highest()) || _bids.empty()) : ((level_ptr == _asks.lowest()) || _asks.empty())));
+    // Cache the price level in the given order
+    order_ptr->Level = level_ptr;
+
+    // Price level was changed. Return top of the book modification flag.
+    return std::make_pair(level_ptr, (level_ptr == ((order_ptr->Side == OrderSide::BUY) ? _best_bid : _best_ask)));
 }
 
 std::pair<Level*, bool> OrderBook::ReduceOrder(Order* order_ptr, uint64_t quantity)
 {
     // Find the price level for the order
-    Levels::iterator level_it = FindLevel(order_ptr->Side, order_ptr->Price);
-    Level* level_ptr = nullptr;
+    Level* level_ptr = order_ptr->Level;
 
     // Reduce the order in the price level
-    if (level_it)
+    if (level_ptr != nullptr)
     {
-        level_ptr = &(*level_it);
-
         // Update the price level volume
         level_ptr->Volume -= quantity;
 
@@ -90,31 +147,24 @@ std::pair<Level*, bool> OrderBook::ReduceOrder(Order* order_ptr, uint64_t quanti
 
         // Delete the empty price level
         if (level_ptr->Volume == 0)
-        {
-            if (order_ptr->Side == OrderSide::BUY)
-                _bids.erase(level_it);
-            else
-                _asks.erase(level_it);
-            _pool.Release(level_ptr);
-        }
+            level_ptr = DeleteLevel(order_ptr, level_ptr);
 
-        return std::make_pair(level_ptr, ((order_ptr->Side == OrderSide::BUY) ? ((level_ptr == _bids.highest()) || _bids.empty()) : ((level_ptr == _asks.lowest()) || _asks.empty())));
+        // Price level was changed. Return top of the book modification flag.
+        return std::make_pair(level_ptr, (level_ptr == ((order_ptr->Side == OrderSide::BUY) ? _best_bid : _best_ask)));
     }
 
+    // Price level was not changed
     return std::make_pair(nullptr, false);
 }
 
 std::pair<Level*, bool> OrderBook::DeleteOrder(Order* order_ptr)
 {
     // Find the price level for the order
-    Levels::iterator level_it = FindLevel(order_ptr->Side, order_ptr->Price);
-    Level* level_ptr = nullptr;
+    Level* level_ptr = order_ptr->Level;
 
     // Delete the order from the price level
-    if (level_it)
+    if (level_ptr != nullptr)
     {
-        level_ptr = &(*level_it);
-
         // Update the price level volume
         level_ptr->Volume -= order_ptr->Quantity;
 
@@ -123,17 +173,13 @@ std::pair<Level*, bool> OrderBook::DeleteOrder(Order* order_ptr)
 
         // Delete the empty price level
         if (level_ptr->Volume == 0)
-        {
-            if (order_ptr->Side == OrderSide::BUY)
-                _bids.erase(level_it);
-            else
-                _asks.erase(level_it);
-            _pool.Release(level_ptr);
-        }
+            level_ptr = DeleteLevel(order_ptr, level_ptr);
 
-        return std::make_pair(level_ptr, ((order_ptr->Side == OrderSide::BUY) ? ((level_ptr == _bids.highest()) || _bids.empty()) : ((level_ptr == _asks.lowest()) || _asks.empty())));
+        // Price level was changed. Return top of the book modification flag.
+        return std::make_pair(level_ptr, (level_ptr == ((order_ptr->Side == OrderSide::BUY) ? _best_bid : _best_ask)));
     }
 
+    // Price level was not changed
     return std::make_pair(nullptr, false);
 }
 

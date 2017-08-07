@@ -1,6 +1,6 @@
 /*!
     \file order.inl
-    \brief Order domain model inline implementation
+    \brief Order inline implementation
     \author Ivan Shynkarenka
     \date 31.07.2017
     \copyright MIT License
@@ -30,6 +30,18 @@ inline std::ostream& operator<<(std::ostream& stream, OrderType type)
         default:
             return stream << "<\?\?\?>";
     }
+}
+
+inline Order::Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity) noexcept
+{
+    Id = id;
+    SymbolId = symbol;
+    Type = type;
+    Side = side;
+    Price = price;
+    Quantity = quantity;
+    Level = nullptr;
+    OrderBook = nullptr;
 }
 
 inline std::ostream& operator<<(std::ostream& stream, const Order& order)

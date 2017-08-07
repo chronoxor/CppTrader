@@ -25,6 +25,9 @@ public:
 protected:
     void onAddSymbol(const Symbol& symbol) override { ++_updates; }
     void onDeleteSymbol(const Symbol& symbol) override { ++_updates; }
+    void onAddOrderBook(const OrderBook& order_book) override { ++_updates; }
+    void onDeleteOrderBook(const OrderBook& order_book) override { ++_updates; }
+    void onUpdateOrderBook(const OrderBook& order_book, const Level& level, bool top) override { ++_updates; }
     void onAddOrder(const Order& order) override { ++_updates; }
     void onReduceOrder(const Order& order, uint64_t quantity) override { ++_updates; }
     void onModifyOrder(const Order& order, uint64_t new_price, uint64_t new_quantity) override { ++_updates; }
@@ -33,9 +36,6 @@ protected:
     void onUpdateOrder(const Order& order) override { ++_updates; }
     void onDeleteOrder(const Order& order) override { ++_updates; }
     void onExecuteOrder(const Order& order, uint64_t price, uint64_t quantity) override { ++_updates; }
-    void onAddOrderBook(const OrderBook& order_book) override { ++_updates; }
-    void onDeleteOrderBook(const OrderBook& order_book) override { ++_updates; }
-    void onUpdateOrderBook(const OrderBook& order_book, const Level& level, bool top) override { ++_updates; }
 
 private:
     size_t _updates;
@@ -51,7 +51,7 @@ public:
 
 protected:
     bool onMessage(const SystemEventMessage& message) override { ++_messages; return true; }
-    bool onMessage(const StockDirectoryMessage& message) override { ++_messages; _market.AddSymbol(Symbol(message.StockLocate, message.Stock)); return true; }
+    bool onMessage(const StockDirectoryMessage& message) override { ++_messages; Symbol symbol(message.StockLocate, message.Stock); _market.AddSymbol(symbol); _market.AddOrderBook(symbol); return true; }
     bool onMessage(const StockTradingActionMessage& message) override { ++_messages; return true; }
     bool onMessage(const RegSHOMessage& message) override { ++_messages; return true; }
     bool onMessage(const MarketParticipantPositionMessage& message) override { ++_messages; return true; }
@@ -103,7 +103,7 @@ TEST_CASE("Market manager", "[CppTrader]")
     }
 
     // Check results
-    REQUIRE(market_handler.updates() == 257288);
+    REQUIRE(market_handler.updates() == 229008);
     REQUIRE(itch_handler.messages() == 1563071);
     REQUIRE(itch_handler.errors() == 0);
 }

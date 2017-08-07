@@ -1,13 +1,13 @@
 /*!
     \file level.h
-    \brief Price level domain model definition
+    \brief Price level definition
     \author Ivan Shynkarenka
     \date 02.08.2017
     \copyright MIT License
 */
 
-#ifndef CPPTRADER_DOMAIN_LEVEL_H
-#define CPPTRADER_DOMAIN_LEVEL_H
+#ifndef CPPTRADER_LEVEL_H
+#define CPPTRADER_LEVEL_H
 
 #include "order.h"
 
@@ -15,7 +15,7 @@
 
 namespace CppTrader {
 
-//! Price level model
+//! Price level
 struct Level : public CppCommon::BinTreeAVL<Level>::Node
 {
     //! Level price
@@ -26,11 +26,7 @@ struct Level : public CppCommon::BinTreeAVL<Level>::Node
     //! Price level orders
     CppCommon::List<Order> Orders;
 
-    Level(uint64_t price) noexcept
-    {
-        Price = price;
-        Volume = 0;
-    }
+    Level(uint64_t price) noexcept;
     Level(const Level&) noexcept = default;
     Level(Level&&) noexcept = default;
     ~Level() noexcept = default;
@@ -59,4 +55,4 @@ struct Level : public CppCommon::BinTreeAVL<Level>::Node
 
 #include "level.inl"
 
-#endif // CPPTRADER_DOMAIN_LEVEL_H
+#endif // CPPTRADER_LEVEL_H

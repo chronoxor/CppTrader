@@ -1,13 +1,13 @@
 /*!
     \file symbol.h
-    \brief Symbol domain model definition
+    \brief Symbol definition
     \author Ivan Shynkarenka
     \date 31.07.2017
     \copyright MIT License
 */
 
-#ifndef CPPTRADER_DOMAIN_SYMBOL_H
-#define CPPTRADER_DOMAIN_SYMBOL_H
+#ifndef CPPTRADER_SYMBOL_H
+#define CPPTRADER_SYMBOL_H
 
 #include "utility/iostream.h"
 
@@ -16,7 +16,7 @@
 
 namespace CppTrader {
 
-//! Symbol model
+//! Symbol
 struct Symbol
 {
     //! Symbol Id
@@ -24,11 +24,7 @@ struct Symbol
     //! Symbol name
     char Name[8];
 
-    Symbol(uint32_t id, const char name[8]) noexcept
-    {
-        Id = id;
-        std::strncpy(Name, name, sizeof(Name));
-    }
+    Symbol(uint32_t id, const char name[8]) noexcept;
     Symbol(const Symbol&) noexcept = default;
     Symbol(Symbol&&) noexcept = default;
     ~Symbol() noexcept = default;
@@ -43,4 +39,4 @@ struct Symbol
 
 #include "symbol.inl"
 
-#endif // CPPTRADER_DOMAIN_SYMBOL_H
+#endif // CPPTRADER_SYMBOL_H

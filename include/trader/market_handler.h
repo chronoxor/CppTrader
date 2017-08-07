@@ -9,11 +9,10 @@
 #ifndef CPPTRADER_MARKET_HANDLER_H
 #define CPPTRADER_MARKET_HANDLER_H
 
-#include "../../domain/level.h"
-#include "../../domain/order.h"
-#include "../../domain/symbol.h"
-
+#include "level.h"
+#include "order.h"
 #include "order_book.h"
+#include "symbol.h"
 
 namespace CppTrader {
 
@@ -47,6 +46,11 @@ protected:
     virtual void onAddSymbol(const Symbol& symbol) {}
     virtual void onDeleteSymbol(const Symbol& symbol) {}
 
+    // Order book handlers
+    virtual void onAddOrderBook(const OrderBook& order_book) {}
+    virtual void onDeleteOrderBook(const OrderBook& order_book) {}
+    virtual void onUpdateOrderBook(const OrderBook& order_book, const Level& level, bool top) {}
+
     // Order handlers
     virtual void onAddOrder(const Order& order) {}
     virtual void onReduceOrder(const Order& order, uint64_t quantity) {}
@@ -58,11 +62,6 @@ protected:
 
     // Order execution handlers
     virtual void onExecuteOrder(const Order& order, uint64_t price, uint64_t quantity) {}
-
-    // Order book handlers
-    virtual void onAddOrderBook(const OrderBook& order_book) {}
-    virtual void onDeleteOrderBook(const OrderBook& order_book) {}
-    virtual void onUpdateOrderBook(const OrderBook& order_book, const Level& level, bool top) {}
 };
 
 } // namespace CppTrader

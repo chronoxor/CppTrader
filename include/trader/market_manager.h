@@ -10,16 +10,20 @@
 #define CPPTRADER_MARKET_MANAGER_H
 
 #include "market_handler.h"
-#include "order_book.h"
-#include "order_manager.h"
-#include "symbol_manager.h"
+
+#include "fast_hash.h"
+
+#include "containers/hashmap.h"
+#include "memory/allocator_pool.h"
+
+#include <cassert>
+#include <vector>
 
 namespace CppTrader {
 
 //! Market manager
 /*!
-    Market manager is used to manage the whole market entities - symbols, symbol groups,
-    orders and order books.
+    Market manager is used to manage the market with symbols, orders and order books.
 
     Not thread-safe.
 */
@@ -35,17 +39,24 @@ public:
     MarketManager& operator=(const MarketManager&) = delete;
     MarketManager& operator=(MarketManager&&) = default;
 
-    //! Get the symbol manager
-    const SymbolManager& symbols() const noexcept { return _symbols; }
-    //! Get the order manager
-    const OrderManager& orders() const noexcept { return _orders; }
-
+    //! Get the symbol with the given Id
+    /*!
+        \param id - Symbol Id
+        \return Pointer to the symobl with the given Id or nullptr
+    */
+    const Symbol* GetSymbol(uint32_t id) const noexcept;
     //! Get the order book for the given symbol Id
     /*!
-        \param symbol - Symbol Id
+        \param id - Symbol Id of the order book
         \return Pointer to the order book with the given symbol Id or nullptr
     */
     const OrderBook* GetOrderBook(uint32_t symbol) const noexcept;
+    //! Get the order with the given Id
+    /*!
+        \param id - Order Id
+        \return Pointer to the order with the given Id or nullptr
+    */
+    const Order* GetOrder(uint64_t id) const noexcept;
 
     //! Add a new symbol
     /*!
@@ -57,6 +68,17 @@ public:
         \param id - Symbol Id
     */
     void DeleteSymbol(uint32_t id);
+
+    //! Add a new order book
+    /*!
+        \param symbol - Symbol of the order book to add
+    */
+    void AddOrderBook(const Symbol& symbol);
+    //! Delete the order book
+    /*!
+        \param id - Symbol Id of the order book
+    */
+    void DeleteOrderBook(uint32_t id);
 
     //! Add a new order
     /*!
@@ -111,14 +133,29 @@ public:
     void ExecuteOrder(uint64_t id, uint64_t price, uint64_t quantity);
 
 private:
-    static MarketHandler _default_handler;
+    // Market handler
+    static MarketHandler _default;
     MarketHandler& _market_handler;
-    CppCommon::DefaultMemoryManager _default_manager;
-    CppCommon::PoolMemoryManager<CppCommon::DefaultMemoryManager> _pool_manager;
-    CppCommon::PoolAllocator<OrderBook, CppCommon::DefaultMemoryManager> _pool;
-    SymbolManager _symbols;
-    OrderManager _orders;
-    std::vector<OrderBook*> _order_book;
+
+    // Auxiliary memory manager
+    CppCommon::DefaultMemoryManager _auxiliary_memory_manager;
+
+    // Symbols
+    CppCommon::PoolMemoryManager<CppCommon::DefaultMemoryManager> _symbol_memory_manager;
+    CppCommon::PoolAllocator<Symbol, CppCommon::DefaultMemoryManager> _symbol_pool;
+    std::vector<Symbol*> _symbols;
+
+    // Order books
+    CppCommon::PoolMemoryManager<CppCommon::DefaultMemoryManager> _order_book_memory_manager;
+    CppCommon::PoolAllocator<OrderBook, CppCommon::DefaultMemoryManager> _order_book_pool;
+    std::vector<OrderBook*> _order_books;
+
+    // Orders
+    CppCommon::PoolMemoryManager<CppCommon::DefaultMemoryManager> _order_memory_manager;
+    CppCommon::PoolAllocator<Order, CppCommon::DefaultMemoryManager> _order_pool;
+    CppCommon::HashMap<uint64_t, Order*, FastHash> _orders;
+
+    void UpdateOrderBook(const OrderBook& order_book, const std::pair<Level*, bool>& order_book_update1, const std::pair<Level*, bool>& order_book_update2 = std::make_pair(nullptr, false));
 };
 
 /*! \example market_manager.cpp Market manager example */

@@ -1,13 +1,13 @@
 /*!
     \file order.h
-    \brief Order domain model definition
+    \brief Order definition
     \author Ivan Shynkarenka
     \date 31.07.2017
     \copyright MIT License
 */
 
-#ifndef CPPTRADER_DOMAIN_ORDER_H
-#define CPPTRADER_DOMAIN_ORDER_H
+#ifndef CPPTRADER_ORDER_H
+#define CPPTRADER_ORDER_H
 
 #include "containers/list.h"
 #include "utility/iostream.h"
@@ -15,6 +15,9 @@
 #include <cstdint>
 
 namespace CppTrader {
+
+struct Level;
+class OrderBook;
 
 //! Order side
 enum class OrderSide : uint8_t
@@ -31,7 +34,7 @@ enum class OrderType : uint8_t
 };
 std::ostream& operator<<(std::ostream& stream, OrderType type);
 
-//! Order model
+//! Order
 struct Order : public CppCommon::List<Order>::Node
 {
     //! Order Id
@@ -47,15 +50,12 @@ struct Order : public CppCommon::List<Order>::Node
     //! Order quantity
     uint64_t Quantity;
 
-    Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity) noexcept
-    {
-        Id = id;
-        SymbolId = symbol;
-        Type = type;
-        Side = side;
-        Price = price;
-        Quantity = quantity;
-    }
+    //! Price level
+    Level* Level;
+    //! Order book
+    OrderBook* OrderBook;
+
+    Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity) noexcept;
     Order(const Order&) noexcept = default;
     Order(Order&&) noexcept = default;
     ~Order() noexcept = default;
@@ -70,4 +70,4 @@ struct Order : public CppCommon::List<Order>::Node
 
 #include "order.inl"
 
-#endif // CPPTRADER_DOMAIN_ORDER_H
+#endif // CPPTRADER_ORDER_H

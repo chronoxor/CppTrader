@@ -9,10 +9,9 @@
 #ifndef CPPTRADER_ORDER_BOOK_H
 #define CPPTRADER_ORDER_BOOK_H
 
-#include "../../domain/level.h"
-#include "../../domain/symbol.h"
+#include "level.h"
+#include "symbol.h"
 
-#include "containers/bintree_avl.h"
 #include "memory/allocator_pool.h"
 
 namespace CppTrader {
@@ -59,14 +58,24 @@ public:
     friend std::ostream& operator<<(std::ostream& stream, const OrderBook& order_book);
 
 private:
-    const Symbol& _symbol;
-    CppCommon::DefaultMemoryManager _default_manager;
-    CppCommon::PoolMemoryManager<CppCommon::DefaultMemoryManager> _pool_manager;
-    CppCommon::PoolAllocator<Level, CppCommon::DefaultMemoryManager> _pool;
+    // Order book symbol
+    Symbol _symbol;
+
+    // Auxiliary memory manager
+    CppCommon::DefaultMemoryManager _auxiliary_memory_manager;
+
+    // Bid/Ask price levels
+    CppCommon::PoolMemoryManager<CppCommon::DefaultMemoryManager> _level_memory_manager;
+    CppCommon::PoolAllocator<Level, CppCommon::DefaultMemoryManager> _level_pool;
     Levels _bids;
     Levels _asks;
+    Level* _best_bid;
+    Level* _best_ask;
 
     Levels::iterator FindLevel(OrderSide side, uint64_t price) noexcept;
+
+    Level* AddLevel(Order* order_ptr);
+    Level* DeleteLevel(Order* order_ptr, Level* level_ptr);
 
     std::pair<Level*, bool> AddOrder(Order* order_ptr);
     std::pair<Level*, bool> ReduceOrder(Order* order_ptr, uint64_t quantity);
