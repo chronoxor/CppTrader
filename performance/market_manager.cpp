@@ -168,11 +168,13 @@ int main(int argc, char** argv)
 
     std::cout << std::endl;
 
-    size_t total_errors = itch_handler.errors();
+    std::cout << "Errors: " << itch_handler.errors() << std::endl;
+
+    std::cout << std::endl;
+
     size_t total_messages = itch_handler.messages();
     size_t total_updates = market_handler.updates();
 
-    std::cout << "Errors: " << total_errors << std::endl;
     std::cout << "Processing time: " << CppBenchmark::ReporterConsole::GenerateTimePeriod(timestamp_stop - timestamp_start) << std::endl;
     std::cout << "Total ITCH messages: " << total_messages << std::endl;
     std::cout << "ITCH messages latency: " << CppBenchmark::ReporterConsole::GenerateTimePeriod((timestamp_stop - timestamp_start) / total_messages) << std::endl;
