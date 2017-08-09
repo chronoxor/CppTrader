@@ -77,9 +77,8 @@ private:
     Level* _best_bid;
     Level* _best_ask;
 
-    Level* FindLevel(OrderSide side, uint64_t price) noexcept;
-    Level* AddLevel(Order* order_ptr);
-    Level* DeleteLevel(Order* order_ptr, Level* level_ptr);
+    Level* FindLevel(Order* order_ptr);
+    Level* DeleteLevel(Order* order_ptr);
 
     std::pair<Level*, bool> AddOrder(Order* order_ptr);
     std::pair<Level*, bool> ReduceOrder(Order* order_ptr, uint64_t quantity);
