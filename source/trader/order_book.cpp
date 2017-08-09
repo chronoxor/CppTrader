@@ -25,48 +25,46 @@ OrderBook::~OrderBook()
 
 Level* OrderBook::FindLevel(Order* order_ptr)
 {
-    Level* level_ptr = nullptr;
-
-    // Find the price level for the order
     if (order_ptr->Side == OrderSide::BUY)
     {
         // Try to find required price level in the bid collection
         auto it = _bids.find(Level(order_ptr->Price));
         if (it != _bids.end())
-            level_ptr = it.operator->();
+            return it.operator->();
     }
     else
     {
         // Try to find required price level in the ask collection
         auto it = _asks.find(Level(order_ptr->Price));
         if (it != _asks.end())
-            level_ptr = it.operator->();
+            return it.operator->();
     }
 
-    // Create a new price level if no one found
-    if (level_ptr == nullptr)
+    return nullptr;
+}
+
+Level* OrderBook::AddLevel(Order* order_ptr)
+{
+    // Create a new price level
+    Level* level_ptr = _level_pool.Create(order_ptr->Price);
+
+    if (order_ptr->Side == OrderSide::BUY)
     {
-        // Create a new price level
-        level_ptr = _level_pool.Create(order_ptr->Price);
+        // Insert the price level into the bid collection
+        _bids.insert(*level_ptr);
 
-        if (order_ptr->Side == OrderSide::BUY)
-        {
-            // Insert the price level into the bid collection
-            _bids.insert(*level_ptr);
+        // Update best bid price level
+        if ((_best_bid == nullptr) || (level_ptr->Price > _best_bid->Price))
+            _best_bid = level_ptr;
+    }
+    else
+    {
+        // Insert the price level into the ask collection
+        _asks.insert(*level_ptr);
 
-            // Update best bid price level
-            if ((_best_bid == nullptr) || (level_ptr->Price > _best_bid->Price))
-                _best_bid = level_ptr;
-        }
-        else
-        {
-            // Insert the price level into the ask collection
-            _asks.insert(*level_ptr);
-
-            // Update best ask price level
-            if ((_best_ask == nullptr) || (level_ptr->Price < _best_ask->Price))
-                _best_ask = level_ptr;
-        }
+        // Update best ask price level
+        if ((_best_ask == nullptr) || (level_ptr->Price < _best_ask->Price))
+            _best_ask = level_ptr;
     }
 
     return level_ptr;
@@ -105,10 +103,14 @@ Level* OrderBook::DeleteLevel(Order* order_ptr)
     return nullptr;
 }
 
-std::pair<Level*, bool> OrderBook::AddOrder(Order* order_ptr)
+bool OrderBook::AddOrder(Order* order_ptr)
 {
     // Find the price level for the order
     Level* level_ptr = FindLevel(order_ptr);
+
+    // Create a new price level if no one found
+    if (level_ptr == nullptr)
+        level_ptr = AddLevel(order_ptr);
 
     // Update the price level volume
     level_ptr->Volume += order_ptr->Quantity;
@@ -120,10 +122,10 @@ std::pair<Level*, bool> OrderBook::AddOrder(Order* order_ptr)
     order_ptr->_level = level_ptr;
 
     // Price level was changed. Return top of the book modification flag.
-    return std::make_pair(level_ptr, (level_ptr == ((order_ptr->Side == OrderSide::BUY) ? _best_bid : _best_ask)));
+    return (level_ptr == ((order_ptr->Side == OrderSide::BUY) ? _best_bid : _best_ask));
 }
 
-std::pair<Level*, bool> OrderBook::ReduceOrder(Order* order_ptr, uint64_t quantity)
+bool OrderBook::ReduceOrder(Order* order_ptr, uint64_t quantity)
 {
     // Find the price level for the order
     Level* level_ptr = order_ptr->_level;
@@ -143,14 +145,14 @@ std::pair<Level*, bool> OrderBook::ReduceOrder(Order* order_ptr, uint64_t quanti
             level_ptr = DeleteLevel(order_ptr);
 
         // Price level was changed. Return top of the book modification flag.
-        return std::make_pair(level_ptr, (level_ptr == ((order_ptr->Side == OrderSide::BUY) ? _best_bid : _best_ask)));
+        return (level_ptr == ((order_ptr->Side == OrderSide::BUY) ? _best_bid : _best_ask));
     }
 
     // Price level was not changed
-    return std::make_pair(nullptr, false);
+    return false;
 }
 
-std::pair<Level*, bool> OrderBook::DeleteOrder(Order* order_ptr)
+bool OrderBook::DeleteOrder(Order* order_ptr)
 {
     // Find the price level for the order
     Level* level_ptr = order_ptr->_level;
@@ -169,11 +171,11 @@ std::pair<Level*, bool> OrderBook::DeleteOrder(Order* order_ptr)
             level_ptr = DeleteLevel(order_ptr);
 
         // Price level was changed. Return top of the book modification flag.
-        return std::make_pair(level_ptr, (level_ptr == ((order_ptr->Side == OrderSide::BUY) ? _best_bid : _best_ask)));
+        return (level_ptr == ((order_ptr->Side == OrderSide::BUY) ? _best_bid : _best_ask));
     }
 
     // Price level was not changed
-    return std::make_pair(nullptr, false);
+    return false;
 }
 
 } // namespace CppTrader

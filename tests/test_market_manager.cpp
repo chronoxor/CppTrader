@@ -27,7 +27,6 @@ public:
           _order_books(0),
           _max_order_books(0),
           _max_order_book_levels(0),
-          _max_order_book_orders(0),
           _orders(0),
           _max_orders(0),
           _add_order(0),
@@ -42,7 +41,6 @@ public:
     size_t max_symbols() const { return _max_symbols; }
     size_t max_order_books() const { return _max_order_books; }
     size_t max_order_book_levels() const { return _max_order_book_levels; }
-    size_t max_order_book_orders() const { return _max_order_book_orders; }
     size_t max_orders() const { return _max_orders; }
     size_t add_order() const { return _add_order; }
     size_t reduce_order() const { return _reduce_order; }
@@ -55,8 +53,8 @@ protected:
     void onAddSymbol(const Symbol& symbol) override { ++_updates; ++_symbols; _max_symbols = std::max(_symbols, _max_symbols); }
     void onDeleteSymbol(const Symbol& symbol) override { ++_updates; --_symbols; }
     void onAddOrderBook(const OrderBook& order_book) override { ++_updates; ++_order_books; _max_order_books = std::max(_order_books, _max_order_books); }
+    void onUpdateOrderBook(const OrderBook& order_book, bool top) override { ++_updates; _max_order_book_levels = std::max(std::max(order_book.bids().size(), order_book.asks().size()), _max_order_book_levels); }
     void onDeleteOrderBook(const OrderBook& order_book) override { ++_updates; --_order_books; }
-    void onUpdateOrderBook(const OrderBook& order_book, const Level& level, bool top) override { ++_updates; _max_order_book_levels = std::max(std::max(order_book.bids().size(), order_book.asks().size()), _max_order_book_levels); _max_order_book_orders = std::max(level.Orders.size(), _max_order_book_orders); }
     void onAddOrder(const Order& order) override { ++_updates; ++_orders; _max_orders = std::max(_orders, _max_orders); ++_add_order; }
     void onReduceOrder(const Order& order, uint64_t quantity) override { ++_updates; ++_reduce_order; }
     void onModifyOrder(const Order& order, uint64_t new_price, uint64_t new_quantity) override { ++_updates; ++_modify_order; }
@@ -73,7 +71,6 @@ private:
     size_t _order_books;
     size_t _max_order_books;
     size_t _max_order_book_levels;
-    size_t _max_order_book_orders;
     size_t _orders;
     size_t _max_orders;
     size_t _add_order;
@@ -152,13 +149,12 @@ TEST_CASE("Market manager", "[CppTrader]")
     // Check results
     REQUIRE(itch_handler.errors() == 0);
     REQUIRE(itch_handler.messages() == 1563071);
-    REQUIRE(market_handler.updates() == 226573);
+    REQUIRE(market_handler.updates() == 257261);
 
     // Check market statistics
     REQUIRE(market_handler.max_symbols() == 8352);
     REQUIRE(market_handler.max_order_books() == 8352);
     REQUIRE(market_handler.max_order_book_levels() == 562);
-    REQUIRE(market_handler.max_order_book_orders() == 517);
     REQUIRE(market_handler.max_orders() == 56245);
 
     // Check order statistics

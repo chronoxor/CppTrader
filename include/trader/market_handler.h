@@ -48,8 +48,8 @@ protected:
 
     // Order book handlers
     virtual void onAddOrderBook(const OrderBook& order_book) {}
+    virtual void onUpdateOrderBook(const OrderBook& order_book, bool top) {}
     virtual void onDeleteOrderBook(const OrderBook& order_book) {}
-    virtual void onUpdateOrderBook(const OrderBook& order_book, const Level& level, bool top) {}
 
     // Order handlers
     virtual void onAddOrder(const Order& order) {}

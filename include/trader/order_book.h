@@ -78,11 +78,12 @@ private:
     Level* _best_ask;
 
     Level* FindLevel(Order* order_ptr);
+    Level* AddLevel(Order* order_ptr);
     Level* DeleteLevel(Order* order_ptr);
 
-    std::pair<Level*, bool> AddOrder(Order* order_ptr);
-    std::pair<Level*, bool> ReduceOrder(Order* order_ptr, uint64_t quantity);
-    std::pair<Level*, bool> DeleteOrder(Order* order_ptr);
+    bool AddOrder(Order* order_ptr);
+    bool ReduceOrder(Order* order_ptr, uint64_t quantity);
+    bool DeleteOrder(Order* order_ptr);
 };
 
 } // namespace CppTrader

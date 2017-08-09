@@ -156,7 +156,7 @@ void MarketManager::AddOrder(const Order& order)
     if (order_book_ptr != nullptr)
     {
         // Add the new order into the order book
-        UpdateOrderBook(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
+        _market_handler.onUpdateOrderBook(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
     }
 }
 
@@ -194,7 +194,7 @@ void MarketManager::ReduceOrder(uint64_t id, uint64_t quantity)
     if (order_book_ptr != nullptr)
     {
         // Reduce the order in the order book
-        UpdateOrderBook(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity));
+        _market_handler.onUpdateOrderBook(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity));
     }
 
     // Delete the empty order
@@ -226,14 +226,14 @@ void MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_qu
     Order* order_ptr = (Order*)order_it->second;
 
     // Order book will be modified in two steps with a single call to update handler
-    std::pair<Level*, bool> order_book_update(nullptr, false);
+    bool top = false;
 
     // Get the valid order book for the modifying order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Delete the order from the order book
-        order_book_update = order_book_ptr->DeleteOrder(order_ptr);
+        top = order_book_ptr->DeleteOrder(order_ptr);
     }
 
     // Call the corresponding handler
@@ -252,16 +252,14 @@ void MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_qu
         if (order_book_ptr != nullptr)
         {
             // Add the modified order into the order book
-            UpdateOrderBook(*order_book_ptr, order_book_update, order_book_ptr->AddOrder(order_ptr));
+            _market_handler.onUpdateOrderBook(*order_book_ptr, order_book_ptr->AddOrder(order_ptr) || top);
         }
     }
     else
     {
         // Call the previous update order book handler
         if (order_book_ptr != nullptr)
-        {
-            UpdateOrderBook(*order_book_ptr, order_book_update);
-        }
+            _market_handler.onUpdateOrderBook(*order_book_ptr, top);
 
         // Call the corresponding handler
         _market_handler.onDeleteOrder(*order_ptr);
@@ -292,14 +290,14 @@ void MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_pric
     Order* order_ptr = (Order*)order_it->second;
 
     // Order book will be modified in two steps with a single call to update handler
-    std::pair<Level*, bool> order_book_update(nullptr, false);
+    bool top = false;
 
     // Get the valid order book for the replacing order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Delete the old order from the order book
-        order_book_update = order_book_ptr->DeleteOrder(order_ptr);
+        top = order_book_ptr->DeleteOrder(order_ptr);
     }
 
     if (new_quantity > 0)
@@ -325,16 +323,14 @@ void MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_pric
         if (order_book_ptr != nullptr)
         {
             // Add the modified order into the order book
-            UpdateOrderBook(*order_book_ptr, order_book_update, order_book_ptr->AddOrder(order_ptr));
+            _market_handler.onUpdateOrderBook(*order_book_ptr, order_book_ptr->AddOrder(order_ptr) || top);
         }
     }
     else
     {
         // Call the previous update order book handler
         if (order_book_ptr != nullptr)
-        {
-            UpdateOrderBook(*order_book_ptr, order_book_update);
-        }
+            _market_handler.onUpdateOrderBook(*order_book_ptr, top);
 
         // Call the corresponding handler
         _market_handler.onDeleteOrder(*order_ptr);
@@ -365,14 +361,14 @@ void MarketManager::ReplaceOrder(uint64_t id, const Order& new_order)
     Order* order_ptr = (Order*)order_it->second;
 
     // Order book will be modified in two steps with a single call to update handler
-    std::pair<Level*, bool> order_book_update(nullptr, false);
+    bool top = false;
 
     // Get the valid order book for the replacing order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Delete the old order from the order book
-        order_book_update = order_book_ptr->DeleteOrder(order_ptr);
+        top = order_book_ptr->DeleteOrder(order_ptr);
     }
 
     if (new_order.Quantity > 0)
@@ -396,16 +392,14 @@ void MarketManager::ReplaceOrder(uint64_t id, const Order& new_order)
         if (order_book_ptr != nullptr)
         {
             // Add the modified order into the order book
-            UpdateOrderBook(*order_book_ptr, order_book_update, order_book_ptr->AddOrder(order_ptr));
+            _market_handler.onUpdateOrderBook(*order_book_ptr, order_book_ptr->AddOrder(order_ptr) || top);
         }
     }
     else
     {
         // Call the previous update order book handler
         if (order_book_ptr != nullptr)
-        {
-            UpdateOrderBook(*order_book_ptr, order_book_update);
-        }
+            _market_handler.onUpdateOrderBook(*order_book_ptr, top);
 
         // Call the corresponding handler
         _market_handler.onDeleteOrder(*order_ptr);
@@ -437,7 +431,7 @@ void MarketManager::DeleteOrder(uint64_t id)
     if (order_book_ptr != nullptr)
     {
         // Delete the order from the order book
-        UpdateOrderBook(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
+        _market_handler.onUpdateOrderBook(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
     }
 
     // Call the corresponding handler
@@ -487,7 +481,7 @@ void MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
     if (order_book_ptr != nullptr)
     {
         // Reduce the order in the order book
-        UpdateOrderBook(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity));
+        _market_handler.onUpdateOrderBook(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity));
     }
 
     // Delete the empty order
@@ -541,7 +535,7 @@ void MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quantity)
     if (order_book_ptr != nullptr)
     {
         // Reduce the order in the order book
-        UpdateOrderBook(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity));
+        _market_handler.onUpdateOrderBook(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity));
     }
 
     // Delete the empty order
@@ -556,19 +550,6 @@ void MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quantity)
         // Relase the order
         _order_pool.Release(order_ptr);
     }
-}
-
-void MarketManager::UpdateOrderBook(const OrderBook& order_book, const std::pair<Level*, bool>& order_book_update1, const std::pair<Level*, bool>& order_book_update2)
-{
-    // Merge two order book updates into the single one and call the corresponding handler
-    if ((order_book_update1.first != nullptr) && (order_book_update2.first != nullptr))
-        _market_handler.onUpdateOrderBook(order_book, *order_book_update2.first, order_book_update1.second || order_book_update2.second);
-    // Call the oder book update handler for the first update only
-    else if (order_book_update1.first != nullptr)
-        _market_handler.onUpdateOrderBook(order_book, *order_book_update1.first, order_book_update1.second);
-    // Call the oder book update handler for the second update only
-    else if (order_book_update2.first != nullptr)
-        _market_handler.onUpdateOrderBook(order_book, *order_book_update2.first, order_book_update2.second);
 }
 
 } // namespace CppTrader

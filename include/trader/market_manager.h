@@ -153,8 +153,6 @@ private:
     CppCommon::PoolMemoryManager<CppCommon::DefaultMemoryManager> _order_memory_manager;
     CppCommon::PoolAllocator<Order, CppCommon::DefaultMemoryManager> _order_pool;
     CppCommon::HashMap<uint64_t, Order*, FastHash> _orders;
-
-    void UpdateOrderBook(const OrderBook& order_book, const std::pair<Level*, bool>& order_book_update1, const std::pair<Level*, bool>& order_book_update2 = std::make_pair(nullptr, false));
 };
 
 /*! \example market_manager.cpp Market manager example */

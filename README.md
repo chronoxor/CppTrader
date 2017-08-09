@@ -139,19 +139,18 @@ ITCH processing...Done!
 
 Errors: 0
 
-Processing time: 1:26.500 m
+Processing time: 1:26.780 m
 Total ITCH messages: 283238832
-ITCH message latency: 305 ns
-ITCH message throughput: 3274401 messages per second
-Total market updates: 545721008
-Market update latency: 158 ns
-Market update throughput: 6308844 updates per second
+ITCH message latency: 306 ns
+ITCH message throughput: 3263864 messages per second
+Total market updates: 571809955
+Market update latency: 151 ns
+Market update throughput: 6589175 updates per second
 
 Market statistics:
 Max symbols: 8371
 Max order books: 8371
 Max order book levels: 2422
-Max order book orders: 2975
 Max orders: 1647972
 
 Order statistics:

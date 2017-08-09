@@ -23,10 +23,10 @@ protected:
 
     void onAddOrderBook(const CppTrader::OrderBook& order_book) override
     { std::cout << "Add order book: " << order_book << std::endl; }
+    void onUpdateOrderBook(const CppTrader::OrderBook& order_book, bool top) override
+    { std::cout << "Update order book: " << order_book << (top ? " - Top of the book!" : "") << std::endl; }
     void onDeleteOrderBook(const CppTrader::OrderBook& order_book) override
     { std::cout << "Delete order book: " << order_book << std::endl; }
-    void onUpdateOrderBook(const CppTrader::OrderBook& order_book, const CppTrader::Level& level, bool top) override
-    { std::cout << "Update order book: " << order_book << " - "<< level << (top ? " - Top of the book!" : "") << std::endl; }
 
     void onAddOrder(const CppTrader::Order& order) override
     { std::cout << "Add order: " << order << std::endl; }

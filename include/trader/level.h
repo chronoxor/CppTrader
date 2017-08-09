@@ -15,6 +15,14 @@
 
 namespace CppTrader {
 
+//! Price level side
+enum class LevelSide : uint8_t
+{
+    BID,
+    ASK
+};
+std::ostream& operator<<(std::ostream& stream, LevelSide side);
+
 //! Price level
 struct Level : public CppCommon::BinTreeAVL<Level>::Node
 {
