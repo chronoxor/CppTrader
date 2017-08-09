@@ -25,12 +25,10 @@ OrderBook::~OrderBook()
 
 Level* OrderBook::FindLevel(OrderSide side, uint64_t price) noexcept
 {
-    Level required(price);
-
     if (side == OrderSide::BUY)
     {
         // Try to find required price level in the bid collection
-        auto it = _bids.find(required);
+        auto it = _bids.find(Level(price));
         if (it != _bids.end())
             return it.operator->();
         else
@@ -39,7 +37,7 @@ Level* OrderBook::FindLevel(OrderSide side, uint64_t price) noexcept
     else
     {
         // Try to find required price level in the ask collection
-        auto it = _asks.find(required);
+        auto it = _asks.find(Level(price));
         if (it != _asks.end())
             return it.operator->();
         else
