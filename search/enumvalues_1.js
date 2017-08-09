@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['limit',['LIMIT',['../namespace_cpp_trader.html#aa18cdf656ad277fcf2e707422ccd148ea3d49b5cb41d88e381beb0d887d7023a2',1,'CppTrader']]]
+  ['bid',['BID',['../namespace_cpp_trader.html#ab3f947ae05198f06aa1842f8e63d5df9a61613d5a4896bfbf5bdb8cb2f476b7f6',1,'CppTrader']]],
+  ['buy',['BUY',['../namespace_cpp_trader.html#a9c12ff4987347bcd962a10467ab2ec87ac45b496ec0828772c8088e4118f09b33',1,'CppTrader']]]
 ];

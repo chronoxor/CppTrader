@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['buy',['BUY',['../namespace_cpp_trader.html#a9c12ff4987347bcd962a10467ab2ec87ac45b496ec0828772c8088e4118f09b33',1,'CppTrader']]]
+  ['ask',['ASK',['../namespace_cpp_trader.html#ab3f947ae05198f06aa1842f8e63d5df9a9fb730caf1b2d638a1dcf747f0d4207d',1,'CppTrader']]]
 ];
