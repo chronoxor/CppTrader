@@ -106,19 +106,26 @@ Process bits: 64-bit
 Process configuaraion: release
 ```
 
-### NASDAQ ITCH handler
+## NASDAQ ITCH handler
 
 Benchmark measures the performance of the [NASDAQ ITCH handler](https://github.com/chronoxor/CppTrader/blob/master/include/trader/providers/nasdaq/itch_handler.h).
 It shows how fast it can parse and handle ITCH messages from the input stream.
 
 Sample ITCH file could be downloaded from ftp://emi.nasdaq.com/ITCH
 
-[cpptrader-performance-itch_handler](https://github.com/chronoxor/CppTrader/blob/master/performance/itch_handler.cpp) < 01302017.NASDAQ_ITCH50
+* [cpptrader-performance-itch_handler](https://github.com/chronoxor/CppTrader/blob/master/performance/itch_handler.cpp) < 01302017.NASDAQ_ITCH50
+```
+ITCH processing...Done!
+
+Errors: 0
+
+Processing time: 6.831 s
+Total ITCH messages: 283238832
+ITCH message latency: 24 ns
+ITCH message throughput: 41460256 messages per second
 ```
 
-```
-
-### Market manager
+## Market manager
 
 Benchmark measures the performance of the [Market manager](https://github.com/chronoxor/CppTrader/blob/master/include/trader/market_manager.h).
 It shows how fast it can handle orders operations (add, reduce, modify, delete,
@@ -126,7 +133,32 @@ execute) and build an order book.
 
 Sample ITCH file could be downloaded from ftp://emi.nasdaq.com/ITCH
 
-[cpptrader-performance-market_manager](https://github.com/chronoxor/CppTrader/blob/master/performance/market_manager.cpp) < 01302017.NASDAQ_ITCH50
+* [cpptrader-performance-market_manager](https://github.com/chronoxor/CppTrader/blob/master/performance/market_manager.cpp) < 01302017.NASDAQ_ITCH50
 ```
+ITCH processing...Done!
 
+Errors: 0
+
+Processing time: 1:26.500 m
+Total ITCH messages: 283238832
+ITCH message latency: 305 ns
+ITCH message throughput: 3274401 messages per second
+Total market updates: 545721008
+Market update latency: 158 ns
+Market update throughput: 6308844 updates per second
+
+Market statistics:
+Max symbols: 8371
+Max order books: 8371
+Max order book levels: 2422
+Max order book orders: 2975
+Max orders: 1647972
+
+Order statistics:
+Add order operations: 120955288
+Reduce order operations: 11450394
+Modify order operations: 0
+Replace order operations: 31910168
+Delete order operations: 120955288
+Execute order operations: 5663712
 ```
