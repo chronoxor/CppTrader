@@ -34,7 +34,7 @@ struct Level
     //! Level volume
     uint64_t Volume;
     //! Level orders
-    uint64_t Orders;
+    size_t Orders;
 
     Level(LevelType type, uint64_t price) noexcept;
     Level(const Level&) noexcept = default;
