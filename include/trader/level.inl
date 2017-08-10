@@ -29,19 +29,10 @@ inline Level::Level(LevelType type, uint64_t price) noexcept
 {
 }
 
-inline LevelNode::LevelNode(const Level& level) noexcept : Level(level)
-{
-}
-
-inline LevelNode& LevelNode::operator=(const Level& level) noexcept
-{
-    Level::operator=(level);
-    return *this;
-}
-
 inline std::ostream& operator<<(std::ostream& stream, const Level& level)
 {
-    return stream << "Level(Price=" << level.Price
+    return stream << "Level(Type=" << level.Type
+        << "; Price=" << level.Price
         << "; Volume=" << level.Volume
         << "; Orders=" << level.Orders
         << ")";
@@ -50,6 +41,16 @@ inline std::ostream& operator<<(std::ostream& stream, const Level& level)
 inline LevelNode::LevelNode(LevelType type, uint64_t price) noexcept
     : Level(type, price)
 {
+}
+
+inline LevelNode::LevelNode(const Level& level) noexcept : Level(level)
+{
+}
+
+inline LevelNode& LevelNode::operator=(const Level& level) noexcept
+{
+    Level::operator=(level);
+    return *this;
 }
 
 inline LevelUpdate::LevelUpdate(UpdateType type, const Level& update, bool top) noexcept

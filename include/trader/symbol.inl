@@ -9,8 +9,8 @@
 namespace CppTrader {
 
 inline Symbol::Symbol(uint32_t id, const char name[8]) noexcept
+    : Id(id)
 {
-    Id = id;
     std::strncpy(Name, name, sizeof(Name));
 }
 

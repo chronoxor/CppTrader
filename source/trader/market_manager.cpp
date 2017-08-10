@@ -54,7 +54,6 @@ void MarketManager::AddSymbol(const Symbol& symbol)
     }
     _symbols[symbol.Id] = symbol_ptr;
 
-
     // Call the corresponding handler
     _market_handler.onAddSymbol(*symbol_ptr);
 }
