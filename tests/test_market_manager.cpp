@@ -27,12 +27,11 @@ public:
           _order_books(0),
           _max_order_books(0),
           _max_order_book_levels(0),
+          _max_order_book_orders(0),
           _orders(0),
           _max_orders(0),
           _add_order(0),
-          _reduce_order(0),
-          _modify_order(0),
-          _replace_order(0),
+          _update_order(0),
           _delete_order(0),
           _execute_order(0)
     {}
@@ -41,11 +40,10 @@ public:
     size_t max_symbols() const { return _max_symbols; }
     size_t max_order_books() const { return _max_order_books; }
     size_t max_order_book_levels() const { return _max_order_book_levels; }
+    size_t max_order_book_orders() const { return _max_order_book_orders; }
     size_t max_orders() const { return _max_orders; }
     size_t add_order() const { return _add_order; }
-    size_t reduce_order() const { return _reduce_order; }
-    size_t modify_order() const { return _modify_order; }
-    size_t replace_order() const { return _replace_order; }
+    size_t update_order() const { return _update_order; }
     size_t delete_order() const { return _delete_order; }
     size_t execute_order() const { return _execute_order; }
 
@@ -53,14 +51,13 @@ protected:
     void onAddSymbol(const Symbol& symbol) override { ++_updates; ++_symbols; _max_symbols = std::max(_symbols, _max_symbols); }
     void onDeleteSymbol(const Symbol& symbol) override { ++_updates; --_symbols; }
     void onAddOrderBook(const OrderBook& order_book) override { ++_updates; ++_order_books; _max_order_books = std::max(_order_books, _max_order_books); }
-    void onUpdateOrderBook(const OrderBook& order_book, bool top) override { ++_updates; _max_order_book_levels = std::max(std::max(order_book.bids().size(), order_book.asks().size()), _max_order_book_levels); }
+    void onUpdateOrderBook(const OrderBook& order_book, bool top) override { _max_order_book_levels = std::max(std::max(order_book.bids().size(), order_book.asks().size()), _max_order_book_levels); }
     void onDeleteOrderBook(const OrderBook& order_book) override { ++_updates; --_order_books; }
+    void onAddLevel(const Level& level, bool top) override { ++_updates; }
+    void onUpdateLevel(const Level& level, bool top) override { ++_updates; _max_order_book_orders = std::max(level.Orders, _max_order_book_orders); }
+    void onDeleteLevel(const Level& level, bool top) override { ++_updates; }
     void onAddOrder(const Order& order) override { ++_updates; ++_orders; _max_orders = std::max(_orders, _max_orders); ++_add_order; }
-    void onReduceOrder(const Order& order, uint64_t quantity) override { ++_updates; ++_reduce_order; }
-    void onModifyOrder(const Order& order, uint64_t new_price, uint64_t new_quantity) override { ++_updates; ++_modify_order; }
-    void onReplaceOrder(const Order& order, uint64_t new_id, uint64_t new_price, uint64_t new_quantity) override { ++_updates; ++_replace_order; }
-    void onReplaceOrder(const Order& order, const Order& new_order) override { ++_updates; ++_replace_order; }
-    void onUpdateOrder(const Order& order) override {}
+    void onUpdateOrder(const Order& order) override { ++_updates; ++_update_order; }
     void onDeleteOrder(const Order& order) override { ++_updates; --_orders; ++_delete_order; }
     void onExecuteOrder(const Order& order, uint64_t price, uint64_t quantity) override { ++_updates; ++_execute_order; }
 
@@ -71,12 +68,11 @@ private:
     size_t _order_books;
     size_t _max_order_books;
     size_t _max_order_book_levels;
+    size_t _max_order_book_orders;
     size_t _orders;
     size_t _max_orders;
     size_t _add_order;
-    size_t _reduce_order;
-    size_t _modify_order;
-    size_t _replace_order;
+    size_t _update_order;
     size_t _delete_order;
     size_t _execute_order;
 };
@@ -149,19 +145,18 @@ TEST_CASE("Market manager", "[CppTrader]")
     // Check results
     REQUIRE(itch_handler.errors() == 0);
     REQUIRE(itch_handler.messages() == 1563071);
-    REQUIRE(market_handler.updates() == 257261);
+    REQUIRE(market_handler.updates() == 254853);
 
     // Check market statistics
     REQUIRE(market_handler.max_symbols() == 8352);
     REQUIRE(market_handler.max_order_books() == 8352);
     REQUIRE(market_handler.max_order_book_levels() == 562);
+    REQUIRE(market_handler.max_order_book_orders() == 517);
     REQUIRE(market_handler.max_orders() == 56245);
 
     // Check order statistics
     REQUIRE(market_handler.add_order() == 58915);
-    REQUIRE(market_handler.reduce_order() == 2435);
-    REQUIRE(market_handler.modify_order() == 0);
-    REQUIRE(market_handler.replace_order() == 0);
+    REQUIRE(market_handler.update_order() == 27);
     REQUIRE(market_handler.delete_order() == 58915);
     REQUIRE(market_handler.execute_order() == 2435);
 }

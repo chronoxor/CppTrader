@@ -16,8 +16,6 @@
 
 namespace CppTrader {
 
-struct Level;
-
 //! Order side
 enum class OrderSide : uint8_t
 {
@@ -34,10 +32,8 @@ enum class OrderType : uint8_t
 std::ostream& operator<<(std::ostream& stream, OrderType type);
 
 //! Order
-struct Order : public CppCommon::List<Order>::Node
+struct Order
 {
-    friend class OrderBook;
-
     //! Order Id
     uint64_t Id;
     //! Symbol Id
@@ -60,9 +56,24 @@ struct Order : public CppCommon::List<Order>::Node
     Order& operator=(Order&&) noexcept = default;
 
     friend std::ostream& operator<<(std::ostream& stream, const Order& order);
+};
 
-private:
-    Level* _level;
+struct LevelNode;
+
+//! Order node
+struct OrderNode : public Order, public CppCommon::List<OrderNode>::Node
+{
+    LevelNode* Level;
+
+    OrderNode(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity) noexcept;
+    OrderNode(const Order& order) noexcept;
+    OrderNode(const OrderNode&) noexcept = default;
+    OrderNode(OrderNode&&) noexcept = default;
+    ~OrderNode() noexcept = default;
+
+    OrderNode& operator=(const Order& order) noexcept;
+    OrderNode& operator=(const OrderNode&) noexcept = default;
+    OrderNode& operator=(OrderNode&&) noexcept = default;
 };
 
 } // namespace CppTrader

@@ -151,8 +151,10 @@ private:
 
     // Orders
     CppCommon::PoolMemoryManager<CppCommon::DefaultMemoryManager> _order_memory_manager;
-    CppCommon::PoolAllocator<Order, CppCommon::DefaultMemoryManager> _order_pool;
-    CppCommon::HashMap<uint64_t, Order*, FastHash> _orders;
+    CppCommon::PoolAllocator<OrderNode, CppCommon::DefaultMemoryManager> _order_pool;
+    CppCommon::HashMap<uint64_t, OrderNode*, FastHash> _orders;
+
+    void UpdateLevel(const OrderBook& order_book, const LevelUpdate& update);
 };
 
 /*! \example market_manager.cpp Market manager example */

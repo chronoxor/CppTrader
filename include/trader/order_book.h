@@ -28,7 +28,7 @@ class OrderBook
 
 public:
     //! Price level container
-    typedef CppCommon::BinTreeAVL<Level, std::less<Level>> Levels;
+    typedef CppCommon::BinTreeAVL<LevelNode, std::less<LevelNode>> Levels;
 
     OrderBook(const Symbol& symbol);
     OrderBook(const OrderBook&) = delete;
@@ -71,19 +71,19 @@ private:
 
     // Bid/Ask price levels
     CppCommon::PoolMemoryManager<CppCommon::DefaultMemoryManager> _level_memory_manager;
-    CppCommon::PoolAllocator<Level, CppCommon::DefaultMemoryManager> _level_pool;
+    CppCommon::PoolAllocator<LevelNode, CppCommon::DefaultMemoryManager> _level_pool;
     Levels _bids;
     Levels _asks;
-    Level* _best_bid;
-    Level* _best_ask;
+    LevelNode* _best_bid;
+    LevelNode* _best_ask;
 
-    Level* FindLevel(Order* order_ptr);
-    Level* AddLevel(Order* order_ptr);
-    Level* DeleteLevel(Order* order_ptr);
+    LevelNode* FindLevel(OrderNode* order_ptr);
+    LevelNode* AddLevel(OrderNode* order_ptr);
+    LevelNode* DeleteLevel(OrderNode* order_ptr);
 
-    bool AddOrder(Order* order_ptr);
-    bool ReduceOrder(Order* order_ptr, uint64_t quantity);
-    bool DeleteOrder(Order* order_ptr);
+    LevelUpdate AddOrder(OrderNode* order_ptr);
+    LevelUpdate ReduceOrder(OrderNode* order_ptr, uint64_t quantity);
+    LevelUpdate DeleteOrder(OrderNode* order_ptr);
 };
 
 } // namespace CppTrader

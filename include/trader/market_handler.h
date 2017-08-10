@@ -51,12 +51,13 @@ protected:
     virtual void onUpdateOrderBook(const OrderBook& order_book, bool top) {}
     virtual void onDeleteOrderBook(const OrderBook& order_book) {}
 
+    // Price level handlers
+    virtual void onAddLevel(const Level& level, bool top) {}
+    virtual void onUpdateLevel(const Level& level, bool top) {}
+    virtual void onDeleteLevel(const Level& level, bool top) {}
+
     // Order handlers
     virtual void onAddOrder(const Order& order) {}
-    virtual void onReduceOrder(const Order& order, uint64_t quantity) {}
-    virtual void onModifyOrder(const Order& order, uint64_t new_price, uint64_t new_quantity) {}
-    virtual void onReplaceOrder(const Order& order, uint64_t new_id, uint64_t new_price, uint64_t new_quantity) {}
-    virtual void onReplaceOrder(const Order& order, const Order& new_order) {}
     virtual void onUpdateOrder(const Order& order) {}
     virtual void onDeleteOrder(const Order& order) {}
 

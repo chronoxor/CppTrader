@@ -138,7 +138,7 @@ void MarketManager::AddOrder(const Order& order)
         throwex CppCommon::ArgumentException("Order quantity must be greater than zero!");
 
     // Create a new order
-    Order* order_ptr = _order_pool.Create(order);
+    OrderNode* order_ptr = _order_pool.Create(order);
 
     // Insert the order
     if (!_orders.insert(std::make_pair(order.Id, order_ptr)).second)
@@ -156,7 +156,7 @@ void MarketManager::AddOrder(const Order& order)
     if (order_book_ptr != nullptr)
     {
         // Add the new order into the order book
-        _market_handler.onUpdateOrderBook(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
+        UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
     }
 }
 
@@ -175,30 +175,29 @@ void MarketManager::ReduceOrder(uint64_t id, uint64_t quantity)
     assert((order_it != _orders.end()) && "Order not found!");
     if (order_it == _orders.end())
         throwex CppCommon::RuntimeException("Order not found! Order Id = {}"_format(id));
-    Order* order_ptr = (Order*)order_it->second;
+    OrderNode* order_ptr = (OrderNode*)order_it->second;
 
     // Calculate the minimal possible order quantity to reduce
     quantity = std::min(quantity, order_ptr->Quantity);
 
-    // Call the corresponding handler
-    _market_handler.onReduceOrder(*order_ptr, quantity);
-
     // Reduce the order quantity
     order_ptr->Quantity -= quantity;
-
-    // Call the corresponding handler
-    _market_handler.onUpdateOrder(*order_ptr);
 
     // Get the valid order book for the reducing order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Reduce the order in the order book
-        _market_handler.onUpdateOrderBook(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity));
+        UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity));
     }
 
-    // Delete the empty order
-    if (order_ptr->Quantity == 0)
+    // Update the order or delete the empty order
+    if (order_ptr->Quantity > 0)
+    {
+        // Call the corresponding handler
+        _market_handler.onUpdateOrder(*order_ptr);
+    }
+    else
     {
         // Call the corresponding handler
         _market_handler.onDeleteOrder(*order_ptr);
@@ -223,44 +222,34 @@ void MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_qu
     assert((order_it != _orders.end()) && "Order not found!");
     if (order_it == _orders.end())
         throwex CppCommon::RuntimeException("Order not found! Order Id = {}"_format(id));
-    Order* order_ptr = (Order*)order_it->second;
-
-    // Order book will be modified in two steps with a single call to update handler
-    bool top = false;
+    OrderNode* order_ptr = (OrderNode*)order_it->second;
 
     // Get the valid order book for the modifying order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Delete the order from the order book
-        top = order_book_ptr->DeleteOrder(order_ptr);
+        UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
     }
-
-    // Call the corresponding handler
-    _market_handler.onModifyOrder(*order_ptr, new_price, new_quantity);
 
     // Modify the order
     order_ptr->Price = new_price;
     order_ptr->Quantity = new_quantity;
 
-    // Call the corresponding handler
-    _market_handler.onUpdateOrder(*order_ptr);
-
-    // Update the order book or delete the empty order
+    // Update the order or delete the empty order
     if (order_ptr->Quantity > 0)
     {
         if (order_book_ptr != nullptr)
         {
             // Add the modified order into the order book
-            _market_handler.onUpdateOrderBook(*order_book_ptr, order_book_ptr->AddOrder(order_ptr) || top);
+            UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
         }
+
+        // Call the corresponding handler
+        _market_handler.onUpdateOrder(*order_ptr);
     }
     else
     {
-        // Call the previous update order book handler
-        if (order_book_ptr != nullptr)
-            _market_handler.onUpdateOrderBook(*order_book_ptr, top);
-
         // Call the corresponding handler
         _market_handler.onDeleteOrder(*order_ptr);
 
@@ -287,23 +276,20 @@ void MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_pric
     assert((order_it != _orders.end()) && "Order not found!");
     if (order_it == _orders.end())
         throwex CppCommon::RuntimeException("Order not found! Order Id = {}"_format(id));
-    Order* order_ptr = (Order*)order_it->second;
-
-    // Order book will be modified in two steps with a single call to update handler
-    bool top = false;
+    OrderNode* order_ptr = (OrderNode*)order_it->second;
 
     // Get the valid order book for the replacing order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Delete the old order from the order book
-        top = order_book_ptr->DeleteOrder(order_ptr);
+        UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
     }
 
     if (new_quantity > 0)
     {
         // Call the corresponding handler
-        _market_handler.onReplaceOrder(*order_ptr, new_id, new_price, new_quantity);
+        _market_handler.onDeleteOrder(*order_ptr);
 
         // Replace the order
         _orders.erase(order_it);
@@ -318,20 +304,16 @@ void MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_pric
         }
 
         // Call the corresponding handler
-        _market_handler.onUpdateOrder(*order_ptr);
+        _market_handler.onAddOrder(*order_ptr);
 
         if (order_book_ptr != nullptr)
         {
             // Add the modified order into the order book
-            _market_handler.onUpdateOrderBook(*order_book_ptr, order_book_ptr->AddOrder(order_ptr) || top);
+            UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
         }
     }
     else
     {
-        // Call the previous update order book handler
-        if (order_book_ptr != nullptr)
-            _market_handler.onUpdateOrderBook(*order_book_ptr, top);
-
         // Call the corresponding handler
         _market_handler.onDeleteOrder(*order_ptr);
 
@@ -358,23 +340,20 @@ void MarketManager::ReplaceOrder(uint64_t id, const Order& new_order)
     assert((order_it != _orders.end()) && "Order not found!");
     if (order_it == _orders.end())
         throwex CppCommon::RuntimeException("Order not found! Order Id = {}"_format(id));
-    Order* order_ptr = (Order*)order_it->second;
-
-    // Order book will be modified in two steps with a single call to update handler
-    bool top = false;
+    OrderNode* order_ptr = (OrderNode*)order_it->second;
 
     // Get the valid order book for the replacing order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Delete the old order from the order book
-        top = order_book_ptr->DeleteOrder(order_ptr);
+        UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
     }
 
     if (new_order.Quantity > 0)
     {
         // Call the corresponding handler
-        _market_handler.onReplaceOrder(*order_ptr, new_order);
+        _market_handler.onDeleteOrder(*order_ptr);
 
         // Replace the order
         _orders.erase(order_it);
@@ -387,20 +366,16 @@ void MarketManager::ReplaceOrder(uint64_t id, const Order& new_order)
         }
 
         // Call the corresponding handler
-        _market_handler.onUpdateOrder(*order_ptr);
+        _market_handler.onAddOrder(*order_ptr);
 
         if (order_book_ptr != nullptr)
         {
             // Add the modified order into the order book
-            _market_handler.onUpdateOrderBook(*order_book_ptr, order_book_ptr->AddOrder(order_ptr) || top);
+            UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
         }
     }
     else
     {
-        // Call the previous update order book handler
-        if (order_book_ptr != nullptr)
-            _market_handler.onUpdateOrderBook(*order_book_ptr, top);
-
         // Call the corresponding handler
         _market_handler.onDeleteOrder(*order_ptr);
 
@@ -424,14 +399,14 @@ void MarketManager::DeleteOrder(uint64_t id)
     assert((order_it != _orders.end()) && "Order not found!");
     if (order_it == _orders.end())
         throwex CppCommon::RuntimeException("Order not found! Order Id = {}"_format(id));
-    Order* order_ptr = (Order*)order_it->second;
+    OrderNode* order_ptr = (OrderNode*)order_it->second;
 
     // Get the valid order book for the deleting order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Delete the order from the order book
-        _market_handler.onUpdateOrderBook(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
+        UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
     }
 
     // Call the corresponding handler
@@ -459,7 +434,7 @@ void MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
     assert((order_it != _orders.end()) && "Order not found!");
     if (order_it == _orders.end())
         throwex CppCommon::RuntimeException("Order not found! Order Id = {}"_format(id));
-    Order* order_ptr = (Order*)order_it->second;
+    OrderNode* order_ptr = (OrderNode*)order_it->second;
 
     // Calculate the minimal possible order quantity to execute
     quantity = std::min(quantity, order_ptr->Quantity);
@@ -467,25 +442,24 @@ void MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
     // Call the corresponding handler
     _market_handler.onExecuteOrder(*order_ptr, order_ptr->Price, quantity);
 
-    // Call the corresponding handler
-    _market_handler.onReduceOrder(*order_ptr, quantity);
-
     // Reduce the order quantity
     order_ptr->Quantity -= quantity;
-
-    // Call the corresponding handler
-    _market_handler.onUpdateOrder(*order_ptr);
 
     // Get the valid order book for the executing order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Reduce the order in the order book
-        _market_handler.onUpdateOrderBook(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity));
+        UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity));
     }
 
-    // Delete the empty order
-    if (order_ptr->Quantity == 0)
+    // Update the order or delete the empty order
+    if (order_ptr->Quantity > 0)
+    {
+        // Call the corresponding handler
+        _market_handler.onUpdateOrder(*order_ptr);
+    }
+    else
     {
         // Call the corresponding handler
         _market_handler.onDeleteOrder(*order_ptr);
@@ -513,7 +487,7 @@ void MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quantity)
     assert((order_it != _orders.end()) && "Order not found!");
     if (order_it == _orders.end())
         throwex CppCommon::RuntimeException("Order not found! Order Id = {}"_format(id));
-    Order* order_ptr = (Order*)order_it->second;
+    OrderNode* order_ptr = (OrderNode*)order_it->second;
 
     // Calculate the minimal possible order quantity to execute
     quantity = std::min(quantity, order_ptr->Quantity);
@@ -521,25 +495,24 @@ void MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quantity)
     // Call the corresponding handler
     _market_handler.onExecuteOrder(*order_ptr, price, quantity);
 
-    // Call the corresponding handler
-    _market_handler.onReduceOrder(*order_ptr, quantity);
-
     // Reduce the order quantity
     order_ptr->Quantity -= quantity;
-
-    // Call the corresponding handler
-    _market_handler.onUpdateOrder(*order_ptr);
 
     // Get the valid order book for the executing order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Reduce the order in the order book
-        _market_handler.onUpdateOrderBook(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity));
+        UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity));
     }
 
-    // Delete the empty order
-    if (order_ptr->Quantity == 0)
+    // Update the order or delete the empty order
+    if (order_ptr->Quantity > 0)
+    {
+        // Call the corresponding handler
+        _market_handler.onUpdateOrder(*order_ptr);
+    }
+    else
     {
         // Call the corresponding handler
         _market_handler.onDeleteOrder(*order_ptr);
@@ -550,6 +523,23 @@ void MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quantity)
         // Relase the order
         _order_pool.Release(order_ptr);
     }
+}
+
+void MarketManager::UpdateLevel(const OrderBook& order_book, const LevelUpdate& update)
+{
+    switch (update.Type)
+    {
+        case UpdateType::ADD:
+            _market_handler.onAddLevel(update.Update, update.Top);
+            break;
+        case UpdateType::UPDATE:
+            _market_handler.onUpdateLevel(update.Update, update.Top);
+            break;
+        case UpdateType::DELETE:
+            _market_handler.onDeleteLevel(update.Update, update.Top);
+            break;
+    }
+    _market_handler.onUpdateOrderBook(order_book, update.Top);
 }
 
 } // namespace CppTrader

@@ -23,19 +23,19 @@ OrderBook::~OrderBook()
     _asks.clear();
 }
 
-Level* OrderBook::FindLevel(Order* order_ptr)
+LevelNode* OrderBook::FindLevel(OrderNode* order_ptr)
 {
     if (order_ptr->Side == OrderSide::BUY)
     {
         // Try to find required price level in the bid collection
-        auto it = _bids.find(Level(order_ptr->Price));
+        auto it = _bids.find(LevelNode(LevelType::BID, order_ptr->Price));
         if (it != _bids.end())
             return it.operator->();
     }
     else
     {
         // Try to find required price level in the ask collection
-        auto it = _asks.find(Level(order_ptr->Price));
+        auto it = _asks.find(LevelNode(LevelType::ASK, order_ptr->Price));
         if (it != _asks.end())
             return it.operator->();
     }
@@ -43,13 +43,15 @@ Level* OrderBook::FindLevel(Order* order_ptr)
     return nullptr;
 }
 
-Level* OrderBook::AddLevel(Order* order_ptr)
+LevelNode* OrderBook::AddLevel(OrderNode* order_ptr)
 {
-    // Create a new price level
-    Level* level_ptr = _level_pool.Create(order_ptr->Price);
+    LevelNode* level_ptr = nullptr;
 
     if (order_ptr->Side == OrderSide::BUY)
     {
+        // Create a new price level
+        level_ptr = _level_pool.Create(LevelType::BID, order_ptr->Price);
+
         // Insert the price level into the bid collection
         _bids.insert(*level_ptr);
 
@@ -59,6 +61,9 @@ Level* OrderBook::AddLevel(Order* order_ptr)
     }
     else
     {
+        // Create a new price level
+        level_ptr = _level_pool.Create(LevelType::ASK, order_ptr->Price);
+
         // Insert the price level into the ask collection
         _asks.insert(*level_ptr);
 
@@ -70,10 +75,10 @@ Level* OrderBook::AddLevel(Order* order_ptr)
     return level_ptr;
 }
 
-Level* OrderBook::DeleteLevel(Order* order_ptr)
+LevelNode* OrderBook::DeleteLevel(OrderNode* order_ptr)
 {
     // Find the price level for the order
-    Level* level_ptr = order_ptr->_level;
+    LevelNode* level_ptr = order_ptr->Level;
 
     if (order_ptr->Side == OrderSide::BUY)
     {
@@ -97,85 +102,91 @@ Level* OrderBook::DeleteLevel(Order* order_ptr)
     // Release the price level
     _level_pool.Release(level_ptr);
 
-    // Clear the price level in the given order
-    order_ptr->_level = nullptr;
-
     return nullptr;
 }
 
-bool OrderBook::AddOrder(Order* order_ptr)
+LevelUpdate OrderBook::AddOrder(OrderNode* order_ptr)
 {
     // Find the price level for the order
-    Level* level_ptr = FindLevel(order_ptr);
+    LevelNode* level_ptr = FindLevel(order_ptr);
 
     // Create a new price level if no one found
+    UpdateType update = UpdateType::UPDATE;
     if (level_ptr == nullptr)
+    {
         level_ptr = AddLevel(order_ptr);
+        update = UpdateType::ADD;
+    }
 
     // Update the price level volume
     level_ptr->Volume += order_ptr->Quantity;
 
     // Link the new order to the orders list of the price level
-    level_ptr->Orders.push_back(*order_ptr);
+    level_ptr->OrderList.push_back(*order_ptr);
+    ++level_ptr->Orders;
 
     // Cache the price level in the given order
-    order_ptr->_level = level_ptr;
+    order_ptr->Level = level_ptr;
 
     // Price level was changed. Return top of the book modification flag.
-    return (level_ptr == ((order_ptr->Side == OrderSide::BUY) ? _best_bid : _best_ask));
+    return LevelUpdate(update, *order_ptr->Level, (order_ptr->Level == ((order_ptr->Side == OrderSide::BUY) ? _best_bid : _best_ask)));
 }
 
-bool OrderBook::ReduceOrder(Order* order_ptr, uint64_t quantity)
+LevelUpdate OrderBook::ReduceOrder(OrderNode* order_ptr, uint64_t quantity)
 {
     // Find the price level for the order
-    Level* level_ptr = order_ptr->_level;
+    LevelNode* level_ptr = order_ptr->Level;
 
-    // Reduce the order in the price level
-    if (level_ptr != nullptr)
+    // Update the price level volume
+    level_ptr->Volume -= quantity;
+
+    // Unlink the empty order from the orders list of the price level
+    if (order_ptr->Quantity == 0)
     {
-        // Update the price level volume
-        level_ptr->Volume -= quantity;
-
-        // Unlink the empty order from the orders list of the price level
-        if (order_ptr->Quantity == 0)
-            level_ptr->Orders.pop_current(*order_ptr);
-
-        // Delete the empty price level
-        if (level_ptr->Volume == 0)
-            level_ptr = DeleteLevel(order_ptr);
-
-        // Price level was changed. Return top of the book modification flag.
-        return (level_ptr == ((order_ptr->Side == OrderSide::BUY) ? _best_bid : _best_ask));
+        level_ptr->OrderList.pop_current(*order_ptr);
+        --level_ptr->Orders;
     }
 
-    // Price level was not changed
-    return false;
+    Level level(*level_ptr);
+
+    // Delete the empty price level
+    UpdateType update = UpdateType::UPDATE;
+    if (level_ptr->Volume == 0)
+    {
+        // Clear the price level in the given order
+        order_ptr->Level = DeleteLevel(order_ptr);
+        update = UpdateType::DELETE;
+    }
+
+    // Price level was changed. Return top of the book modification flag.
+    return LevelUpdate(update, level, (order_ptr->Level == ((order_ptr->Side == OrderSide::BUY) ? _best_bid : _best_ask)));
 }
 
-bool OrderBook::DeleteOrder(Order* order_ptr)
+LevelUpdate OrderBook::DeleteOrder(OrderNode* order_ptr)
 {
     // Find the price level for the order
-    Level* level_ptr = order_ptr->_level;
+    LevelNode* level_ptr = order_ptr->Level;
 
-    // Delete the order from the price level
-    if (level_ptr != nullptr)
+    // Update the price level volume
+    level_ptr->Volume -= order_ptr->Quantity;
+
+    // Unlink the order from the orders list of the price level
+    level_ptr->OrderList.pop_current(*order_ptr);
+    --level_ptr->Orders;
+
+    Level level(*level_ptr);
+
+    // Delete the empty price level
+    UpdateType update = UpdateType::UPDATE;
+    if (level_ptr->Volume == 0)
     {
-        // Update the price level volume
-        level_ptr->Volume -= order_ptr->Quantity;
-
-        // Unlink the order from the orders list of the price level
-        level_ptr->Orders.pop_current(*order_ptr);
-
-        // Delete the empty price level
-        if (level_ptr->Volume == 0)
-            level_ptr = DeleteLevel(order_ptr);
-
-        // Price level was changed. Return top of the book modification flag.
-        return (level_ptr == ((order_ptr->Side == OrderSide::BUY) ? _best_bid : _best_ask));
+        // Clear the price level in the given order
+        order_ptr->Level = DeleteLevel(order_ptr);
+        update = UpdateType::DELETE;
     }
 
-    // Price level was not changed
-    return false;
+    // Price level was changed. Return top of the book modification flag.
+    return LevelUpdate(update, level, (order_ptr->Level == ((order_ptr->Side == OrderSide::BUY) ? _best_bid : _best_ask)));
 }
 
 } // namespace CppTrader

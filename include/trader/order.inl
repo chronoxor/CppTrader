@@ -33,14 +33,13 @@ inline std::ostream& operator<<(std::ostream& stream, OrderType type)
 }
 
 inline Order::Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity) noexcept
-    : _level(nullptr)
+    : Id(id),
+      SymbolId(symbol),
+      Type(type),
+      Side(side),
+      Price(price),
+      Quantity(quantity)
 {
-    Id = id;
-    SymbolId = symbol;
-    Type = type;
-    Side = side;
-    Price = price;
-    Quantity = quantity;
 }
 
 inline std::ostream& operator<<(std::ostream& stream, const Order& order)
@@ -52,6 +51,22 @@ inline std::ostream& operator<<(std::ostream& stream, const Order& order)
         << "; Price=" << order.Price
         << "; Quantity=" << order.Quantity
         << ")";
+}
+
+inline OrderNode::OrderNode(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity) noexcept
+    : Order(id, symbol, type, side, price, quantity),
+      Level(nullptr)
+{
+}
+
+inline OrderNode::OrderNode(const Order& order) noexcept : Order(order)
+{
+}
+
+inline OrderNode& OrderNode::operator=(const Order& order) noexcept
+{
+    Order::operator=(order);
+    return *this;
 }
 
 } // namespace CppTrader

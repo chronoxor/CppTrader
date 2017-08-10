@@ -10,31 +10,33 @@
 #define CPPTRADER_LEVEL_H
 
 #include "order.h"
+#include "update.h"
 
 #include "containers/bintree_avl.h"
 
 namespace CppTrader {
 
-//! Price level side
-enum class LevelSide : uint8_t
+//! Price level type
+enum class LevelType : uint8_t
 {
     BID,
     ASK
 };
-std::ostream& operator<<(std::ostream& stream, LevelSide side);
+std::ostream& operator<<(std::ostream& stream, LevelType type);
 
 //! Price level
-struct Level : public CppCommon::BinTreeAVL<Level>::Node
+struct Level
 {
+    //! Level type
+    LevelType Type;
     //! Level price
     uint64_t Price;
     //! Level volume
     uint64_t Volume;
+    //! Level orders
+    uint64_t Orders;
 
-    //! Price level orders
-    CppCommon::List<Order> Orders;
-
-    Level(uint64_t price) noexcept;
+    Level(LevelType type, uint64_t price) noexcept;
     Level(const Level&) noexcept = default;
     Level(Level&&) noexcept = default;
     ~Level() noexcept = default;
@@ -57,6 +59,58 @@ struct Level : public CppCommon::BinTreeAVL<Level>::Node
     { return level1.Price >= level2.Price; }
 
     friend std::ostream& operator<<(std::ostream& stream, const Level& level);
+};
+
+//! Price level node
+struct LevelNode : public Level, public CppCommon::BinTreeAVL<LevelNode>::Node
+{
+    //! Price level orders
+    CppCommon::List<OrderNode> OrderList;
+
+    LevelNode(LevelType type, uint64_t price) noexcept;
+    LevelNode(const Level& level) noexcept;
+    LevelNode(const LevelNode&) noexcept = default;
+    LevelNode(LevelNode&&) noexcept = default;
+    ~LevelNode() noexcept = default;
+
+    LevelNode& operator=(const Level& level) noexcept;
+    LevelNode& operator=(const LevelNode&) noexcept = default;
+    LevelNode& operator=(LevelNode&&) noexcept = default;
+
+    // Price level comparison
+    friend bool operator==(const LevelNode& level1, const LevelNode& level2) noexcept
+    { return level1.Price == level2.Price; }
+    friend bool operator!=(const LevelNode& level1, const LevelNode& level2) noexcept
+    { return level1.Price != level2.Price; }
+    friend bool operator<(const LevelNode& level1, const LevelNode& level2) noexcept
+    { return level1.Price < level2.Price; }
+    friend bool operator>(const LevelNode& level1, const LevelNode& level2) noexcept
+    { return level1.Price > level2.Price; }
+    friend bool operator<=(const LevelNode& level1, const LevelNode& level2) noexcept
+    { return level1.Price <= level2.Price; }
+    friend bool operator>=(const LevelNode& level1, const LevelNode& level2) noexcept
+    { return level1.Price >= level2.Price; }
+};
+
+//! Price level update
+struct LevelUpdate
+{
+    //! Update type
+    UpdateType Type;
+    //! Level update value
+    Level Update;
+    //! Top of the book flag
+    bool Top;
+
+    LevelUpdate(UpdateType type, const Level& update, bool top = false) noexcept;
+    LevelUpdate(const LevelUpdate&) noexcept = default;
+    LevelUpdate(LevelUpdate&&) noexcept = default;
+    ~LevelUpdate() noexcept = default;
+
+    LevelUpdate& operator=(const LevelUpdate&) noexcept = default;
+    LevelUpdate& operator=(LevelUpdate&&) noexcept = default;
+
+    friend std::ostream& operator<<(std::ostream& stream, const LevelUpdate& update);
 };
 
 } // namespace CppTrader

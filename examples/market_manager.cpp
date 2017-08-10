@@ -28,16 +28,15 @@ protected:
     void onDeleteOrderBook(const CppTrader::OrderBook& order_book) override
     { std::cout << "Delete order book: " << order_book << std::endl; }
 
+    void onAddLevel(const CppTrader::Level& level, bool top) override
+    { std::cout << "Add level: " << level << (top ? " - Top of the book!" : "") << std::endl; }
+    void onUpdateLevel(const CppTrader::Level& level, bool top) override
+    { std::cout << "Update level: " << level << (top ? " - Top of the book!" : "") << std::endl; }
+    void onDeleteLevel(const CppTrader::Level& level, bool top) override
+    { std::cout << "Delete level: " << level << (top ? " - Top of the book!" : "") << std::endl; }
+
     void onAddOrder(const CppTrader::Order& order) override
     { std::cout << "Add order: " << order << std::endl; }
-    void onReduceOrder(const CppTrader::Order& order, uint64_t quantity) override
-    { std::cout << "Reduce order: " << order << " by " << quantity << std::endl; }
-    void onModifyOrder(const CppTrader::Order& order, uint64_t new_price, uint64_t new_quantity) override
-    { std::cout << "Modify order: " << order << " with new price " << new_price << " and quantity " << new_quantity << std::endl; }
-    void onReplaceOrder(const CppTrader::Order& order, uint64_t new_id, uint64_t new_price, uint64_t new_quantity) override
-    { std::cout << "Replace order: " << order << " with new Id " << new_id << ", price " << new_price << " and quantity " << new_quantity << std::endl; }
-    void onReplaceOrder(const CppTrader::Order& order, const CppTrader::Order& new_order) override
-    { std::cout << "Replace order: " << order << " with new order " << new_order << std::endl; }
     void onUpdateOrder(const CppTrader::Order& order) override
     { std::cout << "Update order: " << order << std::endl; }
     void onDeleteOrder(const CppTrader::Order& order) override
