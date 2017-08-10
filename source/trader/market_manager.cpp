@@ -538,6 +538,8 @@ void MarketManager::UpdateLevel(const OrderBook& order_book, const LevelUpdate& 
         case UpdateType::DELETE:
             _market_handler.onDeleteLevel(update.Update, update.Top);
             break;
+        default:
+            break;
     }
     _market_handler.onUpdateOrderBook(order_book, update.Top);
 }
