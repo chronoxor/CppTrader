@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['limit',['LIMIT',['../namespace_cpp_trader.html#aa18cdf656ad277fcf2e707422ccd148ea3d49b5cb41d88e381beb0d887d7023a2',1,'CppTrader']]]
+  ['delete',['DELETE',['../namespace_cpp_trader.html#a7fe73db8d8f684907a580c2bd048cf45a32f68a60cef40faedbc6af20298c1a1e',1,'CppTrader']]]
 ];
