@@ -151,7 +151,7 @@ void MarketManager::AddOrder(const Order& order)
     _market_handler.onAddOrder(*order_ptr);
 
     // Get the valid order book for the new order
-    OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order.SymbolId);
+    OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Add the new order into the order book
@@ -367,6 +367,8 @@ void MarketManager::ReplaceOrder(uint64_t id, const Order& new_order)
         // Call the corresponding handler
         _market_handler.onAddOrder(*order_ptr);
 
+        // Get the valid order book for the new order
+        order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
         if (order_book_ptr != nullptr)
         {
             // Add the modified order into the order book
@@ -524,18 +526,18 @@ void MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quantity)
     }
 }
 
-void MarketManager::UpdateLevel(const OrderBook& order_book, const LevelUpdate& update)
+void MarketManager::UpdateLevel(const OrderBook& order_book, const LevelUpdate& update) const
 {
     switch (update.Type)
     {
         case UpdateType::ADD:
-            _market_handler.onAddLevel(update.Update, update.Top);
+            _market_handler.onAddLevel(order_book, update.Update, update.Top);
             break;
         case UpdateType::UPDATE:
-            _market_handler.onUpdateLevel(update.Update, update.Top);
+            _market_handler.onUpdateLevel(order_book, update.Update, update.Top);
             break;
         case UpdateType::DELETE:
-            _market_handler.onDeleteLevel(update.Update, update.Top);
+            _market_handler.onDeleteLevel(order_book, update.Update, update.Top);
             break;
         default:
             break;

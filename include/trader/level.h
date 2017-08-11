@@ -102,7 +102,7 @@ struct LevelUpdate
     //! Top of the book flag
     bool Top;
 
-    LevelUpdate(UpdateType type, const Level& update, bool top = false) noexcept;
+    LevelUpdate(UpdateType type, const Level& update, bool top) noexcept;
     LevelUpdate(const LevelUpdate&) noexcept = default;
     LevelUpdate(LevelUpdate&&) noexcept = default;
     ~LevelUpdate() noexcept = default;

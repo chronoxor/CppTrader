@@ -32,9 +32,9 @@ inline const Symbol* MarketManager::GetSymbol(uint32_t id) const noexcept
     return ((id < _symbols.size()) ? _symbols[id] : nullptr);
 }
 
-inline const OrderBook* MarketManager::GetOrderBook(uint32_t symbol) const noexcept
+inline const OrderBook* MarketManager::GetOrderBook(uint32_t id) const noexcept
 {
-    return ((symbol < _order_books.size()) ? _order_books[symbol] : nullptr);
+    return ((id < _order_books.size()) ? _order_books[id] : nullptr);
 }
 
 inline const Order* MarketManager::GetOrder(uint64_t id) const noexcept

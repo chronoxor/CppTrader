@@ -52,9 +52,9 @@ protected:
     void onAddOrderBook(const OrderBook& order_book) override { ++_updates; ++_order_books; _max_order_books = std::max(_order_books, _max_order_books); }
     void onUpdateOrderBook(const OrderBook& order_book, bool top) override { _max_order_book_levels = std::max(std::max(order_book.bids().size(), order_book.asks().size()), _max_order_book_levels); }
     void onDeleteOrderBook(const OrderBook& order_book) override { ++_updates; --_order_books; }
-    void onAddLevel(const Level& level, bool top) override { ++_updates; }
-    void onUpdateLevel(const Level& level, bool top) override { ++_updates; _max_order_book_orders = std::max(level.Orders, _max_order_book_orders); }
-    void onDeleteLevel(const Level& level, bool top) override { ++_updates; }
+    void onAddLevel(const OrderBook& order_book, const Level& level, bool top) override { ++_updates; }
+    void onUpdateLevel(const OrderBook& order_book, const Level& level, bool top) override { ++_updates; _max_order_book_orders = std::max(level.Orders, _max_order_book_orders); }
+    void onDeleteLevel(const OrderBook& order_book, const Level& level, bool top) override { ++_updates; }
     void onAddOrder(const Order& order) override { ++_updates; ++_orders; _max_orders = std::max(_orders, _max_orders); ++_add_order; }
     void onUpdateOrder(const Order& order) override { ++_updates; ++_update_order; }
     void onDeleteOrder(const Order& order) override { ++_updates; --_orders; ++_delete_order; }

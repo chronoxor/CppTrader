@@ -49,7 +49,7 @@ public:
         \param id - Symbol Id of the order book
         \return Pointer to the order book with the given symbol Id or nullptr
     */
-    const OrderBook* GetOrderBook(uint32_t symbol) const noexcept;
+    const OrderBook* GetOrderBook(uint32_t id) const noexcept;
     //! Get the order with the given Id
     /*!
         \param id - Order Id
@@ -154,7 +154,7 @@ private:
     CppCommon::PoolAllocator<OrderNode, CppCommon::DefaultMemoryManager> _order_pool;
     CppCommon::HashMap<uint64_t, OrderNode*, FastHash> _orders;
 
-    void UpdateLevel(const OrderBook& order_book, const LevelUpdate& update);
+    void UpdateLevel(const OrderBook& order_book, const LevelUpdate& update) const;
 };
 
 /*! \example market_manager.cpp Market manager example */
