@@ -153,7 +153,7 @@ LevelUpdate OrderBook::ReduceOrder(OrderNode* order_ptr, uint64_t quantity)
     UpdateType update = UpdateType::UPDATE;
     if (level_ptr->Volume == 0)
     {
-        // Clear the price level in the given order
+        // Clear the price level cache in the given order
         order_ptr->Level = DeleteLevel(order_ptr);
         update = UpdateType::DELETE;
     }
@@ -164,29 +164,8 @@ LevelUpdate OrderBook::ReduceOrder(OrderNode* order_ptr, uint64_t quantity)
 
 LevelUpdate OrderBook::DeleteOrder(OrderNode* order_ptr)
 {
-    // Find the price level for the order
-    LevelNode* level_ptr = order_ptr->Level;
-
-    // Update the price level volume
-    level_ptr->Volume -= order_ptr->Quantity;
-
-    // Unlink the order from the orders list of the price level
-    level_ptr->OrderList.pop_current(*order_ptr);
-    --level_ptr->Orders;
-
-    Level level(*level_ptr);
-
-    // Delete the empty price level
-    UpdateType update = UpdateType::UPDATE;
-    if (level_ptr->Volume == 0)
-    {
-        // Clear the price level in the given order
-        order_ptr->Level = DeleteLevel(order_ptr);
-        update = UpdateType::DELETE;
-    }
-
-    // Price level was changed. Return top of the book modification flag.
-    return LevelUpdate(update, level, (order_ptr->Level == ((order_ptr->Side == OrderSide::BUY) ? _best_bid : _best_ask)));
+    // Reduce the order by its full quantity
+    return ReduceOrder(order_ptr, order_ptr->Quantity);
 }
 
 } // namespace CppTrader

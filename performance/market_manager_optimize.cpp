@@ -27,12 +27,6 @@ struct Symbol
     { std::memset(Name, 0, sizeof(Name)); }
     Symbol(uint16_t id, const char name[8]) noexcept : Id(id)
     { std::strncpy(Name, name, sizeof(Name)); }
-    Symbol(const Symbol&) noexcept = default;
-    Symbol(Symbol&&) noexcept = default;
-    ~Symbol() noexcept = default;
-
-    Symbol& operator=(const Symbol&) noexcept = default;
-    Symbol& operator=(Symbol&&) noexcept = default;
 };
 
 enum class LevelType : uint8_t
@@ -47,15 +41,6 @@ struct Level
     uint32_t Price;
     uint32_t Volume;
     size_t Orders;
-
-    Level() noexcept : Type(LevelType::BID), Price(0), Volume(0), Orders(0) {}
-    Level(LevelType type, uint32_t price, uint32_t volume) noexcept : Type(type), Price(price), Volume(volume), Orders(0) {}
-    Level(const Level&) noexcept = default;
-    Level(Level&&) noexcept = default;
-    ~Level() noexcept = default;
-
-    Level& operator=(const Level&) noexcept = default;
-    Level& operator=(Level&&) noexcept = default;
 };
 
 class LevelPool
@@ -106,14 +91,6 @@ struct LevelUpdate
     UpdateType Type;
     Level Update;
     bool Top;
-
-    LevelUpdate(UpdateType type, Level update, bool top) noexcept : Type(type), Update(update), Top(top) {}
-    LevelUpdate(const LevelUpdate&) noexcept = default;
-    LevelUpdate(LevelUpdate&&) noexcept = default;
-    ~LevelUpdate() noexcept = default;
-
-    LevelUpdate& operator=(const LevelUpdate&) noexcept = default;
-    LevelUpdate& operator=(LevelUpdate&&) noexcept = default;
 };
 
 enum class OrderSide : uint8_t
@@ -130,15 +107,12 @@ struct Order
     uint32_t Price;
     uint32_t Quantity;
     size_t Level;
+};
 
-    Order() noexcept : Id(0), Symbol(0), Side(OrderSide::BUY), Price(0), Quantity(0), Level(0) {}
-    Order(uint64_t id, uint16_t symbol, OrderSide side, uint32_t price, uint32_t quantity) noexcept : Id(id), Symbol(symbol), Side(side), Price(price), Quantity(quantity), Level(0) {}
-    Order(const Order&) noexcept = default;
-    Order(Order&&) noexcept = default;
-    ~Order() noexcept = default;
-
-    Order& operator=(const Order&) noexcept = default;
-    Order& operator=(Order&&) noexcept = default;
+struct PriceLevel
+{
+    uint32_t Price;
+    size_t Level;
 };
 
 class OrderBook
@@ -146,7 +120,7 @@ class OrderBook
     friend class MarketManagerOptimized;
 
 public:
-    typedef std::vector<std::pair<uint32_t, size_t>> Levels;
+    typedef std::vector<PriceLevel> Levels;
 
     OrderBook() = default;
     OrderBook(const OrderBook&) = delete;
@@ -154,9 +128,9 @@ public:
     ~OrderBook()
     {
         for (auto bid : _bids)
-            _levels.free(bid.second);
+            _levels.free(bid.Level);
         for (auto ask : _asks)
-            _levels.free(ask.second);
+            _levels.free(ask.Level);
     }
 
     OrderBook& operator=(const OrderBook&) = delete;
@@ -168,8 +142,8 @@ public:
     size_t size() const noexcept { return _bids.size() + _asks.size(); }
     const Levels& bids() const noexcept { return _bids; }
     const Levels& asks() const noexcept { return _asks; }
-    const Level* best_bid() const noexcept { return _bids.empty() ? nullptr : _levels.get(_bids.back().second); }
-    const Level* best_ask() const noexcept { return _asks.empty() ? nullptr : _levels.get(_asks.back().second); }
+    const Level* best_bid() const noexcept { return _bids.empty() ? nullptr : _levels.get(_bids.back().Level); }
+    const Level* best_ask() const noexcept { return _asks.empty() ? nullptr : _levels.get(_asks.back().Level); }
 
 private:
     Levels _bids;
@@ -183,10 +157,10 @@ private:
             auto it = _bids.end();
             while (it-- != _bids.begin())
             {
-                std::pair<uint32_t, size_t> price = *it;
-                if (price.first == order_ptr->Price)
-                    return std::make_pair(price.second, UpdateType::UPDATE);
-                if (price.first < order_ptr->Price)
+                auto& price_level = *it;
+                if (price_level.Price == order_ptr->Price)
+                    return std::make_pair(price_level.Level, UpdateType::UPDATE);
+                if (price_level.Price < order_ptr->Price)
                     break;
             }
 
@@ -199,7 +173,7 @@ private:
             level_ptr->Orders = 0;
 
             // Insert the price level into the bid collection
-            _bids.insert(++it, std::make_pair(level_ptr->Price, level_index));
+            _bids.insert(++it, PriceLevel{ level_ptr->Price, level_index });
 
             return std::make_pair(level_index, UpdateType::ADD);
         }
@@ -209,10 +183,10 @@ private:
             auto it = _asks.end();
             while (it-- != _asks.begin())
             {
-                std::pair<uint32_t, size_t> price = *it;
-                if (price.first == order_ptr->Price)
-                    return std::make_pair(price.second, UpdateType::UPDATE);
-                if (price.first > order_ptr->Price)
+                auto& price_level = *it;
+                if (price_level.Price == order_ptr->Price)
+                    return std::make_pair(price_level.Level, UpdateType::UPDATE);
+                if (price_level.Price > order_ptr->Price)
                     break;
             }
 
@@ -225,7 +199,7 @@ private:
             level_ptr->Orders = 0;
 
             // Insert the price level into the ask collection
-            _asks.insert(++it, std::make_pair(level_ptr->Price, level_index));
+            _asks.insert(++it, PriceLevel{ level_ptr->Price, level_index });
 
             return std::make_pair(level_index, UpdateType::ADD);
         }
@@ -238,14 +212,13 @@ private:
             auto it = _bids.end();
             while (it-- != _bids.begin())
             {
-                std::pair<uint32_t, size_t> price = *it;
-                if (price.first == order_ptr->Price)
+                if (it->Price == order_ptr->Price)
                 {
                     // Erase the price level from the bid collection
                     _bids.erase(it);
                     break;
                 }
-                if (price.first < order_ptr->Price)
+                if (it->Price < order_ptr->Price)
                     break;
             }
         }
@@ -254,14 +227,13 @@ private:
             auto it = _asks.end();
             while (it-- != _asks.begin())
             {
-                std::pair<uint32_t, size_t> price = *it;
-                if (price.first == order_ptr->Price)
+                if (it->Price == order_ptr->Price)
                 {
                     // Erase the price level from the ask collection
                     _asks.erase(it);
                     break;
                 }
-                if (price.first > order_ptr->Price)
+                if (it->Price > order_ptr->Price)
                     break;
             }
         }
@@ -286,7 +258,7 @@ private:
         order_ptr->Level = find_result.first;
 
         // Price level was changed. Return top of the book modification flag.
-        return LevelUpdate(find_result.second, *level_ptr, (level_ptr == ((order_ptr->Side == OrderSide::BUY) ? best_bid() : best_ask())));
+        return LevelUpdate{ find_result.second, *level_ptr, (level_ptr == ((order_ptr->Side == OrderSide::BUY) ? best_bid() : best_ask())) };
     }
 
     LevelUpdate ReduceOrder(Order* order_ptr, uint32_t quantity)
@@ -301,12 +273,11 @@ private:
         if (order_ptr->Quantity == 0)
             --level_ptr->Orders;
 
-        LevelUpdate update(UpdateType::UPDATE, Level(*level_ptr), (level_ptr == ((order_ptr->Side == OrderSide::BUY) ? best_bid() : best_ask())));
+        LevelUpdate update = { UpdateType::UPDATE, Level(*level_ptr), (level_ptr == ((order_ptr->Side == OrderSide::BUY) ? best_bid() : best_ask())) };
 
         // Delete the empty price level
         if (level_ptr->Volume == 0)
         {
-            // Clear the price level in the given order
             DeleteLevel(order_ptr);
             update.Type = UpdateType::DELETE;
         }
@@ -316,26 +287,7 @@ private:
 
     LevelUpdate DeleteOrder(Order* order_ptr)
     {
-        // Find the price level for the order
-        Level* level_ptr = _levels.get(order_ptr->Level);
-
-        // Update the price level volume
-        level_ptr->Volume -= order_ptr->Quantity;
-
-        // Update the price level orders count
-        --level_ptr->Orders;
-
-        LevelUpdate update(UpdateType::UPDATE, Level(*level_ptr), (level_ptr == ((order_ptr->Side == OrderSide::BUY) ? best_bid() : best_ask())));
-
-        // Delete the empty price level
-        if (level_ptr->Volume == 0)
-        {
-            // Clear the price level in the given order
-            DeleteLevel(order_ptr);
-            update.Type = UpdateType::DELETE;
-        }
-
-        return update;
+        return ReduceOrder(order_ptr, order_ptr->Quantity);
     }
 
     static LevelPool _levels;
@@ -451,11 +403,14 @@ public:
         _market_handler.onDeleteOrderBook(_order_books[id]);
     }
 
-    void AddOrder(const Order& order)
+    void AddOrder(uint64_t id, uint16_t symbol, OrderSide side, uint32_t price, uint32_t quantity)
     {
         // Insert the order
-        Order* order_ptr = &_orders[order.Id];
-        *order_ptr = order;
+        Order* order_ptr = &_orders[id];
+        order_ptr->Id = id;
+        order_ptr->Symbol = symbol;
+        order_ptr->Side = side;
+        order_ptr->Quantity = quantity;
 
         // Call the corresponding handler
         _market_handler.onAddOrder(*order_ptr);
@@ -540,6 +495,8 @@ public:
             Order* new_order_ptr = &_orders[new_id];
             *new_order_ptr = *order_ptr;
             new_order_ptr->Id = new_id;
+            new_order_ptr->Symbol = order_ptr->Symbol;
+            new_order_ptr->Side = order_ptr->Side;
             new_order_ptr->Price = new_price;
             new_order_ptr->Quantity = new_quantity;
 
@@ -556,7 +513,7 @@ public:
         }
     }
 
-    void ReplaceOrder(uint64_t id, const Order& new_order)
+    void ReplaceOrder(uint64_t id, uint64_t new_id, uint16_t new_symbol, OrderSide new_side, uint32_t new_price, uint32_t new_quantity)
     {
         // Get the order to replace
         Order* order_ptr = &_orders[id];
@@ -565,19 +522,24 @@ public:
         OrderBook* order_book_ptr = &_order_books[order_ptr->Symbol];
         UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
 
-        if (new_order.Quantity > 0)
+        if (new_quantity > 0)
         {
             // Call the corresponding handler
             _market_handler.onDeleteOrder(*order_ptr);
 
             // Replace the order
-            Order* new_order_ptr = &_orders[new_order.Id];
-            *new_order_ptr = new_order;
+            Order* new_order_ptr = &_orders[new_id];
+            new_order_ptr->Id = new_id;
+            new_order_ptr->Symbol = new_symbol;
+            new_order_ptr->Side = new_side;
+            new_order_ptr->Price = new_price;
+            new_order_ptr->Quantity = new_quantity;
 
             // Call the corresponding handler
             _market_handler.onAddOrder(*new_order_ptr);
 
             // Add the modified order into the order book
+            order_book_ptr = &_order_books[new_order_ptr->Symbol];
             UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(new_order_ptr));
         }
         else
@@ -710,8 +672,8 @@ protected:
     bool onMessage(const MWCBDeclineMessage& message) override { ++_messages; return true; }
     bool onMessage(const MWCBStatusMessage& message) override { ++_messages; return true; }
     bool onMessage(const IPOQuotingMessage& message) override { ++_messages; return true; }
-    bool onMessage(const AddOrderMessage& message) override { ++_messages; _market.AddOrder(Order(message.OrderReferenceNumber, message.StockLocate, (message.BuySellIndicator == 'B') ? OrderSide::BUY : OrderSide::SELL, message.Price, message.Shares)); return true; }
-    bool onMessage(const AddOrderMPIDMessage& message) override { ++_messages; _market.AddOrder(Order(message.OrderReferenceNumber, message.StockLocate, (message.BuySellIndicator == 'B') ? OrderSide::BUY : OrderSide::SELL, message.Price, message.Shares)); return true; }
+    bool onMessage(const AddOrderMessage& message) override { ++_messages; _market.AddOrder(message.OrderReferenceNumber, message.StockLocate, (message.BuySellIndicator == 'B') ? OrderSide::BUY : OrderSide::SELL, message.Price, message.Shares); return true; }
+    bool onMessage(const AddOrderMPIDMessage& message) override { ++_messages; _market.AddOrder(message.OrderReferenceNumber, message.StockLocate, (message.BuySellIndicator == 'B') ? OrderSide::BUY : OrderSide::SELL, message.Price, message.Shares); return true; }
     bool onMessage(const OrderExecutedMessage& message) override { ++_messages; _market.ExecuteOrder(message.OrderReferenceNumber, message.ExecutedShares); return true; }
     bool onMessage(const OrderExecutedWithPriceMessage& message) override { ++_messages; _market.ExecuteOrder(message.OrderReferenceNumber, message.ExecutionPrice, message.ExecutedShares); return true; }
     bool onMessage(const OrderCancelMessage& message) override { ++_messages; _market.ReduceOrder(message.OrderReferenceNumber, message.CanceledShares); return true; }
