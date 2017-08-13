@@ -24,6 +24,8 @@ C++ Trader is a set of components for building a Trading Platform.
   * [Performance](#performance)
     * [NASDAQ ITCH handler](#nasdaq-itch-handler)
     * [Market manager](#market-manager)
+    * [Market manager (optimized version)](#market-manager-optimized-version)
+    * [Market manager (aggressive optimized version)](#market-manager-aggressive-optimized-version)
 
 # Features
 * Cross platform (Linux, OSX, Windows)
