@@ -139,13 +139,13 @@ ITCH processing...Done!
 
 Errors: 0
 
-Processing time: 1:37.421 m
+Processing time: 1:27.616 m
 Total ITCH messages: 283238832
-ITCH message latency: 343 ns
-ITCH message throughput: 2907346 messages per second
+ITCH message latency: 309 ns
+ITCH message throughput: 3232727 messages per second
 Total market updates: 631217516
-Market update latency: 154 ns
-Market update throughput: 6479223 updates per second
+Market update latency: 138 ns
+Market update throughput: 7204359 updates per second
 
 Market statistics:
 Max symbols: 8371
@@ -159,4 +159,76 @@ Add order operations: 152865456
 Update order operations: 7037619
 Delete order operations: 152865456
 Execute order operations: 5663712
+```
+
+## Market manager (optimized version)
+
+This is an optimized version of the Market manager. Optimization tricks are the
+following:
+
+* Symbols and order books are stored in fixed size pre-allocated arrays.
+* Orders are stored in the pre-allocated array instead of HashMap. This gives
+O(1) for all orders operations with no overhead (get, insert, update, delete).
+* Orders linked list is not maintained for price levels, just orders count.
+* Price levels are stored in sorted arrays instead of Red-Black trees. The sort
+order keeps best prices (best bid / best ask) at the end of arrays which gives
+good CPU cache locality and near to O(1) search time for orders with close to
+market prices, but has a penalty for orders with far from market prices!
+* Price levels are taken from the pool, which is implemented using a
+pre-allocated array with O(1) for create and delete each price level.
+
+Sample ITCH file could be downloaded from ftp://emi.nasdaq.com/ITCH
+
+* [cpptrader-performance-market_manager_optimize](https://github.com/chronoxor/CppTrader/blob/master/performance/market_manager_optimize.cpp) < 01302017.NASDAQ_ITCH50
+```
+ITCH processing...Done!
+
+Errors: 0
+
+Processing time: 34.150 s
+Total ITCH messages: 283238832
+ITCH message latency: 120 ns
+ITCH message throughput: 8293747 messages per second
+Total market updates: 631217516
+Market update latency: 54 ns
+Market update throughput: 18483195 updates per second
+
+Market statistics:
+Max symbols: 8371
+Max order books: 8371
+Max order book levels: 38
+Max orders: 1647972
+
+Order statistics:
+Add order operations: 152865456
+Update order operations: 7037619
+Delete order operations: 152865456
+Execute order operations: 5663712
+```
+
+## Market manager (aggressive optimized version)
+
+This is a very aggressive optimized version of the Market manager. It shows
+values of latency and throughput close to optimal with the cost of some more
+optimization tricks which might be hard to keep in real trading platforms:
+
+* Symbols are not maintained
+* Orders and price limits structures are optimized to be optimal. Most of useful
+filds are removed.
+* Price values are stored as signed 32-bit integer values. Positive values for
+bids and negative values for asks.
+* Market handler is not used. No way to receive notifications from the Market
+manager.
+
+Sample ITCH file could be downloaded from ftp://emi.nasdaq.com/ITCH
+
+* [cpptrader-performance-market_manager_optimize_aggressive](https://github.com/chronoxor/CppTrader/blob/master/performance/market_manager_optimize_aggressive.cpp) < 01302017.NASDAQ_ITCH50
+```
+ITCH processing...Done!
+
+Errors: 0
+Processing time: 29.047 s
+Total ITCH messages: 283238832
+ITCH messages latency: 102 ns
+ITCH messages throughput: 9751044 messages per second
 ```
