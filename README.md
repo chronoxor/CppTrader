@@ -181,7 +181,7 @@ pre-allocated array with O(1) for create and delete each price level.
 
 Sample ITCH file could be downloaded from ftp://emi.nasdaq.com/ITCH
 
-* [cpptrader-performance-market_manager_optimize](https://github.com/chronoxor/CppTrader/blob/master/performance/market_manager_optimize.cpp) < 01302017.NASDAQ_ITCH50
+* [cpptrader-performance-market_manager_optimized](https://github.com/chronoxor/CppTrader/blob/master/performance/market_manager_optimized.cpp) < 01302017.NASDAQ_ITCH50
 ```
 ITCH processing...Done!
 
@@ -224,7 +224,7 @@ manager.
 
 Sample ITCH file could be downloaded from ftp://emi.nasdaq.com/ITCH
 
-* [cpptrader-performance-market_manager_optimize_aggressive](https://github.com/chronoxor/CppTrader/blob/master/performance/market_manager_optimize_aggressive.cpp) < 01302017.NASDAQ_ITCH50
+* [cpptrader-performance-market_manager_optimized_aggressive](https://github.com/chronoxor/CppTrader/blob/master/performance/market_manager_optimized_aggressive.cpp) < 01302017.NASDAQ_ITCH50
 ```
 ITCH processing...Done!
 
