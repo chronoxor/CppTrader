@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['getorder',['GetOrder',['../class_cpp_trader_1_1_market_manager.html#a7ce60bf34f5d2e804bebd7f1d2306f39',1,'CppTrader::MarketManager']]],
-  ['getorderbook',['GetOrderBook',['../class_cpp_trader_1_1_market_manager.html#a4bb00fcee51645ba22646e47757cd6dc',1,'CppTrader::MarketManager']]],
-  ['getsymbol',['GetSymbol',['../class_cpp_trader_1_1_market_manager.html#ad30e2369f775c79d1c721c2e0613d5ca',1,'CppTrader::MarketManager']]]
+  ['getorder',['GetOrder',['../class_cpp_trader_1_1_matching_1_1_market_manager.html#a91c60b7ed9e149e3d0bbfee78b1b0f5b',1,'CppTrader::Matching::MarketManager']]],
+  ['getorderbook',['GetOrderBook',['../class_cpp_trader_1_1_matching_1_1_market_manager.html#a2210ef75c65068fd248000143dfce4a9',1,'CppTrader::Matching::MarketManager']]],
+  ['getsymbol',['GetSymbol',['../class_cpp_trader_1_1_matching_1_1_market_manager.html#add7db176f8b6b23edd60b074174d9260',1,'CppTrader::Matching::MarketManager']]]
 ];

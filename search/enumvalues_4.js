@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['none',['NONE',['../namespace_cpp_trader.html#a7fe73db8d8f684907a580c2bd048cf45ab50339a10e1de285ac99d4c3990b8693',1,'CppTrader']]]
+  ['none',['NONE',['../namespace_cpp_trader_1_1_matching.html#a65e7458e06071097f75be96f4ae16f3bab50339a10e1de285ac99d4c3990b8693',1,'CppTrader::Matching']]]
 ];

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['orderside',['OrderSide',['../namespace_cpp_trader.html#a9c12ff4987347bcd962a10467ab2ec87',1,'CppTrader']]],
-  ['ordertype',['OrderType',['../namespace_cpp_trader.html#aa18cdf656ad277fcf2e707422ccd148e',1,'CppTrader']]]
+  ['orderside',['OrderSide',['../namespace_cpp_trader_1_1_matching.html#a07e8bfcb84f50475ba6ca9d29a6ca668',1,'CppTrader::Matching']]],
+  ['ordertype',['OrderType',['../namespace_cpp_trader_1_1_matching.html#a3f665b3bd035eb7a647258ce0ca1dd43',1,'CppTrader::Matching']]]
 ];

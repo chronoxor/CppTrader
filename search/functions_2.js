@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['deleteorder',['DeleteOrder',['../class_cpp_trader_1_1_market_manager.html#a00c715b203f2460d0c8624cadfc84a56',1,'CppTrader::MarketManager']]],
-  ['deleteorderbook',['DeleteOrderBook',['../class_cpp_trader_1_1_market_manager.html#a2710776d5dc35ed0f8c59b15730960fd',1,'CppTrader::MarketManager']]],
-  ['deletesymbol',['DeleteSymbol',['../class_cpp_trader_1_1_market_manager.html#a9ff481659d4fedd5d0bfd846c70a6dc0',1,'CppTrader::MarketManager']]]
+  ['deleteorder',['DeleteOrder',['../class_cpp_trader_1_1_matching_1_1_market_manager.html#a5f49c39634c0275cf28ba58aaa0b7cdd',1,'CppTrader::Matching::MarketManager']]],
+  ['deleteorderbook',['DeleteOrderBook',['../class_cpp_trader_1_1_matching_1_1_market_manager.html#acaae410c0044b297c98d78032547028b',1,'CppTrader::Matching::MarketManager']]],
+  ['deletesymbol',['DeleteSymbol',['../class_cpp_trader_1_1_matching_1_1_market_manager.html#afb057224101e3997a1e681dac77000f3',1,'CppTrader::Matching::MarketManager']]],
+  ['disablematching',['DisableMatching',['../class_cpp_trader_1_1_matching_1_1_market_manager.html#a06930138a5a90d2f8f79ddeb3941d286',1,'CppTrader::Matching::MarketManager']]]
 ];

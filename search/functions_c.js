@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['size',['size',['../class_cpp_trader_1_1_order_book.html#a13da44c8bcc7fa1435df697e822eada4',1,'CppTrader::OrderBook']]],
-  ['symbol',['Symbol',['../struct_cpp_trader_1_1_symbol.html#a015b2810b4fc614a2fdad47292072093',1,'CppTrader::Symbol::Symbol(uint32_t id, const char name[8]) noexcept'],['../struct_cpp_trader_1_1_symbol.html#a025c627cc0052244f1b280fae41323ef',1,'CppTrader::Symbol::Symbol(const Symbol &amp;) noexcept=default'],['../struct_cpp_trader_1_1_symbol.html#ac7b7780281cab43367e3f8963417f5ca',1,'CppTrader::Symbol::Symbol(Symbol &amp;&amp;) noexcept=default'],['../class_cpp_trader_1_1_order_book.html#a40c6fe1e71d3ecd61563cd3e1f6fa30f',1,'CppTrader::OrderBook::symbol()']]]
+  ['size',['size',['../class_cpp_trader_1_1_matching_1_1_order_book.html#a6cf7f3856184478471ffad543b386b67',1,'CppTrader::Matching::OrderBook']]],
+  ['symbol',['symbol',['../class_cpp_trader_1_1_matching_1_1_order_book.html#aa97a9382fa85bd99a3978577634b68cc',1,'CppTrader::Matching::OrderBook::symbol()'],['../struct_cpp_trader_1_1_matching_1_1_symbol.html#ab377f804b856f70a9b07bd524f48253b',1,'CppTrader::Matching::Symbol::Symbol(uint32_t id, const char name[8]) noexcept'],['../struct_cpp_trader_1_1_matching_1_1_symbol.html#a193f54117d133c0c28f8c3353385058d',1,'CppTrader::Matching::Symbol::Symbol(const Symbol &amp;) noexcept=default'],['../struct_cpp_trader_1_1_matching_1_1_symbol.html#a9a082f48b11b3fae3464d87bf31130e4',1,'CppTrader::Matching::Symbol::Symbol(Symbol &amp;&amp;) noexcept=default']]]
 ];

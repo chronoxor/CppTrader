@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['quantity',['Quantity',['../struct_cpp_trader_1_1_order.html#a14cf767c4c24fb2dca9f594ab847aa4c',1,'CppTrader::Order']]]
+  ['quantity',['Quantity',['../struct_cpp_trader_1_1_matching_1_1_order.html#aeb6dd457fd9f343d0f9da913cc1f199c',1,'CppTrader::Matching::Order']]]
 ];

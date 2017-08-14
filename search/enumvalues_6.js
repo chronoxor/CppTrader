@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['update',['UPDATE',['../namespace_cpp_trader.html#a7fe73db8d8f684907a580c2bd048cf45a15a8022d0ed9cd9c2a2e756822703eb4',1,'CppTrader']]]
+  ['update',['UPDATE',['../namespace_cpp_trader_1_1_matching.html#a65e7458e06071097f75be96f4ae16f3ba15a8022d0ed9cd9c2a2e756822703eb4',1,'CppTrader::Matching']]]
 ];
