@@ -6,8 +6,8 @@
     \copyright MIT License
 */
 
-#ifndef CPPTRADER_SYMBOL_H
-#define CPPTRADER_SYMBOL_H
+#ifndef CPPTRADER_MATCHING_SYMBOL_H
+#define CPPTRADER_MATCHING_SYMBOL_H
 
 #include "utility/iostream.h"
 
@@ -15,6 +15,7 @@
 #include <cstring>
 
 namespace CppTrader {
+namespace Matching {
 
 //! Symbol
 struct Symbol
@@ -35,8 +36,9 @@ struct Symbol
     friend std::ostream& operator<<(std::ostream& stream, const Symbol& symbol);
 };
 
+} // namespace Matching
 } // namespace CppTrader
 
 #include "symbol.inl"
 
-#endif // CPPTRADER_SYMBOL_H
+#endif // CPPTRADER_MATCHING_SYMBOL_H

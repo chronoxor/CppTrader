@@ -4,16 +4,16 @@
 
 #include "catch.hpp"
 
+#include "trader/matching/market_manager.h"
 #include "trader/providers/nasdaq/itch_handler.h"
-#include "trader/market_manager.h"
 
 #include "filesystem/file.h"
 
 #include <algorithm>
 
 using namespace CppCommon;
-using namespace CppTrader;
 using namespace CppTrader::ITCH;
+using namespace CppTrader::Matching;
 
 namespace {
 

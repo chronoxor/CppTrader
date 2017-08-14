@@ -6,13 +6,14 @@
     \copyright MIT License
 */
 
-#ifndef CPPTRADER_FAST_HASH_H
-#define CPPTRADER_FAST_HASH_H
+#ifndef CPPTRADER_MATCHING_FAST_HASH_H
+#define CPPTRADER_MATCHING_FAST_HASH_H
 
 #include <cstddef>
 #include <cstdint>
 
 namespace CppTrader {
+namespace Matching {
 
 //! Fast hash helper
 /*!
@@ -42,8 +43,9 @@ public:
     static uint64_t Parse(const char str[8]) noexcept;
 };
 
+} // namespace Matching
 } // namespace CppTrader
 
 #include "fast_hash.inl"
 
-#endif // CPPTRADER_FAST_HASH_H
+#endif // CPPTRADER_MATCHING_FAST_HASH_H

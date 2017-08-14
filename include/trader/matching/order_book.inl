@@ -7,6 +7,7 @@
 */
 
 namespace CppTrader {
+namespace Matching {
 
 inline OrderBook::OrderBook(const Symbol& symbol)
     : _symbol(symbol),
@@ -26,4 +27,5 @@ inline std::ostream& operator<<(std::ostream& stream, const OrderBook& order_boo
         << ")";
 }
 
+} // namespace Matching
 } // namespace CppTrader

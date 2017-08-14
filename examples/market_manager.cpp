@@ -6,110 +6,113 @@
     \copyright MIT License
 */
 
+#include "trader/matching/market_manager.h"
 #include "trader/providers/nasdaq/itch_handler.h"
-#include "trader/market_manager.h"
 
 #include "system/stream.h"
 
 #include <iostream>
 
-class MyMarketHandler : public CppTrader::MarketHandler
+using namespace CppTrader::ITCH;
+using namespace CppTrader::Matching;
+
+class MyMarketHandler : public MarketHandler
 {
 protected:
-    void onAddSymbol(const CppTrader::Symbol& symbol) override
+    void onAddSymbol(const Symbol& symbol) override
     { std::cout << "Add symbol: " << symbol << std::endl; }
-    void onDeleteSymbol(const CppTrader::Symbol& symbol) override
+    void onDeleteSymbol(const Symbol& symbol) override
     { std::cout << "Delete symbol: " << symbol << std::endl; }
 
-    void onAddOrderBook(const CppTrader::OrderBook& order_book) override
+    void onAddOrderBook(const OrderBook& order_book) override
     { std::cout << "Add order book: " << order_book << std::endl; }
-    void onUpdateOrderBook(const CppTrader::OrderBook& order_book, bool top) override
+    void onUpdateOrderBook(const OrderBook& order_book, bool top) override
     { std::cout << "Update order book: " << order_book << (top ? " - Top of the book!" : "") << std::endl; }
-    void onDeleteOrderBook(const CppTrader::OrderBook& order_book) override
+    void onDeleteOrderBook(const OrderBook& order_book) override
     { std::cout << "Delete order book: " << order_book << std::endl; }
 
-    void onAddLevel(const CppTrader::OrderBook& order_book, const CppTrader::Level& level, bool top) override
+    void onAddLevel(const OrderBook& order_book, const Level& level, bool top) override
     { std::cout << "Add level: " << level << (top ? " - Top of the book!" : "") << std::endl; }
-    void onUpdateLevel(const CppTrader::OrderBook& order_book, const CppTrader::Level& level, bool top) override
+    void onUpdateLevel(const OrderBook& order_book, const Level& level, bool top) override
     { std::cout << "Update level: " << level << (top ? " - Top of the book!" : "") << std::endl; }
-    void onDeleteLevel(const CppTrader::OrderBook& order_book, const CppTrader::Level& level, bool top) override
+    void onDeleteLevel(const OrderBook& order_book, const Level& level, bool top) override
     { std::cout << "Delete level: " << level << (top ? " - Top of the book!" : "") << std::endl; }
 
-    void onAddOrder(const CppTrader::Order& order) override
+    void onAddOrder(const Order& order) override
     { std::cout << "Add order: " << order << std::endl; }
-    void onUpdateOrder(const CppTrader::Order& order) override
+    void onUpdateOrder(const Order& order) override
     { std::cout << "Update order: " << order << std::endl; }
-    void onDeleteOrder(const CppTrader::Order& order) override
+    void onDeleteOrder(const Order& order) override
     { std::cout << "Delete order: " << order << std::endl; }
 
-    void onExecuteOrder(const CppTrader::Order& order, uint64_t price, uint64_t quantity) override
+    void onExecuteOrder(const Order& order, uint64_t price, uint64_t quantity) override
     { std::cout << "Execute order: " << order << " with price " << price << " and quantity " << quantity << std::endl; }
 };
 
-class MyITCHHandler : public CppTrader::ITCH::ITCHHandler
+class MyITCHHandler : public ITCHHandler
 {
 public:
-    MyITCHHandler(CppTrader::MarketManager& market) : _market(market) {}
+    MyITCHHandler(MarketManager& market) : _market(market) {}
 
 protected:
-    bool onMessage(const CppTrader::ITCH::StockDirectoryMessage& message) override
+    bool onMessage(const StockDirectoryMessage& message) override
     {
-        CppTrader::Symbol symbol(message.StockLocate, message.Stock);
+        Symbol symbol(message.StockLocate, message.Stock);
         _market.AddSymbol(symbol);
         _market.AddOrderBook(symbol);
         return true;
     }
 
-    bool onMessage(const CppTrader::ITCH::AddOrderMessage& message) override
+    bool onMessage(const AddOrderMessage& message) override
     {
-        _market.AddOrder(CppTrader::Order(message.OrderReferenceNumber, message.StockLocate, CppTrader::OrderType::LIMIT, (message.BuySellIndicator == 'B') ? CppTrader::OrderSide::BUY : CppTrader::OrderSide::SELL, message.Price, message.Shares));
+        _market.AddOrder(Order(message.OrderReferenceNumber, message.StockLocate, OrderType::LIMIT, (message.BuySellIndicator == 'B') ? OrderSide::BUY : OrderSide::SELL, message.Price, message.Shares));
         return true;
     }
 
-    bool onMessage(const CppTrader::ITCH::AddOrderMPIDMessage& message) override
+    bool onMessage(const AddOrderMPIDMessage& message) override
     {
-        _market.AddOrder(CppTrader::Order(message.OrderReferenceNumber, message.StockLocate, CppTrader::OrderType::LIMIT, (message.BuySellIndicator == 'B') ? CppTrader::OrderSide::BUY : CppTrader::OrderSide::SELL, message.Price, message.Shares));
+        _market.AddOrder(Order(message.OrderReferenceNumber, message.StockLocate, OrderType::LIMIT, (message.BuySellIndicator == 'B') ? OrderSide::BUY : OrderSide::SELL, message.Price, message.Shares));
         return true;
     }
 
-    bool onMessage(const CppTrader::ITCH::OrderExecutedMessage& message) override
+    bool onMessage(const OrderExecutedMessage& message) override
     {
         _market.ExecuteOrder(message.OrderReferenceNumber, message.ExecutedShares);
         return true;
     }
 
-    bool onMessage(const CppTrader::ITCH::OrderExecutedWithPriceMessage& message) override
+    bool onMessage(const OrderExecutedWithPriceMessage& message) override
     {
         _market.ExecuteOrder(message.OrderReferenceNumber, message.ExecutionPrice, message.ExecutedShares);
         return true;
     }
 
-    bool onMessage(const CppTrader::ITCH::OrderCancelMessage& message) override
+    bool onMessage(const OrderCancelMessage& message) override
     {
         _market.ReduceOrder(message.OrderReferenceNumber, message.CanceledShares);
         return true;
     }
 
-    bool onMessage(const CppTrader::ITCH::OrderDeleteMessage& message) override
+    bool onMessage(const OrderDeleteMessage& message) override
     {
         _market.DeleteOrder(message.OrderReferenceNumber);
         return true;
     }
 
-    bool onMessage(const CppTrader::ITCH::OrderReplaceMessage& message) override
+    bool onMessage(const OrderReplaceMessage& message) override
     {
         _market.ReplaceOrder(message.OriginalOrderReferenceNumber, message.NewOrderReferenceNumber, message.Price, message.Shares);
         return true;
     }
 
 private:
-    CppTrader::MarketManager& _market;
+    MarketManager& _market;
 };
 
 int main(int argc, char** argv)
 {
     MyMarketHandler market_handler;
-    CppTrader::MarketManager market(market_handler);
+    MarketManager market(market_handler);
     MyITCHHandler itch_handler(market);
 
     // Perform input

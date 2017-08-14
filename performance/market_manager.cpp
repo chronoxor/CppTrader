@@ -2,8 +2,8 @@
 // Created by Ivan Shynkarenka on 05.08.2017
 //
 
+#include "trader/matching/market_manager.h"
 #include "trader/providers/nasdaq/itch_handler.h"
-#include "trader/market_manager.h"
 
 #include "benchmark/reporter_console.h"
 #include "filesystem/file.h"
@@ -13,8 +13,8 @@
 #include "../modules/cpp-optparse/OptionParser.h"
 
 using namespace CppCommon;
-using namespace CppTrader;
 using namespace CppTrader::ITCH;
+using namespace CppTrader::Matching;
 
 class MyMarketHandler : public MarketHandler
 {

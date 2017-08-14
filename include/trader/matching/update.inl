@@ -7,6 +7,7 @@
 */
 
 namespace CppTrader {
+namespace Matching {
 
 inline std::ostream& operator<<(std::ostream& stream, UpdateType type)
 {
@@ -25,4 +26,5 @@ inline std::ostream& operator<<(std::ostream& stream, UpdateType type)
     }
 }
 
+} // namespace Matching
 } // namespace CppTrader

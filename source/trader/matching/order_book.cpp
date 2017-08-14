@@ -6,9 +6,10 @@
     \copyright MIT License
 */
 
-#include "trader/order_book.h"
+#include "trader/matching/order_book.h"
 
 namespace CppTrader {
+namespace Matching {
 
 OrderBook::~OrderBook()
 {
@@ -168,4 +169,5 @@ LevelUpdate OrderBook::DeleteOrder(OrderNode* order_ptr)
     return ReduceOrder(order_ptr, order_ptr->Quantity);
 }
 
+} // namespace Matching
 } // namespace CppTrader

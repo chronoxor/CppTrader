@@ -7,6 +7,7 @@
 */
 
 namespace CppTrader {
+namespace Matching {
 
 inline std::ostream& operator<<(std::ostream& stream, LevelType type)
 {
@@ -68,4 +69,5 @@ inline std::ostream& operator<<(std::ostream& stream, const LevelUpdate& update)
         << ")";
 }
 
+} // namespace Matching
 } // namespace CppTrader

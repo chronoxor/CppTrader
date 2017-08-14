@@ -6,12 +6,13 @@
     \copyright MIT License
 */
 
-#include "trader/market_manager.h"
+#include "trader/matching/market_manager.h"
 
 #include "errors/exceptions.h"
 #include "string/format.h"
 
 namespace CppTrader {
+namespace Matching {
 
 MarketHandler MarketManager::_default;
 
@@ -136,6 +137,11 @@ void MarketManager::AddOrder(const Order& order)
     if (order.Quantity == 0)
         throwex CppCommon::ArgumentException("Order quantity must be greater than zero!");
 
+    // Automatic order matching
+    if (_matching)
+        if (Match((OrderBook*)GetOrderBook(order.SymbolId), order.Side, order.Price, order.Quantity))
+            return;
+
     // Create a new order
     OrderNode* order_ptr = _order_pool.Create(order);
 
@@ -235,6 +241,11 @@ void MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_qu
     order_ptr->Price = new_price;
     order_ptr->Quantity = new_quantity;
 
+    // Automatic order matching
+    if (_matching)
+        if (Match(order_book_ptr, order_ptr->Side, order_ptr->Price, order_ptr->Quantity))
+            order_ptr->Quantity = 0;
+
     // Update the order or delete the empty order
     if (order_ptr->Quantity > 0)
     {
@@ -285,16 +296,33 @@ void MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_pric
         UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
     }
 
+    // Call the corresponding handler
+    _market_handler.onDeleteOrder(*order_ptr);
+
     if (new_quantity > 0)
     {
-        // Call the corresponding handler
-        _market_handler.onDeleteOrder(*order_ptr);
-
         // Replace the order
         _orders.erase(order_it);
         order_ptr->Id = new_id;
         order_ptr->Price = new_price;
         order_ptr->Quantity = new_quantity;
+
+        // Automatic order matching
+        if (_matching)
+        {
+            if (Match(order_book_ptr, order_ptr->Side, order_ptr->Price, order_ptr->Quantity))
+            {
+                // Erase the order
+                _orders.erase(order_it);
+
+                // Relase the order
+                _order_pool.Release(order_ptr);
+
+                return;
+            }
+        }
+
+        // Insert the order
         if (!_orders.insert(std::make_pair(new_id, order_ptr)).second)
         {
             // Release the order
@@ -313,9 +341,6 @@ void MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_pric
     }
     else
     {
-        // Call the corresponding handler
-        _market_handler.onDeleteOrder(*order_ptr);
-
         // Erase the order
         _orders.erase(order_it);
 
@@ -349,14 +374,31 @@ void MarketManager::ReplaceOrder(uint64_t id, const Order& new_order)
         UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
     }
 
+    // Call the corresponding handler
+    _market_handler.onDeleteOrder(*order_ptr);
+
     if (new_order.Quantity > 0)
     {
-        // Call the corresponding handler
-        _market_handler.onDeleteOrder(*order_ptr);
-
         // Replace the order
         _orders.erase(order_it);
         *order_ptr = new_order;
+
+        // Automatic order matching
+        if (_matching)
+        {
+            if (Match(order_book_ptr, order_ptr->Side, order_ptr->Price, order_ptr->Quantity))
+            {
+                // Erase the order
+                _orders.erase(order_it);
+
+                // Relase the order
+                _order_pool.Release(order_ptr);
+
+                return;
+            }
+        }
+
+        // Insert the order
         if (!_orders.insert(std::make_pair(new_order.Id, order_ptr)).second)
         {
             // Release the order
@@ -377,9 +419,6 @@ void MarketManager::ReplaceOrder(uint64_t id, const Order& new_order)
     }
     else
     {
-        // Call the corresponding handler
-        _market_handler.onDeleteOrder(*order_ptr);
-
         // Erase the order
         _orders.erase(order_it);
 
@@ -526,6 +565,86 @@ void MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quantity)
     }
 }
 
+void MarketManager::Match()
+{
+    for (auto order_book_ptr : _order_books)
+        if (order_book_ptr != nullptr)
+            Match(order_book_ptr);
+}
+
+void MarketManager::Match(OrderBook* order_book_ptr)
+{
+    // Check the arbitrage bid/ask prices
+    while ((order_book_ptr->_best_bid != nullptr) &&
+           (order_book_ptr->_best_ask != nullptr) &&
+           (order_book_ptr->_best_bid->Price > order_book_ptr->_best_ask->Price))
+    {
+        LevelNode* bid = order_book_ptr->_best_bid;
+        LevelNode* ask = order_book_ptr->_best_ask;
+
+        // Execute crossed orders
+        while (!bid->OrderList.empty() && !ask->OrderList.empty())
+        {
+            // Find the order to execute and the order to reduce
+            Order* executing_order_ptr = bid->OrderList.front();
+            Order* reducing_order_ptr = ask->OrderList.front();
+            if (executing_order_ptr->Quantity > reducing_order_ptr->Quantity)
+                std::swap(executing_order_ptr, reducing_order_ptr);
+
+            // Get the execution quantity
+            uint64_t quantity = executing_order_ptr->Quantity;
+
+            // Call the corresponding handler
+            _market_handler.onExecuteOrder(*executing_order_ptr, executing_order_ptr->Price, quantity);
+
+            // Delete the executing order from the order book
+            DeleteOrder(executing_order_ptr->Id);
+
+            // Reduce the remaining order in the order book
+            ReduceOrder(reducing_order_ptr->Id, quantity);
+        }
+    }
+}
+
+bool MarketManager::Match(OrderBook* order_book_ptr, OrderSide side, uint64_t price, uint64_t quantity)
+{
+    // Check if the order book is valid
+    if (order_book_ptr == nullptr)
+        return false;
+
+    // Find the price level to match
+    LevelNode* level = (side == OrderSide::BUY) ? order_book_ptr->_best_ask : order_book_ptr->_best_bid;
+    if (level == nullptr)
+        return false;
+
+    // Check the arbitrage bid/ask prices
+    bool arbitrage = (side == OrderSide::BUY) ? (price >= level->Price) : (price <= level->Price);
+    if (arbitrage)
+    {
+        // Execute crossed orders
+        while ((quantity > 0) && !level->OrderList.empty())
+        {
+            // Find the order to execute
+            Order* executing_order_ptr = level->OrderList.front();
+
+            // Get the execution quantity
+            uint64_t executed = std::min(quantity, executing_order_ptr->Quantity);
+
+            // Call the corresponding handler
+            _market_handler.onExecuteOrder(*executing_order_ptr, executing_order_ptr->Price, executed);
+
+            // Reduce the executing order in the order book
+            ReduceOrder(executing_order_ptr->Id, executed);
+
+            // Reduce quantity to execute
+            quantity -= executed;
+        }
+    }
+
+    // Return full order execution flag
+    return (quantity == 0);
+}
+
 void MarketManager::UpdateLevel(const OrderBook& order_book, const LevelUpdate& update) const
 {
     switch (update.Type)
@@ -545,4 +664,5 @@ void MarketManager::UpdateLevel(const OrderBook& order_book, const LevelUpdate& 
     _market_handler.onUpdateOrderBook(order_book, update.Top);
 }
 
+} // namespace Matching
 } // namespace CppTrader

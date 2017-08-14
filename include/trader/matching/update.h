@@ -6,12 +6,13 @@
     \copyright MIT License
 */
 
-#ifndef CPPTRADER_UPDATE_H
-#define CPPTRADER_UPDATE_H
+#ifndef CPPTRADER_MATCHING_UPDATE_H
+#define CPPTRADER_MATCHING_UPDATE_H
 
 #include <cstdint>
 
 namespace CppTrader {
+namespace Matching {
 
 //! Update type
 enum class UpdateType : uint8_t
@@ -23,8 +24,9 @@ enum class UpdateType : uint8_t
 };
 std::ostream& operator<<(std::ostream& stream, UpdateType type);
 
+} // namespace Matching
 } // namespace CppTrader
 
 #include "update.inl"
 
-#endif // CPPTRADER_UPDATE_H
+#endif // CPPTRADER_MATCHING_UPDATE_H

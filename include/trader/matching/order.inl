@@ -7,6 +7,7 @@
 */
 
 namespace CppTrader {
+namespace Matching {
 
 inline std::ostream& operator<<(std::ostream& stream, OrderSide side)
 {
@@ -69,4 +70,5 @@ inline OrderNode& OrderNode::operator=(const Order& order) noexcept
     return *this;
 }
 
+} // namespace Matching
 } // namespace CppTrader

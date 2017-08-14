@@ -6,8 +6,8 @@
     \copyright MIT License
 */
 
-#ifndef CPPTRADER_MARKET_HANDLER_H
-#define CPPTRADER_MARKET_HANDLER_H
+#ifndef CPPTRADER_MATCHING_MARKET_HANDLER_H
+#define CPPTRADER_MATCHING_MARKET_HANDLER_H
 
 #include "level.h"
 #include "order.h"
@@ -15,6 +15,7 @@
 #include "symbol.h"
 
 namespace CppTrader {
+namespace Matching {
 
 //! Market handler class
 /*!
@@ -65,6 +66,7 @@ protected:
     virtual void onExecuteOrder(const Order& order, uint64_t price, uint64_t quantity) {}
 };
 
+} // namespace Matching
 } // namespace CppTrader
 
-#endif // CPPTRADER_MARKET_HANDLER_H
+#endif // CPPTRADER_MATCHING_MARKET_HANDLER_H

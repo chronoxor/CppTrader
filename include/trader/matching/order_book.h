@@ -6,8 +6,8 @@
     \copyright MIT License
 */
 
-#ifndef CPPTRADER_ORDER_BOOK_H
-#define CPPTRADER_ORDER_BOOK_H
+#ifndef CPPTRADER_MATCHING_ORDER_BOOK_H
+#define CPPTRADER_MATCHING_ORDER_BOOK_H
 
 #include "level.h"
 #include "symbol.h"
@@ -15,6 +15,7 @@
 #include "memory/allocator_pool.h"
 
 namespace CppTrader {
+namespace Matching {
 
 //! Order book
 /*!
@@ -86,8 +87,9 @@ private:
     LevelUpdate DeleteOrder(OrderNode* order_ptr);
 };
 
+} // namespace Matching
 } // namespace CppTrader
 
 #include "order_book.inl"
 
-#endif // CPPTRADER_ORDER_BOOK_H
+#endif // CPPTRADER_MATCHING_ORDER_BOOK_H

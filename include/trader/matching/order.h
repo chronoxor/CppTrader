@@ -6,8 +6,8 @@
     \copyright MIT License
 */
 
-#ifndef CPPTRADER_ORDER_H
-#define CPPTRADER_ORDER_H
+#ifndef CPPTRADER_MATCHING_ORDER_H
+#define CPPTRADER_MATCHING_ORDER_H
 
 #include "containers/list.h"
 #include "utility/iostream.h"
@@ -15,6 +15,7 @@
 #include <cstdint>
 
 namespace CppTrader {
+namespace Matching {
 
 //! Order side
 enum class OrderSide : uint8_t
@@ -76,8 +77,9 @@ struct OrderNode : public Order, public CppCommon::List<OrderNode>::Node
     OrderNode& operator=(OrderNode&&) noexcept = default;
 };
 
+} // namespace Matching
 } // namespace CppTrader
 
 #include "order.inl"
 
-#endif // CPPTRADER_ORDER_H
+#endif // CPPTRADER_MATCHING_ORDER_H

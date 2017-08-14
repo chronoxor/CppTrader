@@ -6,8 +6,8 @@
     \copyright MIT License
 */
 
-#ifndef CPPTRADER_LEVEL_H
-#define CPPTRADER_LEVEL_H
+#ifndef CPPTRADER_MATCHING_LEVEL_H
+#define CPPTRADER_MATCHING_LEVEL_H
 
 #include "order.h"
 #include "update.h"
@@ -15,6 +15,7 @@
 #include "containers/bintree_avl.h"
 
 namespace CppTrader {
+namespace Matching {
 
 //! Price level type
 enum class LevelType : uint8_t
@@ -113,8 +114,9 @@ struct LevelUpdate
     friend std::ostream& operator<<(std::ostream& stream, const LevelUpdate& update);
 };
 
+} // namespace Matching
 } // namespace CppTrader
 
 #include "level.inl"
 
-#endif // CPPTRADER_LEVEL_H
+#endif // CPPTRADER_MATCHING_LEVEL_H

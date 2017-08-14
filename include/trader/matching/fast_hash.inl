@@ -7,6 +7,7 @@
 */
 
 namespace CppTrader {
+namespace Matching {
 
 inline size_t FastHash::operator()(uint64_t value) const noexcept
 {
@@ -32,4 +33,5 @@ inline uint64_t FastHash::Parse(const char str[8]) noexcept
     return value;
 }
 
+} // namespace Matching
 } // namespace CppTrader

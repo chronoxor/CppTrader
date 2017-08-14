@@ -7,6 +7,7 @@
 */
 
 namespace CppTrader {
+namespace Matching {
 
 inline MarketManager::MarketManager()
     : MarketManager(_default)
@@ -22,7 +23,8 @@ inline MarketManager::MarketManager(MarketHandler& market_handler)
       _order_book_pool(_order_book_memory_manager),
       _order_memory_manager(_auxiliary_memory_manager),
       _order_pool(_order_memory_manager),
-      _orders(16384, 0)
+      _orders(16384, 0),
+      _matching(false)
 {
 
 }
@@ -47,4 +49,5 @@ inline const Order* MarketManager::GetOrder(uint64_t id) const noexcept
     return ((it != _orders.end()) ? it->second : nullptr);
 }
 
+} // namespace Matching
 } // namespace CppTrader

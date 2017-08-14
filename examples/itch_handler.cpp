@@ -12,30 +12,32 @@
 
 #include <iostream>
 
-class MyITCHHandler : public CppTrader::ITCH::ITCHHandler
+using namespace CppTrader::ITCH;
+
+class MyITCHHandler : public ITCHHandler
 {
 protected:
-    bool onMessage(const CppTrader::ITCH::SystemEventMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::StockDirectoryMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::StockTradingActionMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::RegSHOMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::MarketParticipantPositionMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::MWCBDeclineMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::MWCBStatusMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::IPOQuotingMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::AddOrderMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::AddOrderMPIDMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::OrderExecutedMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::OrderExecutedWithPriceMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::OrderCancelMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::OrderDeleteMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::OrderReplaceMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::TradeMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::CrossTradeMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::BrokenTradeMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::NOIIMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::RPIIMessage& message) override { return OutputMessage(message); }
-    bool onMessage(const CppTrader::ITCH::UnknownMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const SystemEventMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const StockDirectoryMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const StockTradingActionMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const RegSHOMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const MarketParticipantPositionMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const MWCBDeclineMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const MWCBStatusMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const IPOQuotingMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const AddOrderMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const AddOrderMPIDMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const OrderExecutedMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const OrderExecutedWithPriceMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const OrderCancelMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const OrderDeleteMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const OrderReplaceMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const TradeMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const CrossTradeMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const BrokenTradeMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const NOIIMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const RPIIMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const UnknownMessage& message) override { return OutputMessage(message); }
 
 private:
     template <class TMessage>

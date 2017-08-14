@@ -7,6 +7,7 @@
 */
 
 namespace CppTrader {
+namespace Matching {
 
 inline Symbol::Symbol(uint32_t id, const char name[8]) noexcept
     : Id(id)
@@ -21,4 +22,5 @@ inline std::ostream& operator<<(std::ostream& stream, const Symbol& symbol)
         << ")";
 }
 
+} // namespace Matching
 } // namespace CppTrader

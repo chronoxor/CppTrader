@@ -6,8 +6,8 @@
     \copyright MIT License
 */
 
-#ifndef CPPTRADER_MARKET_MANAGER_H
-#define CPPTRADER_MARKET_MANAGER_H
+#ifndef CPPTRADER_MATCHING_MARKET_MANAGER_H
+#define CPPTRADER_MATCHING_MARKET_MANAGER_H
 
 #include "fast_hash.h"
 #include "market_handler.h"
@@ -20,9 +20,18 @@
 
 namespace CppTrader {
 
+/*!
+    \namespace CppTrader::Matching
+    \brief Matching engine definitions
+*/
+namespace Matching {
+
 //! Market manager
 /*!
     Market manager is used to manage the market with symbols, orders and order books.
+
+    Automatic orders matching can be enabled with EnableMatching() method or can be
+    manually performed with Match() method.
 
     Not thread-safe.
 */
@@ -131,6 +140,23 @@ public:
     */
     void ExecuteOrder(uint64_t id, uint64_t price, uint64_t quantity);
 
+    //! Is automatic matching enabled?
+    bool IsMatchingEnabled() const noexcept { return _matching; }
+    //! Enable automatic matching
+    void EnableMatching() { _matching = true; Match(); }
+    //! Disable automatic matching
+    void DisableMatching() { _matching = false; }
+
+    //! Match crossed orders in all order books
+    /*!
+        Method will match all crossed orders in each order book. Buy orders will be
+        matched with sell orders at arbitrage price starting from the top of the book.
+        Matched orders will be executed with deleted form the order book. After the
+        matching operation each order book will have the best bid price guarantied
+        less than the best ask price!
+    */
+    void Match();
+
 private:
     // Market handler
     static MarketHandler _default;
@@ -154,13 +180,20 @@ private:
     CppCommon::PoolAllocator<OrderNode, CppCommon::DefaultMemoryManager> _order_pool;
     CppCommon::HashMap<uint64_t, OrderNode*, FastHash> _orders;
 
+    // Matching
+    bool _matching;
+
+    void Match(OrderBook* order_book_ptr);
+    bool Match(OrderBook* order_book_ptr, OrderSide side, uint64_t price, uint64_t quantity);
+
     void UpdateLevel(const OrderBook& order_book, const LevelUpdate& update) const;
 };
 
 /*! \example market_manager.cpp Market manager example */
 
+} // namespace Matching
 } // namespace CppTrader
 
 #include "market_manager.inl"
 
-#endif // CPPTRADER_MARKET_MANAGER_H
+#endif // CPPTRADER_MATCHING_MARKET_MANAGER_H
