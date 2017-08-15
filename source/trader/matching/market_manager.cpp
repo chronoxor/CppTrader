@@ -138,12 +138,14 @@ void MarketManager::AddOrder(const Order& order)
         throwex CppCommon::ArgumentException("Order quantity must be greater than zero!");
 
     // Automatic order matching
+    size_t quantity = order.Quantity;
     if (_matching)
-        if (Match((OrderBook*)GetOrderBook(order.SymbolId), order.Side, order.Price, order.Quantity))
+        if (Match((OrderBook*)GetOrderBook(order.SymbolId), order.Side, order.Price, quantity))
             return;
 
     // Create a new order
     OrderNode* order_ptr = _order_pool.Create(order);
+    order_ptr->Quantity = quantity;
 
     // Insert the order
     if (!_orders.insert(std::make_pair(order.Id, order_ptr)).second)
@@ -243,8 +245,7 @@ void MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_qu
 
     // Automatic order matching
     if (_matching)
-        if (Match(order_book_ptr, order_ptr->Side, order_ptr->Price, order_ptr->Quantity))
-            order_ptr->Quantity = 0;
+        Match(order_book_ptr, order_ptr->Side, order_ptr->Price, order_ptr->Quantity);
 
     // Update the order or delete the empty order
     if (order_ptr->Quantity > 0)
@@ -312,12 +313,8 @@ void MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_pric
         {
             if (Match(order_book_ptr, order_ptr->Side, order_ptr->Price, order_ptr->Quantity))
             {
-                // Erase the order
-                _orders.erase(order_it);
-
                 // Relase the order
                 _order_pool.Release(order_ptr);
-
                 return;
             }
         }
@@ -388,12 +385,8 @@ void MarketManager::ReplaceOrder(uint64_t id, const Order& new_order)
         {
             if (Match(order_book_ptr, order_ptr->Side, order_ptr->Price, order_ptr->Quantity))
             {
-                // Erase the order
-                _orders.erase(order_it);
-
                 // Relase the order
                 _order_pool.Release(order_ptr);
-
                 return;
             }
         }
@@ -606,31 +599,36 @@ void MarketManager::Match(OrderBook* order_book_ptr)
             // Reduce the remaining order in the order book
             ReduceOrder(reducing_order_ptr->Id, quantity);
 
-            // If the bid level or the ask level becomes empty start again from the best bid/ask level
+            // If some level becomes empty start again from the best bid/ask level
             if ((quantity == bid_volume) || (quantity == ask_volume))
                 break;
         }
     }
 }
 
-bool MarketManager::Match(OrderBook* order_book_ptr, OrderSide side, uint64_t price, uint64_t quantity)
+bool MarketManager::Match(OrderBook* order_book_ptr, OrderSide side, uint64_t price, uint64_t& quantity)
 {
     // Check if the order book is valid
     if (order_book_ptr == nullptr)
         return false;
 
-    // Find the price level to match
-    LevelNode* level = (side == OrderSide::BUY) ? order_book_ptr->_best_ask : order_book_ptr->_best_bid;
-    if (level == nullptr)
-        return false;
-
-    // Check the arbitrage bid/ask prices
-    bool arbitrage = (side == OrderSide::BUY) ? (price >= level->Price) : (price <= level->Price);
-    if (arbitrage)
+    LevelNode* level;
+    while ((level = (side == OrderSide::BUY) ? order_book_ptr->_best_ask : order_book_ptr->_best_bid) != nullptr)
     {
+        // Check if we have something to match
+        if (quantity == 0)
+            return true;
+
+        // Check the arbitrage bid/ask prices
+        bool arbitrage = (side == OrderSide::BUY) ? (price >= level->Price) : (price <= level->Price);
+        if (!arbitrage)
+            return false;
+
         // Execute crossed orders
-        while ((quantity > 0) && !level->OrderList.empty())
+        while (!level->OrderList.empty())
         {
+            size_t level_volume = level->Volume;
+
             // Find the order to execute
             Order* executing_order_ptr = level->OrderList.front();
 
@@ -645,6 +643,12 @@ bool MarketManager::Match(OrderBook* order_book_ptr, OrderSide side, uint64_t pr
 
             // Reduce quantity to execute
             quantity -= executed;
+            if (quantity == 0)
+                return true;
+
+            // If the level becomes empty start again from the best bid/ask level
+            if (executed == level_volume)
+                break;
         }
     }
 

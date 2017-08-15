@@ -85,7 +85,7 @@ LevelNode* OrderBook::DeleteLevel(OrderNode* order_ptr)
     {
         // Update best bid price level
         if (level_ptr == _best_bid)
-            _best_bid = _best_bid->parent;
+            _best_bid = (_best_bid->left != nullptr) ? _best_bid->left : _best_bid->parent;
 
         // Erase the price level from the bid collection
         _bids.erase(Levels::iterator(&_bids, level_ptr));
@@ -94,7 +94,7 @@ LevelNode* OrderBook::DeleteLevel(OrderNode* order_ptr)
     {
         // Update best ask price level
         if (level_ptr == _best_ask)
-            _best_ask = _best_ask->parent;
+            _best_ask = (_best_ask->right != nullptr) ? _best_ask->right : _best_ask->parent;
 
         // Erase the price level from the ask collection
         _asks.erase(Levels::iterator(&_asks, level_ptr));
