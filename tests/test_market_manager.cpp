@@ -120,7 +120,7 @@ private:
 
 } // namespace
 
-TEST_CASE("Market manager", "[CppTrader]")
+TEST_CASE("Market manager", "[CppTrader][Matching]")
 {
     MyMarketHandler market_handler;
     MarketManager market(market_handler);

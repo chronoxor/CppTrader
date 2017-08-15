@@ -577,7 +577,7 @@ void MarketManager::Match(OrderBook* order_book_ptr)
     // Check the arbitrage bid/ask prices
     while ((order_book_ptr->_best_bid != nullptr) &&
            (order_book_ptr->_best_ask != nullptr) &&
-           (order_book_ptr->_best_bid->Price > order_book_ptr->_best_ask->Price))
+           (order_book_ptr->_best_bid->Price >= order_book_ptr->_best_ask->Price))
     {
         LevelNode* bid = order_book_ptr->_best_bid;
         LevelNode* ask = order_book_ptr->_best_ask;
@@ -585,6 +585,9 @@ void MarketManager::Match(OrderBook* order_book_ptr)
         // Execute crossed orders
         while (!bid->OrderList.empty() && !ask->OrderList.empty())
         {
+            size_t bid_volume = bid->Volume;
+            size_t ask_volume = ask->Volume;
+
             // Find the order to execute and the order to reduce
             Order* executing_order_ptr = bid->OrderList.front();
             Order* reducing_order_ptr = ask->OrderList.front();
@@ -602,6 +605,10 @@ void MarketManager::Match(OrderBook* order_book_ptr)
 
             // Reduce the remaining order in the order book
             ReduceOrder(reducing_order_ptr->Id, quantity);
+
+            // If the bid level or the ask level becomes empty start again from the best bid/ask level
+            if ((quantity == bid_volume) || (quantity == ask_volume))
+                break;
         }
     }
 }

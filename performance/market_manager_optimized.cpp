@@ -287,7 +287,25 @@ private:
 
     LevelUpdate DeleteOrder(Order* order_ptr)
     {
-        return ReduceOrder(order_ptr, order_ptr->Quantity);
+        // Find the price level for the order
+        Level* level_ptr = _levels.get(order_ptr->Level);
+
+        // Update the price level volume
+        level_ptr->Volume -= order_ptr->Quantity;
+
+        // Update the price level orders count
+        --level_ptr->Orders;
+
+        LevelUpdate update = { UpdateType::UPDATE, Level(*level_ptr), (level_ptr == ((order_ptr->Side == OrderSide::BUY) ? best_bid() : best_ask())) };
+
+        // Delete the empty price level
+        if (level_ptr->Volume == 0)
+        {
+            DeleteLevel(order_ptr);
+            update.Type = UpdateType::DELETE;
+        }
+
+        return update;
     }
 
     static LevelPool _levels;
