@@ -184,7 +184,7 @@ private:
     bool _matching;
 
     void Match(OrderBook* order_book_ptr);
-    bool Match(OrderBook* order_book_ptr, OrderSide side, uint64_t price, uint64_t& quantity);
+    void Match(OrderBook* order_book_ptr, OrderSide side, uint64_t price, uint64_t& quantity);
 
     void UpdateLevel(const OrderBook& order_book, const LevelUpdate& update) const;
 };

@@ -504,11 +504,11 @@ public:
         OrderBook* order_book_ptr = &_order_books[order_ptr->Symbol];
         UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
 
+        // Call the corresponding handler
+        _market_handler.onDeleteOrder(*order_ptr);
+
         if (new_quantity > 0)
         {
-            // Call the corresponding handler
-            _market_handler.onDeleteOrder(*order_ptr);
-
             // Replace the order
             Order* new_order_ptr = &_orders[new_id];
             *new_order_ptr = *order_ptr;
@@ -524,11 +524,6 @@ public:
             // Add the modified order into the order book
             UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(new_order_ptr));
         }
-        else
-        {
-            // Call the corresponding handler
-            _market_handler.onDeleteOrder(*order_ptr);
-        }
     }
 
     void ReplaceOrder(uint64_t id, uint64_t new_id, uint16_t new_symbol, OrderSide new_side, uint32_t new_price, uint32_t new_quantity)
@@ -540,11 +535,11 @@ public:
         OrderBook* order_book_ptr = &_order_books[order_ptr->Symbol];
         UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
 
+        // Call the corresponding handler
+        _market_handler.onDeleteOrder(*order_ptr);
+
         if (new_quantity > 0)
         {
-            // Call the corresponding handler
-            _market_handler.onDeleteOrder(*order_ptr);
-
             // Replace the order
             Order* new_order_ptr = &_orders[new_id];
             new_order_ptr->Id = new_id;
@@ -559,11 +554,6 @@ public:
             // Add the modified order into the order book
             order_book_ptr = &_order_books[new_order_ptr->Symbol];
             UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(new_order_ptr));
-        }
-        else
-        {
-            // Call the corresponding handler
-            _market_handler.onDeleteOrder(*order_ptr);
         }
     }
 

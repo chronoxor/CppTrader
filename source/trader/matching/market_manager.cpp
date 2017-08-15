@@ -137,33 +137,36 @@ void MarketManager::AddOrder(const Order& order)
     if (order.Quantity == 0)
         throwex CppCommon::ArgumentException("Order quantity must be greater than zero!");
 
+    Order new_order(order);
+
     // Automatic order matching
-    size_t quantity = order.Quantity;
     if (_matching)
-        if (Match((OrderBook*)GetOrderBook(order.SymbolId), order.Side, order.Price, quantity))
-            return;
+        Match((OrderBook*)GetOrderBook(order.SymbolId), new_order.Side, new_order.Price, new_order.Quantity);
 
-    // Create a new order
-    OrderNode* order_ptr = _order_pool.Create(order);
-    order_ptr->Quantity = quantity;
-
-    // Insert the order
-    if (!_orders.insert(std::make_pair(order.Id, order_ptr)).second)
+    // Add a new order
+    if (new_order.Quantity > 0)
     {
-        // Release the order
-        _order_pool.Release(order_ptr);
-        throwex CppCommon::RuntimeException("Duplicate order detected! Order Id = {}"_format(order.Id));
-    }
+        // Create a new order
+        OrderNode* order_ptr = _order_pool.Create(new_order);
 
-    // Call the corresponding handler
-    _market_handler.onAddOrder(*order_ptr);
+        // Insert the order
+        if (!_orders.insert(std::make_pair(new_order.Id, order_ptr)).second)
+        {
+            // Release the order
+            _order_pool.Release(order_ptr);
+            throwex CppCommon::RuntimeException("Duplicate order detected! Order Id = {}"_format(new_order.Id));
+        }
 
-    // Get the valid order book for the new order
-    OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
-    if (order_book_ptr != nullptr)
-    {
-        // Add the new order into the order book
-        UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
+        // Call the corresponding handler
+        _market_handler.onAddOrder(*order_ptr);
+
+        // Get the valid order book for the new order
+        OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
+        if (order_book_ptr != nullptr)
+        {
+            // Add the new order into the order book
+            UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
+        }
     }
 }
 
@@ -250,14 +253,15 @@ void MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_qu
     // Update the order or delete the empty order
     if (order_ptr->Quantity > 0)
     {
+        // Call the corresponding handler
+        _market_handler.onUpdateOrder(*order_ptr);
+
+        order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
         if (order_book_ptr != nullptr)
         {
             // Add the modified order into the order book
             UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
         }
-
-        // Call the corresponding handler
-        _market_handler.onUpdateOrder(*order_ptr);
     }
     else
     {
@@ -300,36 +304,33 @@ void MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_pric
     // Call the corresponding handler
     _market_handler.onDeleteOrder(*order_ptr);
 
-    if (new_quantity > 0)
+    // Erase the order
+    _orders.erase(order_it);
+
+    // Replace the order
+    order_ptr->Id = new_id;
+    order_ptr->Price = new_price;
+    order_ptr->Quantity = new_quantity;
+
+    // Automatic order matching
+    if (_matching)
+        Match(order_book_ptr, order_ptr->Side, order_ptr->Price, order_ptr->Quantity);
+
+    if (order_ptr->Quantity > 0)
     {
-        // Replace the order
-        _orders.erase(order_it);
-        order_ptr->Id = new_id;
-        order_ptr->Price = new_price;
-        order_ptr->Quantity = new_quantity;
-
-        // Automatic order matching
-        if (_matching)
-        {
-            if (Match(order_book_ptr, order_ptr->Side, order_ptr->Price, order_ptr->Quantity))
-            {
-                // Relase the order
-                _order_pool.Release(order_ptr);
-                return;
-            }
-        }
-
         // Insert the order
-        if (!_orders.insert(std::make_pair(new_id, order_ptr)).second)
+        if (!_orders.insert(std::make_pair(order_ptr->Id, order_ptr)).second)
         {
             // Release the order
             _order_pool.Release(order_ptr);
-            throwex CppCommon::RuntimeException("Duplicate order detected! Order Id = {}"_format(new_id));
+            throwex CppCommon::RuntimeException("Duplicate order detected! Order Id = {}"_format(order_ptr->Id));
         }
 
         // Call the corresponding handler
         _market_handler.onAddOrder(*order_ptr);
 
+        // Get the valid order book for the new order
+        order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
         if (order_book_ptr != nullptr)
         {
             // Add the modified order into the order book
@@ -338,9 +339,6 @@ void MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_pric
     }
     else
     {
-        // Erase the order
-        _orders.erase(order_it);
-
         // Relase the order
         _order_pool.Release(order_ptr);
     }
@@ -374,29 +372,24 @@ void MarketManager::ReplaceOrder(uint64_t id, const Order& new_order)
     // Call the corresponding handler
     _market_handler.onDeleteOrder(*order_ptr);
 
-    if (new_order.Quantity > 0)
+    // Erase the order
+    _orders.erase(order_it);
+
+    // Replace the order
+    *order_ptr = new_order;
+
+    // Automatic order matching
+    if (_matching)
+        Match(order_book_ptr, order_ptr->Side, order_ptr->Price, order_ptr->Quantity);
+
+    if (order_ptr->Quantity > 0)
     {
-        // Replace the order
-        _orders.erase(order_it);
-        *order_ptr = new_order;
-
-        // Automatic order matching
-        if (_matching)
-        {
-            if (Match(order_book_ptr, order_ptr->Side, order_ptr->Price, order_ptr->Quantity))
-            {
-                // Relase the order
-                _order_pool.Release(order_ptr);
-                return;
-            }
-        }
-
         // Insert the order
-        if (!_orders.insert(std::make_pair(new_order.Id, order_ptr)).second)
+        if (!_orders.insert(std::make_pair(order_ptr->Id, order_ptr)).second)
         {
             // Release the order
             _order_pool.Release(order_ptr);
-            throwex CppCommon::RuntimeException("Duplicate order detected! Order Id = {}"_format(new_order.Id));
+            throwex CppCommon::RuntimeException("Duplicate order detected! Order Id = {}"_format(order_ptr->Id));
         }
 
         // Call the corresponding handler
@@ -412,9 +405,6 @@ void MarketManager::ReplaceOrder(uint64_t id, const Order& new_order)
     }
     else
     {
-        // Erase the order
-        _orders.erase(order_it);
-
         // Relase the order
         _order_pool.Release(order_ptr);
     }
@@ -606,23 +596,21 @@ void MarketManager::Match(OrderBook* order_book_ptr)
     }
 }
 
-bool MarketManager::Match(OrderBook* order_book_ptr, OrderSide side, uint64_t price, uint64_t& quantity)
+void MarketManager::Match(OrderBook* order_book_ptr, OrderSide side, uint64_t price, uint64_t& quantity)
 {
     // Check if the order book is valid
     if (order_book_ptr == nullptr)
-        return false;
+        return;
 
     LevelNode* level;
+
+    // Start the matching from the top of the book
     while ((level = (side == OrderSide::BUY) ? order_book_ptr->_best_ask : order_book_ptr->_best_bid) != nullptr)
     {
-        // Check if we have something to match
-        if (quantity == 0)
-            return true;
-
         // Check the arbitrage bid/ask prices
         bool arbitrage = (side == OrderSide::BUY) ? (price >= level->Price) : (price <= level->Price);
         if (!arbitrage)
-            return false;
+            return;
 
         // Execute crossed orders
         while (!level->OrderList.empty())
@@ -644,16 +632,13 @@ bool MarketManager::Match(OrderBook* order_book_ptr, OrderSide side, uint64_t pr
             // Reduce quantity to execute
             quantity -= executed;
             if (quantity == 0)
-                return true;
+                return;
 
             // If the level becomes empty start again from the best bid/ask level
             if (executed == level_volume)
                 break;
         }
     }
-
-    // Return full order execution flag
-    return (quantity == 0);
 }
 
 void MarketManager::UpdateLevel(const OrderBook& order_book, const LevelUpdate& update) const
