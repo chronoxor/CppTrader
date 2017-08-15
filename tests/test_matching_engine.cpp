@@ -48,7 +48,7 @@ TEST_CASE("Automatic matching", "[CppTrader][Matching]")
     market.AddSymbol(symbol);
     market.AddOrderBook(symbol);
 
-    // Enable matching
+    // Enable automatic matching
     market.EnableMatching();
 
     // Add buy orders
