@@ -3,12 +3,12 @@ var indexSectionsWithContent =
   0: "abcdefgilmnopqrstuv~",
   1: "abcfilmnorstu",
   2: "c",
-  3: "filmosuv",
+  3: "efilmosuv",
   4: "abdefgilmoprs~",
   5: "abcefilmnopqrstuv",
   6: "l",
-  7: "lou",
-  8: "abdlnsu",
+  7: "elou",
+  8: "abdlnosu",
   9: "mo",
   10: "c"
 };

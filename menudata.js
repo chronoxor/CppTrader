@@ -4,11 +4,13 @@ var menudata={children:[
 {text:"Namespace List",url:"namespaces.html"},
 {text:"Namespace Members",url:"namespacemembers.html",children:[
 {text:"All",url:"namespacemembers.html",children:[
+{text:"e",url:"namespacemembers.html#index_e"},
 {text:"l",url:"namespacemembers.html#index_l"},
 {text:"o",url:"namespacemembers.html#index_o"},
 {text:"u",url:"namespacemembers.html#index_u"},
 {text:"v",url:"namespacemembers.html#index_v"}]},
-{text:"Functions",url:"namespacemembers_func.html"},
+{text:"Functions",url:"namespacemembers_func.html",children:[
+{text:"o",url:"namespacemembers_func.html#index_o"}]},
 {text:"Variables",url:"namespacemembers_vars.html"},
 {text:"Enumerations",url:"namespacemembers_enum.html"}]}]},
 {text:"Classes",url:"annotated.html",children:[
