@@ -8,9 +8,6 @@
 
 #include "trader/matching/market_manager.h"
 
-#include "errors/exceptions.h"
-#include "string/format.h"
-
 namespace CppTrader {
 namespace Matching {
 
@@ -36,7 +33,7 @@ MarketManager::~MarketManager()
     _symbols.clear();
 }
 
-void MarketManager::AddSymbol(const Symbol& symbol)
+ErrorCode MarketManager::AddSymbol(const Symbol& symbol)
 {
     // Resize the symbol container
     if (_symbols.size() <= symbol.Id)
@@ -51,19 +48,21 @@ void MarketManager::AddSymbol(const Symbol& symbol)
     {
         // Release the symbol
         _symbol_pool.Release(symbol_ptr);
-        throwex CppCommon::RuntimeException("Duplicate symbol detected! Symbol Id = {}"_format(symbol.Id));
+        return ErrorCode::SYMBOL_DUPLICATE;
     }
     _symbols[symbol.Id] = symbol_ptr;
 
     // Call the corresponding handler
     _market_handler.onAddSymbol(*symbol_ptr);
+
+    return ErrorCode::OK;
 }
 
-void MarketManager::DeleteSymbol(uint32_t id)
+ErrorCode MarketManager::DeleteSymbol(uint32_t id)
 {
     assert(((id < _symbols.size()) && (_symbols[id] != nullptr)) && "Symbol not found!");
     if ((_symbols.size() <= id) || (_symbols[id] == nullptr))
-        throwex CppCommon::RuntimeException("Symbol not found! Symbol Id = {}"_format(id));
+        return ErrorCode::SYMBOL_NOT_FOUND;
 
     // Get the symbol by Id
     Symbol* symbol_ptr = _symbols[id];
@@ -76,13 +75,15 @@ void MarketManager::DeleteSymbol(uint32_t id)
 
     // Release the symbol
     _symbol_pool.Release(symbol_ptr);
+
+    return ErrorCode::OK;
 }
 
-void MarketManager::AddOrderBook(const Symbol& symbol)
+ErrorCode MarketManager::AddOrderBook(const Symbol& symbol)
 {
     assert(((symbol.Id < _symbols.size()) && (_symbols[symbol.Id] != nullptr)) && "Symbol not found!");
     if ((_symbols.size() <= symbol.Id) || (_symbols[symbol.Id] == nullptr))
-        throwex CppCommon::RuntimeException("Symbol not found for a new order book! Symbol Id = {}"_format(symbol.Id));
+        return ErrorCode::SYMBOL_NOT_FOUND;
 
     // Get the symbol by Id
     Symbol* symbol_ptr = _symbols[symbol.Id];
@@ -100,19 +101,21 @@ void MarketManager::AddOrderBook(const Symbol& symbol)
     {
         // Release the order book
         _order_book_pool.Release(order_book_ptr);
-        throwex CppCommon::RuntimeException("Duplicate order book detected! Order book symbol Id = {}"_format(symbol.Id));
+        return ErrorCode::ORDER_BOOK_DUPLICATE;
     }
     _order_books[symbol.Id] = order_book_ptr;
 
     // Call the corresponding handler
     _market_handler.onAddOrderBook(*order_book_ptr);
+
+    return ErrorCode::OK;
 }
 
-void MarketManager::DeleteOrderBook(uint32_t id)
+ErrorCode MarketManager::DeleteOrderBook(uint32_t id)
 {
     assert(((id < _order_books.size()) && (_order_books[id] != nullptr)) && "Order book not found!");
     if ((_order_books.size() <= id) || (_order_books[id] == nullptr))
-        throwex CppCommon::RuntimeException("Order book not found! Order book symbol Id = {}"_format(id));
+        return ErrorCode::ORDER_BOOK_NOT_FOUND;
 
     // Get the order book by Id
     OrderBook* order_book_ptr = _order_books[id];
@@ -125,17 +128,19 @@ void MarketManager::DeleteOrderBook(uint32_t id)
 
     // Release the order book
     _order_book_pool.Release(order_book_ptr);
+
+    return ErrorCode::OK;
 }
 
-void MarketManager::AddOrder(const Order& order)
+ErrorCode MarketManager::AddOrder(const Order& order)
 {
     // Validate parameters
     assert((order.Id > 0) && "Order Id must be greater than zero!");
     if (order.Id == 0)
-        throwex CppCommon::ArgumentException("Order Id must be greater than zero!");
+        return ErrorCode::ORDER_ID_INVALID;
     assert((order.Quantity > 0) && "Order quantity must be greater than zero!");
     if (order.Quantity == 0)
-        throwex CppCommon::ArgumentException("Order quantity must be greater than zero!");
+        return ErrorCode::ORDER_QUANTITY_INVALID;
 
     Order new_order(order);
 
@@ -154,7 +159,7 @@ void MarketManager::AddOrder(const Order& order)
         {
             // Release the order
             _order_pool.Release(order_ptr);
-            throwex CppCommon::RuntimeException("Duplicate order detected! Order Id = {}"_format(new_order.Id));
+            return ErrorCode::ORDER_DUPLICATE;
         }
 
         // Call the corresponding handler
@@ -168,23 +173,25 @@ void MarketManager::AddOrder(const Order& order)
             UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
         }
     }
+
+    return ErrorCode::OK;
 }
 
-void MarketManager::ReduceOrder(uint64_t id, uint64_t quantity)
+ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity)
 {
     // Validate parameters
     assert((id > 0) && "Order Id must be greater than zero!");
     if (id == 0)
-        throwex CppCommon::ArgumentException("Order Id must be greater than zero!");
+        return ErrorCode::ORDER_ID_INVALID;
     assert((quantity > 0) && "Order quantity must be greater than zero!");
     if (quantity == 0)
-        throwex CppCommon::ArgumentException("Order quantity must be greater than zero!");
+        return ErrorCode::ORDER_QUANTITY_INVALID;
 
     // Get the order to reduce
     auto order_it = _orders.find(id);
     assert((order_it != _orders.end()) && "Order not found!");
     if (order_it == _orders.end())
-        throwex CppCommon::RuntimeException("Order not found! Order Id = {}"_format(id));
+        return ErrorCode::ORDER_NOT_FOUND;
     OrderNode* order_ptr = (OrderNode*)order_it->second;
 
     // Calculate the minimal possible order quantity to reduce
@@ -218,20 +225,22 @@ void MarketManager::ReduceOrder(uint64_t id, uint64_t quantity)
         // Relase the order
         _order_pool.Release(order_ptr);
     }
+
+    return ErrorCode::OK;
 }
 
-void MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity)
+ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity)
 {
     // Validate parameters
     assert((id > 0) && "Order Id must be greater than zero!");
     if (id == 0)
-        throwex CppCommon::ArgumentException("Order Id must be greater than zero!");
+        return ErrorCode::ORDER_ID_INVALID;
 
     // Get the order to modify
     auto order_it = _orders.find(id);
     assert((order_it != _orders.end()) && "Order not found!");
     if (order_it == _orders.end())
-        throwex CppCommon::RuntimeException("Order not found! Order Id = {}"_format(id));
+        return ErrorCode::ORDER_NOT_FOUND;
     OrderNode* order_ptr = (OrderNode*)order_it->second;
 
     // Get the valid order book for the modifying order
@@ -274,23 +283,25 @@ void MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_qu
         // Relase the order
         _order_pool.Release(order_ptr);
     }
+
+    return ErrorCode::OK;
 }
 
-void MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_price, uint64_t new_quantity)
+ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_price, uint64_t new_quantity)
 {
     // Validate parameters
     assert((id > 0) && "Order Id must be greater than zero!");
     if (id == 0)
-        throwex CppCommon::ArgumentException("Order Id must be greater than zero!");
+        return ErrorCode::ORDER_ID_INVALID;
     assert((new_id > 0) && "New order Id must be greater than zero!");
     if (new_id == 0)
-        throwex CppCommon::ArgumentException("New order Id must be greater than zero!");
+        return ErrorCode::ORDER_ID_INVALID;
 
     // Get the order to replace
     auto order_it = _orders.find(id);
     assert((order_it != _orders.end()) && "Order not found!");
     if (order_it == _orders.end())
-        throwex CppCommon::RuntimeException("Order not found! Order Id = {}"_format(id));
+        return ErrorCode::ORDER_NOT_FOUND;
     OrderNode* order_ptr = (OrderNode*)order_it->second;
 
     // Get the valid order book for the replacing order
@@ -323,7 +334,7 @@ void MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_pric
         {
             // Release the order
             _order_pool.Release(order_ptr);
-            throwex CppCommon::RuntimeException("Duplicate order detected! Order Id = {}"_format(order_ptr->Id));
+            return ErrorCode::ORDER_DUPLICATE;
         }
 
         // Call the corresponding handler
@@ -342,23 +353,25 @@ void MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_pric
         // Relase the order
         _order_pool.Release(order_ptr);
     }
+
+    return ErrorCode::OK;
 }
 
-void MarketManager::ReplaceOrder(uint64_t id, const Order& new_order)
+ErrorCode MarketManager::ReplaceOrder(uint64_t id, const Order& new_order)
 {
     // Validate parameters
     assert((id > 0) && "Order Id must be greater than zero!");
     if (id == 0)
-        throwex CppCommon::ArgumentException("Order Id must be greater than zero!");
+        return ErrorCode::ORDER_ID_INVALID;
     assert((new_order.Id > 0) && "New order Id must be greater than zero!");
     if (new_order.Id == 0)
-        throwex CppCommon::ArgumentException("New order Id must be greater than zero!");
+        return ErrorCode::ORDER_ID_INVALID;
 
     // Get the order to replace
     auto order_it = _orders.find(id);
     assert((order_it != _orders.end()) && "Order not found!");
     if (order_it == _orders.end())
-        throwex CppCommon::RuntimeException("Order not found! Order Id = {}"_format(id));
+        return ErrorCode::ORDER_NOT_FOUND;
     OrderNode* order_ptr = (OrderNode*)order_it->second;
 
     // Get the valid order book for the replacing order
@@ -389,7 +402,7 @@ void MarketManager::ReplaceOrder(uint64_t id, const Order& new_order)
         {
             // Release the order
             _order_pool.Release(order_ptr);
-            throwex CppCommon::RuntimeException("Duplicate order detected! Order Id = {}"_format(order_ptr->Id));
+            return ErrorCode::ORDER_DUPLICATE;
         }
 
         // Call the corresponding handler
@@ -408,20 +421,22 @@ void MarketManager::ReplaceOrder(uint64_t id, const Order& new_order)
         // Relase the order
         _order_pool.Release(order_ptr);
     }
+
+    return ErrorCode::OK;
 }
 
-void MarketManager::DeleteOrder(uint64_t id)
+ErrorCode MarketManager::DeleteOrder(uint64_t id)
 {
     // Validate parameters
     assert((id > 0) && "Order Id must be greater than zero!");
     if (id == 0)
-        throwex CppCommon::ArgumentException("Order Id must be greater than zero!");
+        return ErrorCode::ORDER_ID_INVALID;
 
     // Get the order to delete
     auto order_it = _orders.find(id);
     assert((order_it != _orders.end()) && "Order not found!");
     if (order_it == _orders.end())
-        throwex CppCommon::RuntimeException("Order not found! Order Id = {}"_format(id));
+        return ErrorCode::ORDER_NOT_FOUND;
     OrderNode* order_ptr = (OrderNode*)order_it->second;
 
     // Get the valid order book for the deleting order
@@ -440,23 +455,25 @@ void MarketManager::DeleteOrder(uint64_t id)
 
     // Relase the order
     _order_pool.Release(order_ptr);
+
+    return ErrorCode::OK;
 }
 
-void MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
+ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
 {
     // Validate parameters
     assert((id > 0) && "Order Id must be greater than zero!");
     if (id == 0)
-        throwex CppCommon::ArgumentException("Order Id must be greater than zero!");
+        return ErrorCode::ORDER_ID_INVALID;
     assert((quantity > 0) && "Order quantity must be greater than zero!");
     if (quantity == 0)
-        throwex CppCommon::ArgumentException("Order quantity must be greater than zero!");
+        return ErrorCode::ORDER_QUANTITY_INVALID;
 
     // Get the order to execute
     auto order_it = _orders.find(id);
     assert((order_it != _orders.end()) && "Order not found!");
     if (order_it == _orders.end())
-        throwex CppCommon::RuntimeException("Order not found! Order Id = {}"_format(id));
+        return ErrorCode::ORDER_NOT_FOUND;
     OrderNode* order_ptr = (OrderNode*)order_it->second;
 
     // Calculate the minimal possible order quantity to execute
@@ -493,23 +510,25 @@ void MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
         // Relase the order
         _order_pool.Release(order_ptr);
     }
+
+    return ErrorCode::OK;
 }
 
-void MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quantity)
+ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quantity)
 {
     // Validate parameters
     assert((id > 0) && "Order Id must be greater than zero!");
     if (id == 0)
-        throwex CppCommon::ArgumentException("Order Id must be greater than zero!");
+        return ErrorCode::ORDER_ID_INVALID;
     assert((quantity > 0) && "Order quantity must be greater than zero!");
     if (quantity == 0)
-        throwex CppCommon::ArgumentException("Order quantity must be greater than zero!");
+        return ErrorCode::ORDER_QUANTITY_INVALID;
 
     // Get the order to execute
     auto order_it = _orders.find(id);
     assert((order_it != _orders.end()) && "Order not found!");
     if (order_it == _orders.end())
-        throwex CppCommon::RuntimeException("Order not found! Order Id = {}"_format(id));
+        return ErrorCode::ORDER_NOT_FOUND;
     OrderNode* order_ptr = (OrderNode*)order_it->second;
 
     // Calculate the minimal possible order quantity to execute
@@ -546,6 +565,8 @@ void MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quantity)
         // Relase the order
         _order_pool.Release(order_ptr);
     }
+
+    return ErrorCode::OK;
 }
 
 void MarketManager::Match()

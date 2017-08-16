@@ -9,6 +9,8 @@
 #ifndef CPPTRADER_MATCHING_UPDATE_H
 #define CPPTRADER_MATCHING_UPDATE_H
 
+#include "utility/iostream.h"
+
 #include <cstdint>
 
 namespace CppTrader {

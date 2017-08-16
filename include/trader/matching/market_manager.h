@@ -9,6 +9,7 @@
 #ifndef CPPTRADER_MATCHING_MARKET_MANAGER_H
 #define CPPTRADER_MATCHING_MARKET_MANAGER_H
 
+#include "errors.h"
 #include "fast_hash.h"
 #include "market_handler.h"
 
@@ -69,76 +70,88 @@ public:
     //! Add a new symbol
     /*!
         \param symbol - Symbol to add
+        \return Error code
     */
-    void AddSymbol(const Symbol& symbol);
+    ErrorCode AddSymbol(const Symbol& symbol);
     //! Delete the symbol
     /*!
         \param id - Symbol Id
+        \return Error code
     */
-    void DeleteSymbol(uint32_t id);
+    ErrorCode DeleteSymbol(uint32_t id);
 
     //! Add a new order book
     /*!
         \param symbol - Symbol of the order book to add
+        \return Error code
     */
-    void AddOrderBook(const Symbol& symbol);
+    ErrorCode AddOrderBook(const Symbol& symbol);
     //! Delete the order book
     /*!
         \param id - Symbol Id of the order book
+        \return Error code
     */
-    void DeleteOrderBook(uint32_t id);
+    ErrorCode DeleteOrderBook(uint32_t id);
 
     //! Add a new order
     /*!
         \param order - Order to add
+        \return Error code
     */
-    void AddOrder(const Order& order);
+    ErrorCode AddOrder(const Order& order);
     //! Reduce the order by the given quantity
     /*!
         \param id - Order Id
         \param quantity - Order quantity to reduce
+        \return Error code
     */
-    void ReduceOrder(uint64_t id, uint64_t quantity);
+    ErrorCode ReduceOrder(uint64_t id, uint64_t quantity);
     //! Modify the order
     /*!
         \param id - Order Id
         \param new_price - Order price to modify
         \param new_quantity - Order quantity to modify
+        \return Error code
     */
-    void ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity);
+    ErrorCode ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity);
     //! Replace the order with a similar order but different Id, price and quantity
     /*!
         \param id - Order Id
         \param new_id - Order Id to replace
         \param new_price - Order price to replace
         \param new_quantity - Order quantity to replace
+        \return Error code
     */
-    void ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_price, uint64_t new_quantity);
+    ErrorCode ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_price, uint64_t new_quantity);
     //! Replace the order with a new one
     /*!
         \param id - Order Id
         \param new_order - Order to replace
+        \return Error code
     */
-    void ReplaceOrder(uint64_t id, const Order& new_order);
+    ErrorCode ReplaceOrder(uint64_t id, const Order& new_order);
     //! Delete the order
     /*!
         \param id - Order Id
+        \return Error code
     */
-    void DeleteOrder(uint64_t id);
+    ErrorCode DeleteOrder(uint64_t id);
 
     //! Execute the order
     /*!
         \param id - Order Id
         \param quantity - Order executed quantity
+        \return Error code
     */
-    void ExecuteOrder(uint64_t id, uint64_t quantity);
+    ErrorCode ExecuteOrder(uint64_t id, uint64_t quantity);
     //! Execute the order
     /*!
         \param id - Order Id
         \param price - Order executed price
         \param quantity - Order executed quantity
+        \return Error code
     */
-    void ExecuteOrder(uint64_t id, uint64_t price, uint64_t quantity);
+    ErrorCode ExecuteOrder(uint64_t id, uint64_t price, uint64_t quantity);
 
     //! Is automatic matching enabled?
     bool IsMatchingEnabled() const noexcept { return _matching; }
