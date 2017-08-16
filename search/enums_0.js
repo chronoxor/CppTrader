@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['leveltype',['LevelType',['../namespace_cpp_trader_1_1_matching.html#a08cb139d374fe621043cc84ad62790ac',1,'CppTrader::Matching']]]
+  ['errorcode',['ErrorCode',['../namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86e',1,'CppTrader::Matching']]]
 ];
