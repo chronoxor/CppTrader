@@ -59,7 +59,7 @@ protected:
     void onDeleteLevel(const OrderBook& order_book, const Level& level, bool top) override { ++_updates; }
     void onAddOrder(const Order& order) override { ++_updates; ++_orders; _max_orders = std::max(_orders, _max_orders); ++_add_orders; }
     void onUpdateOrder(const Order& order) override { ++_updates; ++_update_orders; }
-    void onRejectOrder(const Order& order, ErrorCode error) { ++_updates; ++_reject_orders; }
+    void onRejectOrder(const Order& order, ErrorCode error) override { ++_updates; ++_reject_orders; }
     void onDeleteOrder(const Order& order) override { ++_updates; --_orders; ++_delete_orders; }
     void onExecuteOrder(const Order& order, uint64_t price, uint64_t quantity) override { ++_updates; ++_execute_orders; }
 
