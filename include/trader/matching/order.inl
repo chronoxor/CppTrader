@@ -54,29 +54,39 @@ inline std::ostream& operator<<(std::ostream& stream, const Order& order)
         << "; Side=" << order.Side
         << "; Price=" << order.Price
         << "; Quantity=" << order.Quantity;
-    if (order.Slippage > 0)
+    if (order.Slippage < std::numeric_limits<uint64_t>::max())
         stream << "; Slippage=" << order.Slippage;
     return stream << ")";
 }
 
+inline Order Order::Limit(uint64_t id, uint32_t symbol, OrderSide side, uint64_t price, uint64_t quantity) noexcept
+{
+    return Order(id, symbol, OrderType::LIMIT, side, price, quantity, std::numeric_limits<uint64_t>::max());
+}
+
 inline Order Order::BuyLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity) noexcept
 {
-    return Order(id, symbol, OrderType::LIMIT, OrderSide::BUY, price, quantity, 0);
+    return Order(id, symbol, OrderType::LIMIT, OrderSide::BUY, price, quantity, std::numeric_limits<uint64_t>::max());
 }
 
 inline Order Order::SellLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity) noexcept
 {
-    return Order(id, symbol, OrderType::LIMIT, OrderSide::SELL, price, quantity, 0);
+    return Order(id, symbol, OrderType::LIMIT, OrderSide::SELL, price, quantity, std::numeric_limits<uint64_t>::max());
 }
 
-inline Order Order::BuyLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity, uint64_t slippage) noexcept
+inline Order Order::Market(uint64_t id, uint32_t symbol, OrderSide side, uint64_t quantity, uint64_t slippage) noexcept
 {
-    return Order(id, symbol, OrderType::MARKET, OrderSide::BUY, price, quantity, slippage);
+    return Order(id, symbol, OrderType::MARKET, side, 0, quantity, slippage);
 }
 
-inline Order Order::SellLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity, uint64_t slippage) noexcept
+inline Order Order::BuyMarket(uint64_t id, uint32_t symbol, uint64_t quantity, uint64_t slippage) noexcept
 {
-    return Order(id, symbol, OrderType::MARKET, OrderSide::SELL, price, quantity, slippage);
+    return Order(id, symbol, OrderType::MARKET, OrderSide::BUY, 0, quantity, slippage);
+}
+
+inline Order Order::SellMarket(uint64_t id, uint32_t symbol, uint64_t quantity, uint64_t slippage) noexcept
+{
+    return Order(id, symbol, OrderType::MARKET, OrderSide::SELL, 0, quantity, slippage);
 }
 
 inline OrderNode::OrderNode(const Order& order) noexcept : Order(order), Level(nullptr)

@@ -200,7 +200,7 @@ private:
     bool _matching;
 
     void Match(OrderBook* order_book_ptr);
-    void MatchMarket(OrderBook* order_book_ptr, OrderSide side, uint64_t price, uint64_t& quantity, uint64_t slippage);
+    void MatchMarket(OrderBook* order_book_ptr, OrderSide side, uint64_t slippage, uint64_t& quantity);
     void MatchLimit(OrderBook* order_book_ptr, OrderSide side, uint64_t price, uint64_t& quantity);
 
     void UpdateLevel(const OrderBook& order_book, const LevelUpdate& update) const;

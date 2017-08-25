@@ -88,7 +88,7 @@ struct Order
     //! Market order slippage
     uint64_t Slippage;
 
-    Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity, uint64_t slippage = 0) noexcept;
+    Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
     Order(const Order&) noexcept = default;
     Order(Order&&) noexcept = default;
     ~Order() noexcept = default;
@@ -98,14 +98,18 @@ struct Order
 
     friend std::ostream& operator<<(std::ostream& stream, const Order& order);
 
+    //! Prepare a new limit order
+    static Order Limit(uint64_t id, uint32_t symbol, OrderSide side, uint64_t price, uint64_t quantity) noexcept;
     //! Prepare a new buy limit order
     static Order BuyLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity) noexcept;
     //! Prepare a new sell limit order
     static Order SellLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity) noexcept;
+    //! Prepare a new market order
+    static Order Market(uint64_t id, uint32_t symbol, OrderSide side, uint64_t quantity, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
     //! Prepare a new buy market order
-    static Order BuyLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity, uint64_t slippage = 0) noexcept;
+    static Order BuyMarket(uint64_t id, uint32_t symbol, uint64_t quantity, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
     //! Prepare a new sell market order
-    static Order SellLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity, uint64_t slippage = 0) noexcept;
+    static Order SellMarket(uint64_t id, uint32_t symbol, uint64_t quantity, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
 };
 
 struct LevelNode;

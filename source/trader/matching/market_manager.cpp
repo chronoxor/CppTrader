@@ -161,7 +161,7 @@ ErrorCode MarketManager::AddMarketOrder(const Order& order)
 
     // Automatic order matching
     if (_matching)
-        MatchMarket((OrderBook*)GetOrderBook(order.SymbolId), new_order.Side, new_order.Price, new_order.Quantity, new_order.Slippage);
+        MatchMarket((OrderBook*)GetOrderBook(order.SymbolId), new_order.Side, new_order.Slippage, new_order.Quantity);
 
     // Reject remaining market order
     if (new_order.Quantity > 0)
@@ -402,71 +402,13 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
 
 ErrorCode MarketManager::ReplaceOrder(uint64_t id, const Order& new_order)
 {
-    // Validate parameters
-    assert((id > 0) && "Order Id must be greater than zero!");
-    if (id == 0)
-        return ErrorCode::ORDER_ID_INVALID;
-    assert((new_order.Id > 0) && "New order Id must be greater than zero!");
-    if (new_order.Id == 0)
-        return ErrorCode::ORDER_ID_INVALID;
+    // Delete the previous order by Id
+    ErrorCode result = DeleteOrder(id);
+    if (result != ErrorCode::OK)
+        return result;
 
-    // Get the order to replace
-    auto order_it = _orders.find(id);
-    assert((order_it != _orders.end()) && "Order not found!");
-    if (order_it == _orders.end())
-        return ErrorCode::ORDER_NOT_FOUND;
-    OrderNode* order_ptr = (OrderNode*)order_it->second;
-
-    // Get the valid order book for the replacing order
-    OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
-    if (order_book_ptr != nullptr)
-    {
-        // Delete the old order from the order book
-        UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
-    }
-
-    // Call the corresponding handler
-    _market_handler.onDeleteOrder(*order_ptr);
-
-    // Erase the order
-    _orders.erase(order_it);
-
-    // Replace the order
-    *order_ptr = new_order;
-
-    // Automatic order matching
-    if (_matching)
-        MatchLimit(order_book_ptr, order_ptr->Side, order_ptr->Price, order_ptr->Quantity);
-
-    if (order_ptr->Quantity > 0)
-    {
-        // Insert the order
-        if (!_orders.insert(std::make_pair(order_ptr->Id, order_ptr)).second)
-        {
-            // Release the order
-            _order_pool.Release(order_ptr);
-            _market_handler.onRejectOrder(*order_ptr, ErrorCode::ORDER_DUPLICATE);
-            return ErrorCode::ORDER_DUPLICATE;
-        }
-
-        // Call the corresponding handler
-        _market_handler.onAddOrder(*order_ptr);
-
-        // Get the valid order book for the new order
-        order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
-        if (order_book_ptr != nullptr)
-        {
-            // Add the modified order into the order book
-            UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
-        }
-    }
-    else
-    {
-        // Relase the order
-        _order_pool.Release(order_ptr);
-    }
-
-    return ErrorCode::OK;
+    // Add the new order
+    return AddOrder(new_order);
 }
 
 ErrorCode MarketManager::DeleteOrder(uint64_t id)
@@ -661,9 +603,38 @@ void MarketManager::Match(OrderBook* order_book_ptr)
     }
 }
 
-void MarketManager::MatchMarket(OrderBook* order_book_ptr, OrderSide side, uint64_t price, uint64_t& quantity, uint64_t slippage)
+void MarketManager::MatchMarket(OrderBook* order_book_ptr, OrderSide side, uint64_t slippage, uint64_t& quantity)
 {
+    uint64_t price;
 
+    // Calculate acceptable marker order price with optional slippage value
+    if (side == OrderSide::BUY)
+    {
+        // Check if there is nothing to buy
+        if (order_book_ptr->best_ask() == nullptr)
+            return;
+
+        price = order_book_ptr->best_ask()->Price;
+        if (price > (std::numeric_limits<uint64_t>::max() - slippage))
+            price = std::numeric_limits<uint64_t>::max();
+        else
+            price += slippage;
+    }
+    else
+    {
+        // Check if there is nothing to sell
+        if (order_book_ptr->best_bid() == nullptr)
+            return;
+
+        price = order_book_ptr->best_bid()->Price;
+        if (price < (std::numeric_limits<uint64_t>::min() + slippage))
+            price = std::numeric_limits<uint64_t>::min();
+        else
+            price -= slippage;
+    }
+
+    // Match the market order as a limit one
+    MatchLimit(order_book_ptr, side, price, quantity);
 }
 
 void MarketManager::MatchLimit(OrderBook* order_book_ptr, OrderSide side, uint64_t price, uint64_t& quantity)
