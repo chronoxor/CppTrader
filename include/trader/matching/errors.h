@@ -24,9 +24,11 @@ enum class ErrorCode : uint8_t
     SYMBOL_NOT_FOUND,
     ORDER_BOOK_DUPLICATE,
     ORDER_BOOK_NOT_FOUND,
+    ORDER_BOOK_EMPTY,
     ORDER_DUPLICATE,
     ORDER_NOT_FOUND,
     ORDER_ID_INVALID,
+    ORDER_TYPE_INVALID,
     ORDER_QUANTITY_INVALID
 };
 std::ostream& operator<<(std::ostream& stream, ErrorCode error);

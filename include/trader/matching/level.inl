@@ -48,12 +48,6 @@ inline LevelNode::LevelNode(const Level& level) noexcept : Level(level)
 {
 }
 
-inline LevelNode& LevelNode::operator=(const Level& level) noexcept
-{
-    Level::operator=(level);
-    return *this;
-}
-
 inline LevelUpdate::LevelUpdate(UpdateType type, const Level& update, bool top) noexcept
     : Type(type),
       Update(update),

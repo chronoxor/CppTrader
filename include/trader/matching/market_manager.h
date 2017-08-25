@@ -193,11 +193,15 @@ private:
     CppCommon::PoolAllocator<OrderNode, CppCommon::DefaultMemoryManager> _order_pool;
     CppCommon::HashMap<uint64_t, OrderNode*, FastHash> _orders;
 
+    ErrorCode AddMarketOrder(const Order& order);
+    ErrorCode AddLimitOrder(const Order& order);
+
     // Matching
     bool _matching;
 
     void Match(OrderBook* order_book_ptr);
-    void Match(OrderBook* order_book_ptr, OrderSide side, uint64_t price, uint64_t& quantity);
+    void MatchMarket(OrderBook* order_book_ptr, OrderSide side, uint64_t price, uint64_t& quantity, uint64_t slippage);
+    void MatchLimit(OrderBook* order_book_ptr, OrderSide side, uint64_t price, uint64_t& quantity);
 
     void UpdateLevel(const OrderBook& order_book, const LevelUpdate& update) const;
 };

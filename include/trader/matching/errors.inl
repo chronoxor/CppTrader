@@ -23,12 +23,16 @@ inline std::ostream& operator<<(std::ostream& stream, ErrorCode error)
             return stream << "ORDER_BOOK_DUPLICATE";
         case ErrorCode::ORDER_BOOK_NOT_FOUND:
             return stream << "ORDER_BOOK_NOT_FOUND";
+        case ErrorCode::ORDER_BOOK_EMPTY:
+            return stream << "ORDER_BOOK_EMPTY";
         case ErrorCode::ORDER_DUPLICATE:
             return stream << "ORDER_DUPLICATE";
         case ErrorCode::ORDER_NOT_FOUND:
             return stream << "ORDER_NOT_FOUND";
         case ErrorCode::ORDER_ID_INVALID:
             return stream << "ORDER_ID_INVALID";
+        case ErrorCode::ORDER_TYPE_INVALID:
+            return stream << "ORDER_TYPE_INVALID";
         case ErrorCode::ORDER_QUANTITY_INVALID:
             return stream << "ORDER_QUANTITY_INVALID";
         default:

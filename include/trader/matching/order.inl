@@ -26,6 +26,8 @@ inline std::ostream& operator<<(std::ostream& stream, OrderType type)
 {
     switch (type)
     {
+        case OrderType::MARKET:
+            return stream << "MARKET";
         case OrderType::LIMIT:
             return stream << "LIMIT";
         default:
@@ -33,41 +35,52 @@ inline std::ostream& operator<<(std::ostream& stream, OrderType type)
     }
 }
 
-inline Order::Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity) noexcept
+inline Order::Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity, uint64_t slippage) noexcept
     : Id(id),
       SymbolId(symbol),
       Type(type),
       Side(side),
       Price(price),
-      Quantity(quantity)
+      Quantity(quantity),
+      Slippage(slippage)
 {
 }
 
 inline std::ostream& operator<<(std::ostream& stream, const Order& order)
 {
-    return stream << "Order(Id=" << order.Id
+    stream << "Order(Id=" << order.Id
         << "; SymbolId=" << order.SymbolId
         << "; Type=" << order.Type
         << "; Side=" << order.Side
         << "; Price=" << order.Price
-        << "; Quantity=" << order.Quantity
-        << ")";
+        << "; Quantity=" << order.Quantity;
+    if (order.Slippage > 0)
+        stream << "; Slippage=" << order.Slippage;
+    return stream << ")";
 }
 
-inline OrderNode::OrderNode(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity) noexcept
-    : Order(id, symbol, type, side, price, quantity),
-      Level(nullptr)
+inline Order Order::BuyLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity) noexcept
 {
+    return Order(id, symbol, OrderType::LIMIT, OrderSide::BUY, price, quantity, 0);
 }
 
-inline OrderNode::OrderNode(const Order& order) noexcept : Order(order)
+inline Order Order::SellLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity) noexcept
 {
+    return Order(id, symbol, OrderType::LIMIT, OrderSide::SELL, price, quantity, 0);
 }
 
-inline OrderNode& OrderNode::operator=(const Order& order) noexcept
+inline Order Order::BuyLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity, uint64_t slippage) noexcept
 {
-    Order::operator=(order);
-    return *this;
+    return Order(id, symbol, OrderType::MARKET, OrderSide::BUY, price, quantity, slippage);
+}
+
+inline Order Order::SellLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity, uint64_t slippage) noexcept
+{
+    return Order(id, symbol, OrderType::MARKET, OrderSide::SELL, price, quantity, slippage);
+}
+
+inline OrderNode::OrderNode(const Order& order) noexcept : Order(order), Level(nullptr)
+{
 }
 
 } // namespace Matching

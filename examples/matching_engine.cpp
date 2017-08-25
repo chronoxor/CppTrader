@@ -42,6 +42,8 @@ protected:
     { std::cout << "Add order: " << order << std::endl; }
     void onUpdateOrder(const Order& order) override
     { std::cout << "Update order: " << order << std::endl; }
+    void onRejectOrder(const Order& order, ErrorCode error) override
+    { std::cout << "Reject order: " << order << "with error" << error << std::endl; }
     void onDeleteOrder(const Order& order) override
     { std::cout << "Delete order: " << order << std::endl; }
 

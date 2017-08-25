@@ -134,6 +134,21 @@ ErrorCode MarketManager::DeleteOrderBook(uint32_t id)
 
 ErrorCode MarketManager::AddOrder(const Order& order)
 {
+    switch (order.Type)
+    {
+        case OrderType::MARKET:
+            return AddMarketOrder(order);
+        case OrderType::LIMIT:
+            return AddLimitOrder(order);
+        default:
+            return ErrorCode::ORDER_TYPE_INVALID;
+    }
+}
+
+ErrorCode MarketManager::AddMarketOrder(const Order& order)
+{
+    assert(_matching && "Market orders can be placed only in automatic matching mode!");
+
     // Validate parameters
     assert((order.Id > 0) && "Order Id must be greater than zero!");
     if (order.Id == 0)
@@ -146,7 +161,33 @@ ErrorCode MarketManager::AddOrder(const Order& order)
 
     // Automatic order matching
     if (_matching)
-        Match((OrderBook*)GetOrderBook(order.SymbolId), new_order.Side, new_order.Price, new_order.Quantity);
+        MatchMarket((OrderBook*)GetOrderBook(order.SymbolId), new_order.Side, new_order.Price, new_order.Quantity, new_order.Slippage);
+
+    // Reject remaining market order
+    if (new_order.Quantity > 0)
+    {
+        _market_handler.onRejectOrder(new_order, ErrorCode::ORDER_BOOK_EMPTY);
+        return ErrorCode::ORDER_BOOK_EMPTY;
+    }
+
+    return ErrorCode::OK;
+}
+
+ErrorCode MarketManager::AddLimitOrder(const Order& order)
+{
+    // Validate parameters
+    assert((order.Id > 0) && "Order Id must be greater than zero!");
+    if (order.Id == 0)
+        return ErrorCode::ORDER_ID_INVALID;
+    assert((order.Quantity > 0) && "Order quantity must be greater than zero!");
+    if (order.Quantity == 0)
+        return ErrorCode::ORDER_QUANTITY_INVALID;
+
+    Order new_order(order);
+
+    // Automatic order matching
+    if (_matching)
+        MatchLimit((OrderBook*)GetOrderBook(order.SymbolId), new_order.Side, new_order.Price, new_order.Quantity);
 
     // Add a new order
     if (new_order.Quantity > 0)
@@ -159,6 +200,7 @@ ErrorCode MarketManager::AddOrder(const Order& order)
         {
             // Release the order
             _order_pool.Release(order_ptr);
+            _market_handler.onRejectOrder(*order_ptr, ErrorCode::ORDER_DUPLICATE);
             return ErrorCode::ORDER_DUPLICATE;
         }
 
@@ -257,7 +299,7 @@ ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t n
 
     // Automatic order matching
     if (_matching)
-        Match(order_book_ptr, order_ptr->Side, order_ptr->Price, order_ptr->Quantity);
+        MatchLimit(order_book_ptr, order_ptr->Side, order_ptr->Price, order_ptr->Quantity);
 
     // Update the order or delete the empty order
     if (order_ptr->Quantity > 0)
@@ -325,7 +367,7 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
 
     // Automatic order matching
     if (_matching)
-        Match(order_book_ptr, order_ptr->Side, order_ptr->Price, order_ptr->Quantity);
+        MatchLimit(order_book_ptr, order_ptr->Side, order_ptr->Price, order_ptr->Quantity);
 
     if (order_ptr->Quantity > 0)
     {
@@ -334,6 +376,7 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
         {
             // Release the order
             _order_pool.Release(order_ptr);
+            _market_handler.onRejectOrder(*order_ptr, ErrorCode::ORDER_DUPLICATE);
             return ErrorCode::ORDER_DUPLICATE;
         }
 
@@ -393,7 +436,7 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, const Order& new_order)
 
     // Automatic order matching
     if (_matching)
-        Match(order_book_ptr, order_ptr->Side, order_ptr->Price, order_ptr->Quantity);
+        MatchLimit(order_book_ptr, order_ptr->Side, order_ptr->Price, order_ptr->Quantity);
 
     if (order_ptr->Quantity > 0)
     {
@@ -402,6 +445,7 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, const Order& new_order)
         {
             // Release the order
             _order_pool.Release(order_ptr);
+            _market_handler.onRejectOrder(*order_ptr, ErrorCode::ORDER_DUPLICATE);
             return ErrorCode::ORDER_DUPLICATE;
         }
 
@@ -617,7 +661,12 @@ void MarketManager::Match(OrderBook* order_book_ptr)
     }
 }
 
-void MarketManager::Match(OrderBook* order_book_ptr, OrderSide side, uint64_t price, uint64_t& quantity)
+void MarketManager::MatchMarket(OrderBook* order_book_ptr, OrderSide side, uint64_t price, uint64_t& quantity, uint64_t slippage)
+{
+
+}
+
+void MarketManager::MatchLimit(OrderBook* order_book_ptr, OrderSide side, uint64_t price, uint64_t& quantity)
 {
     // Check if the order book is valid
     if (order_book_ptr == nullptr)

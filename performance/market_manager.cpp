@@ -29,10 +29,11 @@ public:
           _max_order_book_orders(0),
           _orders(0),
           _max_orders(0),
-          _add_order(0),
-          _update_order(0),
-          _delete_order(0),
-          _execute_order(0)
+          _add_orders(0),
+          _update_orders(0),
+          _reject_orders(0),
+          _delete_orders(0),
+          _execute_orders(0)
     {}
 
     size_t updates() const { return _updates; }
@@ -41,10 +42,11 @@ public:
     size_t max_order_book_levels() const { return _max_order_book_levels; }
     size_t max_order_book_orders() const { return _max_order_book_orders; }
     size_t max_orders() const { return _max_orders; }
-    size_t add_order() const { return _add_order; }
-    size_t update_order() const { return _update_order; }
-    size_t delete_order() const { return _delete_order; }
-    size_t execute_order() const { return _execute_order; }
+    size_t add_orders() const { return _add_orders; }
+    size_t update_orders() const { return _update_orders; }
+    size_t reject_orders() const { return _reject_orders; }
+    size_t delete_orders() const { return _delete_orders; }
+    size_t execute_orders() const { return _execute_orders; }
 
 protected:
     void onAddSymbol(const Symbol& symbol) override { ++_updates; ++_symbols; _max_symbols = std::max(_symbols, _max_symbols); }
@@ -55,10 +57,11 @@ protected:
     void onAddLevel(const OrderBook& order_book, const Level& level, bool top) override { ++_updates; }
     void onUpdateLevel(const OrderBook& order_book, const Level& level, bool top) override { ++_updates; _max_order_book_orders = std::max(level.Orders, _max_order_book_orders); }
     void onDeleteLevel(const OrderBook& order_book, const Level& level, bool top) override { ++_updates; }
-    void onAddOrder(const Order& order) override { ++_updates; ++_orders; _max_orders = std::max(_orders, _max_orders); ++_add_order; }
-    void onUpdateOrder(const Order& order) override { ++_updates; ++_update_order; }
-    void onDeleteOrder(const Order& order) override { ++_updates; --_orders; ++_delete_order; }
-    void onExecuteOrder(const Order& order, uint64_t price, uint64_t quantity) override { ++_updates; ++_execute_order; }
+    void onAddOrder(const Order& order) override { ++_updates; ++_orders; _max_orders = std::max(_orders, _max_orders); ++_add_orders; }
+    void onUpdateOrder(const Order& order) override { ++_updates; ++_update_orders; }
+    void onRejectOrder(const Order& order, ErrorCode error) { ++_updates; ++_reject_orders; }
+    void onDeleteOrder(const Order& order) override { ++_updates; --_orders; ++_delete_orders; }
+    void onExecuteOrder(const Order& order, uint64_t price, uint64_t quantity) override { ++_updates; ++_execute_orders; }
 
 private:
     size_t _updates;
@@ -70,10 +73,11 @@ private:
     size_t _max_order_book_orders;
     size_t _orders;
     size_t _max_orders;
-    size_t _add_order;
-    size_t _update_order;
-    size_t _delete_order;
-    size_t _execute_order;
+    size_t _add_orders;
+    size_t _update_orders;
+    size_t _reject_orders;
+    size_t _delete_orders;
+    size_t _execute_orders;
 };
 
 class MyITCHHandler : public ITCHHandler
@@ -188,10 +192,11 @@ int main(int argc, char** argv)
     std::cout << std::endl;
 
     std::cout << "Order statistics: " << std::endl;
-    std::cout << "Add order operations: " << market_handler.add_order() << std::endl;
-    std::cout << "Update order operations: " << market_handler.update_order() << std::endl;
-    std::cout << "Delete order operations: " << market_handler.delete_order() << std::endl;
-    std::cout << "Execute order operations: " << market_handler.execute_order() << std::endl;
+    std::cout << "Add order operations: " << market_handler.add_orders() << std::endl;
+    std::cout << "Update order operations: " << market_handler.update_orders() << std::endl;
+    std::cout << "Reject order operations: " << market_handler.reject_orders() << std::endl;
+    std::cout << "Delete order operations: " << market_handler.delete_orders() << std::endl;
+    std::cout << "Execute order operations: " << market_handler.execute_orders() << std::endl;
 
     return 0;
 }

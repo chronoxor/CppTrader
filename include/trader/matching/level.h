@@ -74,7 +74,6 @@ struct LevelNode : public Level, public CppCommon::BinTreeAVL<LevelNode>::Node
     LevelNode(LevelNode&&) noexcept = default;
     ~LevelNode() noexcept = default;
 
-    LevelNode& operator=(const Level& level) noexcept;
     LevelNode& operator=(const LevelNode&) noexcept = default;
     LevelNode& operator=(LevelNode&&) noexcept = default;
 
