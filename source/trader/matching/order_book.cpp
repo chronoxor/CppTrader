@@ -24,26 +24,6 @@ OrderBook::~OrderBook()
     _asks.clear();
 }
 
-LevelNode* OrderBook::FindLevel(OrderNode* order_ptr)
-{
-    if (order_ptr->Side == OrderSide::BUY)
-    {
-        // Try to find required price level in the bid collection
-        auto it = _bids.find(LevelNode(LevelType::BID, order_ptr->Price));
-        if (it != _bids.end())
-            return it.operator->();
-    }
-    else
-    {
-        // Try to find required price level in the ask collection
-        auto it = _asks.find(LevelNode(LevelType::ASK, order_ptr->Price));
-        if (it != _asks.end())
-            return it.operator->();
-    }
-
-    return nullptr;
-}
-
 LevelNode* OrderBook::AddLevel(OrderNode* order_ptr)
 {
     LevelNode* level_ptr = nullptr;
@@ -109,7 +89,7 @@ LevelNode* OrderBook::DeleteLevel(OrderNode* order_ptr)
 LevelUpdate OrderBook::AddOrder(OrderNode* order_ptr)
 {
     // Find the price level for the order
-    LevelNode* level_ptr = FindLevel(order_ptr);
+    LevelNode* level_ptr = (order_ptr->Side == OrderSide::BUY) ? (LevelNode*)GetBid(order_ptr->Price) : (LevelNode*)GetAsk(order_ptr->Price);
 
     // Create a new price level if no one found
     UpdateType update = UpdateType::UPDATE;

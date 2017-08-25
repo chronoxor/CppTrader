@@ -54,14 +54,27 @@ public:
     const Levels& asks() const noexcept { return _asks; }
 
     //! Get the order book best bid price level
-    const Level* best_bid() const noexcept { return _best_bid; }
+    const LevelNode* best_bid() const noexcept { return _best_bid; }
     //! Get the order book best ask price level
-    const Level* best_ask() const noexcept { return _best_ask; }
+    const LevelNode* best_ask() const noexcept { return _best_ask; }
 
     //! Get the order book symbol
     const Symbol& symbol() const noexcept { return _symbol; }
 
     friend std::ostream& operator<<(std::ostream& stream, const OrderBook& order_book);
+
+    //! Get the order book bid price level with the given price
+    /*!
+        \param price - Price
+        \return Pointer to the order book bid price level with the given price or nullptr
+    */
+    const LevelNode* GetBid(uint64_t price) const noexcept;
+    //! Get the order book ask price level with the given price
+    /*!
+        \param price - Price
+        \return Pointer to the order book ask price level with the given price or nullptr
+    */
+    const LevelNode* GetAsk(uint64_t price) const noexcept;
 
 private:
     // Order book symbol
@@ -78,7 +91,6 @@ private:
     LevelNode* _best_bid;
     LevelNode* _best_ask;
 
-    LevelNode* FindLevel(OrderNode* order_ptr);
     LevelNode* AddLevel(OrderNode* order_ptr);
     LevelNode* DeleteLevel(OrderNode* order_ptr);
 

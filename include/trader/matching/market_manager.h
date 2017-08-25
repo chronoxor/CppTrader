@@ -39,6 +39,13 @@ namespace Matching {
 class MarketManager
 {
 public:
+    //! Symbols container
+    typedef std::vector<Symbol*> Symbols;
+    //! Order books container
+    typedef std::vector<OrderBook*> OrderBooks;
+    //! Orders container
+    typedef CppCommon::HashMap<uint64_t, OrderNode*, FastHash> Orders;
+
     MarketManager();
     MarketManager(MarketHandler& market_handler);
     MarketManager(const MarketManager&) = delete;
@@ -47,6 +54,13 @@ public:
 
     MarketManager& operator=(const MarketManager&) = delete;
     MarketManager& operator=(MarketManager&&) = default;
+
+    //! Get the symbols container
+    const Symbols& symbols() const noexcept { return _symbols; }
+    //! Get the order books container
+    const OrderBooks& order_books() const noexcept { return _order_books; }
+    //! Get the orders container
+    const Orders& orders() const noexcept { return _orders; }
 
     //! Get the symbol with the given Id
     /*!
@@ -181,17 +195,17 @@ private:
     // Symbols
     CppCommon::PoolMemoryManager<CppCommon::DefaultMemoryManager> _symbol_memory_manager;
     CppCommon::PoolAllocator<Symbol, CppCommon::DefaultMemoryManager> _symbol_pool;
-    std::vector<Symbol*> _symbols;
+    Symbols _symbols;
 
     // Order books
     CppCommon::PoolMemoryManager<CppCommon::DefaultMemoryManager> _order_book_memory_manager;
     CppCommon::PoolAllocator<OrderBook, CppCommon::DefaultMemoryManager> _order_book_pool;
-    std::vector<OrderBook*> _order_books;
+    OrderBooks _order_books;
 
     // Orders
     CppCommon::PoolMemoryManager<CppCommon::DefaultMemoryManager> _order_memory_manager;
     CppCommon::PoolAllocator<OrderNode, CppCommon::DefaultMemoryManager> _order_pool;
-    CppCommon::HashMap<uint64_t, OrderNode*, FastHash> _orders;
+    Orders _orders;
 
     ErrorCode AddMarketOrder(const Order& order);
     ErrorCode AddLimitOrder(const Order& order);

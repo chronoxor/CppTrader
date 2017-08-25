@@ -27,5 +27,17 @@ inline std::ostream& operator<<(std::ostream& stream, const OrderBook& order_boo
         << ")";
 }
 
+inline const LevelNode* OrderBook::GetBid(uint64_t price) const noexcept
+{
+    auto it = _bids.find(LevelNode(LevelType::BID, price));
+    return (it != _bids.end()) ? it.operator->() : nullptr;
+}
+
+inline const LevelNode* OrderBook::GetAsk(uint64_t price) const noexcept
+{
+    auto it = _asks.find(LevelNode(LevelType::ASK, price));
+    return (it != _asks.end()) ? it.operator->() : nullptr;
+}
+
 } // namespace Matching
 } // namespace CppTrader
