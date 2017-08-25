@@ -13,6 +13,7 @@
 #include "utility/iostream.h"
 
 #include <cstdint>
+#include <limits>
 
 namespace CppTrader {
 namespace Matching {
