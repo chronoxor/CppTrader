@@ -207,6 +207,7 @@ private:
 };
 
 /*! \example market_manager.cpp Market manager example */
+/*! \example matching_engine.cpp Matching engine example */
 
 } // namespace Matching
 } // namespace CppTrader
