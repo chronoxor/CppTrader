@@ -149,6 +149,8 @@ private:
     Levels _bids;
     Levels _asks;
 
+    static LevelPool _levels;
+
     std::pair<size_t, UpdateType> FindLevel(Order* order_ptr)
     {
         if (order_ptr->Side == OrderSide::BUY)
@@ -307,8 +309,6 @@ private:
 
         return update;
     }
-
-    static LevelPool _levels;
 };
 
 LevelPool OrderBook::_levels(1000000);

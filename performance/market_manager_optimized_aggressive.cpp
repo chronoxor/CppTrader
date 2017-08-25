@@ -106,6 +106,8 @@ private:
     Levels _bids;
     Levels _asks;
 
+    static LevelPool _levels;
+
     size_t FindLevel(int32_t price)
     {
         // Choose the price level collection
@@ -196,8 +198,6 @@ private:
         if (level_ptr->Volume == 0)
             DeleteLevel(order_ptr);
     }
-
-    static LevelPool _levels;
 };
 
 LevelPool OrderBook::_levels(1000000);
