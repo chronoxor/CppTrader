@@ -35,11 +35,6 @@ std::ostream& operator<<(std::ostream& stream, OrderSide side);
 
 //! Order type
 /*!
-    An order is an instruction to buy or sell on a trading venue such as a stock market,
-    bond market, commodity market, or financial derivative market. These instructions can
-    be simple or complicated, and can be sent to either a broker or directly to a trading
-    venue via direct market access.
-
     Possible values:
     * <b>Market order</b> - A market order is a buy or sell order to be executed immediately
       at current market prices. As long as there are willing sellers and buyers, market orders
@@ -70,6 +65,12 @@ enum class OrderType : uint8_t
 std::ostream& operator<<(std::ostream& stream, OrderType type);
 
 //! Order
+/*!
+    An order is an instruction to buy or sell on a trading venue such as a stock market,
+    bond market, commodity market, or financial derivative market. These instructions can
+    be simple or complicated, and can be sent to either a broker or directly to a trading
+    venue via direct market access.
+*/
 struct Order
 {
     //! Order Id
