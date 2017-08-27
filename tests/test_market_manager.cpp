@@ -30,9 +30,10 @@ public:
           _max_order_book_orders(0),
           _orders(0),
           _max_orders(0),
+          _accept_orders(0),
+          _reject_orders(0),
           _add_orders(0),
           _update_orders(0),
-          _reject_orders(0),
           _delete_orders(0),
           _execute_orders(0)
     {}
@@ -43,9 +44,10 @@ public:
     size_t max_order_book_levels() const { return _max_order_book_levels; }
     size_t max_order_book_orders() const { return _max_order_book_orders; }
     size_t max_orders() const { return _max_orders; }
+    size_t accept_orders() const { return _accept_orders; }
+    size_t reject_orders() const { return _reject_orders; }
     size_t add_orders() const { return _add_orders; }
     size_t update_orders() const { return _update_orders; }
-    size_t reject_orders() const { return _reject_orders; }
     size_t delete_orders() const { return _delete_orders; }
     size_t execute_orders() const { return _execute_orders; }
 
@@ -58,9 +60,10 @@ protected:
     void onAddLevel(const OrderBook& order_book, const Level& level, bool top) override { ++_updates; }
     void onUpdateLevel(const OrderBook& order_book, const Level& level, bool top) override { ++_updates; _max_order_book_orders = std::max(level.Orders, _max_order_book_orders); }
     void onDeleteLevel(const OrderBook& order_book, const Level& level, bool top) override { ++_updates; }
+    void onAcceptOrder(const Order& order) override { ++_updates; ++_accept_orders; }
+    void onRejectOrder(const Order& order, ErrorCode error) override { ++_updates; ++_reject_orders; }
     void onAddOrder(const Order& order) override { ++_updates; ++_orders; _max_orders = std::max(_orders, _max_orders); ++_add_orders; }
     void onUpdateOrder(const Order& order) override { ++_updates; ++_update_orders; }
-    void onRejectOrder(const Order& order, ErrorCode error) override { ++_updates; --_orders; ++_reject_orders; }
     void onDeleteOrder(const Order& order) override { ++_updates; --_orders; ++_delete_orders; }
     void onExecuteOrder(const Order& order, uint64_t price, uint64_t quantity) override { ++_updates; ++_execute_orders; }
 
@@ -74,9 +77,10 @@ private:
     size_t _max_order_book_orders;
     size_t _orders;
     size_t _max_orders;
+    size_t _accept_orders;
+    size_t _reject_orders;
     size_t _add_orders;
     size_t _update_orders;
-    size_t _reject_orders;
     size_t _delete_orders;
     size_t _execute_orders;
 };
@@ -149,7 +153,7 @@ TEST_CASE("Market manager", "[CppTrader][Matching]")
     // Check results
     REQUIRE(itch_handler.errors() == 0);
     REQUIRE(itch_handler.messages() == 1563071);
-    REQUIRE(market_handler.updates() == 254853);
+    REQUIRE(market_handler.updates() == 313768);
 
     // Check market statistics
     REQUIRE(market_handler.max_symbols() == 8352);
@@ -159,9 +163,10 @@ TEST_CASE("Market manager", "[CppTrader][Matching]")
     REQUIRE(market_handler.max_orders() == 56245);
 
     // Check order statistics
+    REQUIRE(market_handler.accept_orders() == 58915);
+    REQUIRE(market_handler.reject_orders() == 0);
     REQUIRE(market_handler.add_orders() == 58915);
     REQUIRE(market_handler.update_orders() == 27);
-    REQUIRE(market_handler.reject_orders() == 0);
     REQUIRE(market_handler.delete_orders() == 58915);
     REQUIRE(market_handler.execute_orders() == 2435);
 }

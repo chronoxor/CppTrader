@@ -159,6 +159,9 @@ ErrorCode MarketManager::AddMarketOrder(const Order& order)
 
     Order new_order(order);
 
+    // Call the corresponding handler
+    _market_handler.onAcceptOrder(new_order);
+
     // Automatic order matching
     if (_matching)
         MatchMarket((OrderBook*)GetOrderBook(order.SymbolId), new_order.Side, new_order.Slippage, new_order.Quantity);
@@ -184,6 +187,9 @@ ErrorCode MarketManager::AddLimitOrder(const Order& order)
         return ErrorCode::ORDER_QUANTITY_INVALID;
 
     Order new_order(order);
+
+    // Call the corresponding handler
+    _market_handler.onAcceptOrder(new_order);
 
     // Automatic order matching
     if (_matching)
@@ -364,6 +370,9 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
     order_ptr->Id = new_id;
     order_ptr->Price = new_price;
     order_ptr->Quantity = new_quantity;
+
+    // Call the corresponding handler
+    _market_handler.onAcceptOrder(*order_ptr);
 
     // Automatic order matching
     if (_matching)

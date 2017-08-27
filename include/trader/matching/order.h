@@ -37,26 +37,20 @@ std::ostream& operator<<(std::ostream& stream, OrderSide side);
 //! Order type
 /*!
     Possible values:
-    * <b>Market order</b> - A market order is a buy or sell order to be executed immediately
-      at current market prices. As long as there are willing sellers and buyers, market orders
-      are filled. Market orders are therefore used when certainty of execution is a priority
-      over price of execution. A market order is the simplest of the order types. This order
-      type does not allow any control over the price received. The order is filled at the best
-      price available at the relevant time. In fast-moving markets, the price paid or received
-      may be quite different from the last price quoted before the order was entered. A market
-      order may be split across multiple participants on the other side of the transaction,
-      resulting in different prices for some of the shares.
-    * <b>Limit order</b> - A limit order is an order to buy a security at no more than a specific
-      price, or to sell a security at no less than a specific price (called "or better" for either
-      direction). This gives the trader (customer) control over the price at which the trade is
-      executed; however, the order may never be executed ("filled"). Limit orders are used when
-      the trader wishes to control price rather than certainty of execution. A <b>buy limit order</b>
-      can only be executed at the limit price or lower. For example, if an investor wants to buy
-      a stock, but doesn't want to pay more than $20 for it, the investor can place a limit order
-      to buy the stock at $20. By entering a limit order rather than a market order, the investor
-      will not buy the stock at a higher price, but, may get fewer shares than he wants or not get
-      the stock at all. A <b>sell limit order</b> is analogous; it can only be executed at the limit
-      price or higher.
+    * <b>Market order</b> - A market order is an order to buy or sell a stock at the best
+      available price. Generally, this type of order will be executed immediately. However,
+      the price at which a market order will be executed is not guaranteed. It is important
+      for investors to remember that the last-traded price is not necessarily the price at
+      which a market order will be executed. In fast-moving markets, the price at which a
+      market order will execute often deviates from the last-traded price or "real time"
+      quote.
+    * <b>Limit order</b> - A limit order is an order to buy or sell a stock at a specific
+      price or better. A buy limit order can only be executed at the limit price or lower,
+      and a sell limit order can only be executed at the limit price or higher. A limit
+      order is not guaranteed to execute. A limit order can only be filled if the stock’s
+      market price reaches the limit price. While limit orders do not guarantee execution,
+      they help ensure that an investor does not pay more than a predetermined price for a
+      stock.
 */
 enum class OrderType : uint8_t
 {
