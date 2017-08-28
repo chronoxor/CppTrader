@@ -327,8 +327,6 @@ public:
           _max_order_book_levels(0),
           _orders(0),
           _max_orders(0),
-          _accept_orders(0),
-          _reject_orders(0),
           _add_orders(0),
           _update_orders(0),
           _delete_orders(0),
@@ -340,8 +338,6 @@ public:
     size_t max_order_books() const { return _max_order_books; }
     size_t max_order_book_levels() const { return _max_order_book_levels; }
     size_t max_orders() const { return _max_orders; }
-    size_t accept_orders() const { return _accept_orders; }
-    size_t reject_orders() const { return _reject_orders; }
     size_t add_orders() const { return _add_orders; }
     size_t update_orders() const { return _update_orders; }
     size_t delete_orders() const { return _delete_orders; }
@@ -356,8 +352,6 @@ protected:
     void onAddLevel(const OrderBook& order_book, const Level& level, bool top) { ++_updates; }
     void onUpdateLevel(const OrderBook& order_book, const Level& level, bool top) { ++_updates; }
     void onDeleteLevel(const OrderBook& order_book, const Level& level, bool top) { ++_updates; }
-    void onAcceptOrder(const Order& order) { ++_updates; ++_accept_orders; }
-    void onRejectOrder(const Order& order) { ++_updates; ++_reject_orders; }
     void onAddOrder(const Order& order) { ++_updates; ++_orders; _max_orders = std::max(_orders, _max_orders); ++_add_orders; }
     void onUpdateOrder(const Order& order) { ++_updates; ++_update_orders; }
     void onDeleteOrder(const Order& order) { ++_updates; --_orders; ++_delete_orders; }
@@ -372,8 +366,6 @@ private:
     size_t _max_order_book_levels;
     size_t _orders;
     size_t _max_orders;
-    size_t _accept_orders;
-    size_t _reject_orders;
     size_t _add_orders;
     size_t _update_orders;
     size_t _delete_orders;
@@ -439,9 +431,6 @@ public:
         order_ptr->Quantity = quantity;
 
         // Call the corresponding handler
-        _market_handler.onAcceptOrder(*order_ptr);
-
-        // Call the corresponding handler
         _market_handler.onAddOrder(*order_ptr);
 
         // Add the new order into the order book
@@ -460,20 +449,24 @@ public:
         // Reduce the order quantity
         order_ptr->Quantity -= quantity;
 
-        // Reduce the order in the order book
-        OrderBook* order_book_ptr = &_order_books[order_ptr->Symbol];
-        UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity));
-
         // Update the order or delete the empty order
         if (order_ptr->Quantity > 0)
         {
             // Call the corresponding handler
             _market_handler.onUpdateOrder(*order_ptr);
+
+            // Reduce the order in the order book
+            OrderBook* order_book_ptr = &_order_books[order_ptr->Symbol];
+            UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity));
         }
         else
         {
             // Call the corresponding handler
             _market_handler.onDeleteOrder(*order_ptr);
+
+            // Delete the order in the order book
+            OrderBook* order_book_ptr = &_order_books[order_ptr->Symbol];
+            UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
         }
     }
 
@@ -493,11 +486,11 @@ public:
         // Update the order or delete the empty order
         if (order_ptr->Quantity > 0)
         {
-            // Add the modified order into the order book
-            UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
-
             // Call the corresponding handler
             _market_handler.onUpdateOrder(*order_ptr);
+
+            // Add the modified order into the order book
+            UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
         }
         else
         {
@@ -530,9 +523,6 @@ public:
             new_order_ptr->Quantity = new_quantity;
 
             // Call the corresponding handler
-            _market_handler.onAcceptOrder(*new_order_ptr);
-
-            // Call the corresponding handler
             _market_handler.onAddOrder(*new_order_ptr);
 
             // Add the modified order into the order book
@@ -561,9 +551,6 @@ public:
             new_order_ptr->Side = new_side;
             new_order_ptr->Price = new_price;
             new_order_ptr->Quantity = new_quantity;
-
-            // Call the corresponding handler
-            _market_handler.onAcceptOrder(*new_order_ptr);
 
             // Call the corresponding handler
             _market_handler.onAddOrder(*new_order_ptr);
@@ -787,8 +774,6 @@ int main(int argc, char** argv)
     std::cout << std::endl;
 
     std::cout << "Order statistics: " << std::endl;
-    std::cout << "Accept order operations: " << market_handler.accept_orders() << std::endl;
-    std::cout << "Reject order operations: " << market_handler.reject_orders() << std::endl;
     std::cout << "Add order operations: " << market_handler.add_orders() << std::endl;
     std::cout << "Update order operations: " << market_handler.update_orders() << std::endl;
     std::cout << "Delete order operations: " << market_handler.delete_orders() << std::endl;

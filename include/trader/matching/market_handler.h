@@ -58,8 +58,6 @@ protected:
     virtual void onDeleteLevel(const OrderBook& order_book, const Level& level, bool top) {}
 
     // Order handlers
-    virtual void onAcceptOrder(const Order& order) {}
-    virtual void onRejectOrder(const Order& order, ErrorCode error) {}
     virtual void onAddOrder(const Order& order) {}
     virtual void onUpdateOrder(const Order& order) {}
     virtual void onDeleteOrder(const Order& order) {}

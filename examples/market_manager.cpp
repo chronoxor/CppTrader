@@ -38,10 +38,6 @@ protected:
     void onDeleteLevel(const OrderBook& order_book, const Level& level, bool top) override
     { std::cout << "Delete level: " << level << (top ? " - Top of the book!" : "") << std::endl; }
 
-    void onAcceptOrder(const Order& order) override
-    { std::cout << "Accept order: " << order << std::endl; }
-    void onRejectOrder(const Order& order, ErrorCode error) override
-    { std::cout << "Reject order: " << order << "with error" << error << std::endl; }
     void onAddOrder(const Order& order) override
     { std::cout << "Add order: " << order << std::endl; }
     void onUpdateOrder(const Order& order) override
