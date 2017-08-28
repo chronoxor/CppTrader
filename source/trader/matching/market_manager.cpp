@@ -671,7 +671,7 @@ void MarketManager::MatchMarket(OrderBook* order_book_ptr, Order* order_ptr)
             price -= order_ptr->Slippage;
     }
 
-    // Match the market order by its price
+    // Match the market order
     MatchOrder(order_book_ptr, order_ptr, price);
 }
 
@@ -681,7 +681,7 @@ void MarketManager::MatchLimit(OrderBook* order_book_ptr, Order* order_ptr)
     if ((order_book_ptr == nullptr) || (order_ptr == nullptr))
         return;
 
-    // Match the limit order by its price
+    // Match the limit order
     MatchOrder(order_book_ptr, order_ptr, order_ptr->Price);
 }
 
