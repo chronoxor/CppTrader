@@ -756,7 +756,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;            price -= order_ptr-&gt;Slippage;</div>
 <div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;    }</div>
 <div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;</div>
-<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;    <span class="comment">// Match the market order by its price</span></div>
+<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;    <span class="comment">// Match the market order</span></div>
 <div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;    MatchOrder(order_book_ptr, order_ptr, price);</div>
 <div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;}</div>
 <div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;</div>
@@ -766,7 +766,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;    <span class="keywordflow">if</span> ((order_book_ptr == <span class="keyword">nullptr</span>) || (order_ptr == <span class="keyword">nullptr</span>))</div>
 <div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;        <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;</div>
-<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;    <span class="comment">// Match the limit order by its price</span></div>
+<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;    <span class="comment">// Match the limit order</span></div>
 <div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;    MatchOrder(order_book_ptr, order_ptr, order_ptr-&gt;Price);</div>
 <div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;}</div>
 <div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;</div>
