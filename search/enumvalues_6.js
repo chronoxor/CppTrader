@@ -2,7 +2,6 @@ var searchData=
 [
   ['ok',['OK',['../namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86eae0aa021e21dddbd6d8cecec71e9cf564',1,'CppTrader::Matching']]],
   ['order_5fbook_5fduplicate',['ORDER_BOOK_DUPLICATE',['../namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86eae0fa8b2c29fc5a591a8ad444e2195ac6',1,'CppTrader::Matching']]],
-  ['order_5fbook_5fempty',['ORDER_BOOK_EMPTY',['../namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86eabe2678c0a33ae1473aec0232a33469ec',1,'CppTrader::Matching']]],
   ['order_5fbook_5fnot_5ffound',['ORDER_BOOK_NOT_FOUND',['../namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86ea0b3c6cdbe1e3a80e1ca0bd85ba65958b',1,'CppTrader::Matching']]],
   ['order_5fduplicate',['ORDER_DUPLICATE',['../namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86ea148fc7e99211b3c2bb6ea5da92ad88af',1,'CppTrader::Matching']]],
   ['order_5fid_5finvalid',['ORDER_ID_INVALID',['../namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86eac02ebbdecc1b69c22d2e2d6b1f36b022',1,'CppTrader::Matching']]],
