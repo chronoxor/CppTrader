@@ -170,7 +170,7 @@ ErrorCode MarketManager::AddMarketOrder(const Order& order)
     // Call the corresponding handler
     _market_handler.onDeleteOrder(new_order);
 
-    return (new_order.Quantity == 0) ? ErrorCode::OK : ErrorCode::ORDER_BOOK_EMPTY;
+    return ErrorCode::OK;
 }
 
 ErrorCode MarketManager::AddLimitOrder(const Order& order)

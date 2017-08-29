@@ -1,0 +1,34 @@
+add symbol 1 EURUSD
+add book 1
+
+# Fill the EURUSD order book
+# Ask: 60 -> 30, 20, 10
+# Ask: 50 -> 30, 20, 10
+# Ask: 40 -> 30, 20, 10 (best ask)
+#
+# Bid: 30 -> 10, 20, 30 (best bid)
+# Bid: 20 -> 10, 20, 30
+# Bid: 10 -> 10, 20, 30
+
+add limit buy 1 1 10 10
+add limit buy 2 1 10 20
+add limit buy 3 1 10 30
+add limit buy 4 1 20 10
+add limit buy 5 1 20 20
+add limit buy 6 1 20 30
+add limit buy 7 1 30 10
+add limit buy 8 1 30 20
+add limit buy 9 1 30 30
+
+add limit sell 10 1 60 30
+add limit sell 11 1 60 20
+add limit sell 12 1 60 10
+add limit sell 13 1 50 30
+add limit sell 14 1 50 20
+add limit sell 15 1 50 10
+add limit sell 16 1 40 30
+add limit sell 17 1 40 20
+add limit sell 18 1 40 10
+
+# Send buy limit order to match half of the sell orders
+add limit buy 19 1 50 100

@@ -25,6 +25,7 @@ struct Symbol
     //! Symbol name
     char Name[8];
 
+    Symbol() noexcept = default;
     Symbol(uint32_t id, const char name[8]) noexcept;
     Symbol(const Symbol&) noexcept = default;
     Symbol(Symbol&&) noexcept = default;

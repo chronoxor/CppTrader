@@ -84,6 +84,7 @@ struct Order
     //! Market order slippage
     uint64_t Slippage;
 
+    Order() noexcept = default;
     Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
     Order(const Order&) noexcept = default;
     Order(Order&&) noexcept = default;
