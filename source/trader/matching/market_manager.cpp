@@ -486,6 +486,8 @@ ErrorCode MarketManager::DeleteOrder(uint64_t id)
                 UpdateLevel(*order_book_ptr, order_book_ptr->DeleteLimitOrder(order_ptr));
                 break;
             }
+            default:
+                break;
         }
     }
 
@@ -846,7 +848,7 @@ uint64_t MarketManager::CalculateAllOrNoneChain(OrderNode* bid_order_ptr, OrderN
             std::swap(required, available);
             continue;
         }
-            
+
         // Take the next order
         shortest = shortest->next;
     }
