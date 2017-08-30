@@ -228,6 +228,39 @@ void AddLimitOrder(MarketManager& market, const std::string& command)
     std::cerr << "Invalid 'add limit' command: " << command << std::endl;
 }
 
+void AddAONLimitOrder(MarketManager& market, const std::string& command)
+{
+    static std::regex pattern("^add aon limit (buy|sell) (\\d+) (\\d+) (\\d+) (\\d+)$");
+    std::smatch match;
+
+    if (std::regex_search(command, match, pattern))
+    {
+        uint64_t id = std::stoi(match[2]);
+        uint32_t symbol_id = std::stoi(match[3]);
+        uint64_t price = std::stoi(match[4]);
+        uint64_t quantity = std::stoi(match[5]);
+
+        Order order;
+        if (match[1] == "buy")
+            order = Order::BuyLimit(id, symbol_id, price, quantity, true);
+        else if (match[1] == "sell")
+            order = Order::SellLimit(id, symbol_id, price, quantity, true);
+        else
+        {
+            std::cerr << "Invalid limit order side: " << match[1] << std::endl;
+            return;
+        }
+
+        ErrorCode result = market.AddOrder(order);
+        if (result != ErrorCode::OK)
+            std::cerr << "Failed 'add aon limit' command: " << result << std::endl;
+
+        return;
+    }
+
+    std::cerr << "Invalid 'add aon limit' command: " << command << std::endl;
+}
+
 void ReduceLimitOrder(MarketManager& market, const std::string& command)
 {
     static std::regex pattern("^reduce limit (\\d+) (\\d+)$");
@@ -329,6 +362,7 @@ int main(int argc, char** argv)
             std::cout << "add market {Side} {Id} {SymbolId} {Quantity} - Add a new market order of {Type} (buy/sell) with {Id}, {SymbolId} and {Quantity}" << std::endl;
             std::cout << "add slippage market {Side} {Id} {SymbolId} {Quantity} {Slippage} - Add a new slippage market order of {Type} (buy/sell) with {Id}, {SymbolId}, {Quantity} and {Slippage}" << std::endl;
             std::cout << "add limit {Side} {Id} {SymbolId} {Price} {Quantity} - Add a new limit order of {Type} (buy/sell) with {Id}, {SymbolId}, {Price} and {Quantity}" << std::endl;
+            std::cout << "add aon limit {Side} {Id} {SymbolId} {Price} {Quantity} - Add a new 'All-Or-None' limit order of {Type} (buy/sell) with {Id}, {SymbolId}, {Price} and {Quantity}" << std::endl;
             std::cout << "reduce limit {Id} {Quantity} - Reduce the limit order with {Id} by the given {Quantity}" << std::endl;
             std::cout << "modify limit {Id} {NewPrice} {NewQuantity} - Modify the limit order with {Id} and set {NewPrice} and {NewQuantity}" << std::endl;
             std::cout << "replace limit {Id} {NewId} {NewPrice} {NewQuantity} - Replace the limit order with {Id} and set {NewId}, {NewPrice} and {NewQuantity}" << std::endl;
@@ -357,6 +391,8 @@ int main(int argc, char** argv)
             AddSlippageMarketOrder(market, line);
         else if (line.find("add limit") != std::string::npos)
             AddLimitOrder(market, line);
+        else if (line.find("add aon limit") != std::string::npos)
+            AddAONLimitOrder(market, line);
         else if (line.find("reduce limit") != std::string::npos)
             ReduceLimitOrder(market, line);
         else if (line.find("modify limit") != std::string::npos)

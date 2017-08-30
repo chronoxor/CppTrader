@@ -55,7 +55,9 @@ std::ostream& operator<<(std::ostream& stream, OrderSide side);
 enum class OrderType : uint8_t
 {
     MARKET,
-    LIMIT
+    LIMIT,
+    STOP,
+    STOPLIMIT
 };
 std::ostream& operator<<(std::ostream& stream, OrderType type);
 
@@ -82,10 +84,31 @@ struct Order
     uint64_t Quantity;
 
     //! Market order slippage
+    /*!
+        Slippage is useful to protect market order from executions at prices
+        which are too far from the best price. If the slippage is provided
+        for market order its execution will be stopped when the price run
+        out of the market for the given slippage value. Zero slippage will
+        allow to execute market order only at the best price, non executed
+        part of the market order will be canceled.
+
+        Supported only for market and stop orders!
+    */
     uint64_t Slippage;
 
+    //! Limit/Stop-limit order 'All-Or-None' flag
+    /*!
+        An All-Or-None (AON) order is an order to buy or sell a stock that
+        must be executed in its entirety, or not executed at all. AON orders
+        that cannot be executed immediately remain active until they are
+        executed or cancelled.
+
+        Supported only for limit and stop-limit orders!
+    */
+    bool AllOrNone;
+
     Order() noexcept = default;
-    Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
+    Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity, uint64_t slippage = std::numeric_limits<uint64_t>::max(), bool aon = false) noexcept;
     Order(const Order&) noexcept = default;
     Order(Order&&) noexcept = default;
     ~Order() noexcept = default;
@@ -97,6 +120,10 @@ struct Order
     bool IsMarket() const noexcept { return Type == OrderType::MARKET; }
     //! Is the limit order?
     bool IsLimit() const noexcept { return Type == OrderType::LIMIT; }
+    //! Is the stop order?
+    bool IsStop() const noexcept { return Type == OrderType::STOP; }
+    //! Is the stop-limit order?
+    bool IsStopLimit() const noexcept { return Type == OrderType::STOPLIMIT; }
 
     //! Is the order with buy side?
     bool IsBuy() const noexcept { return Side == OrderSide::BUY; }
@@ -105,21 +132,23 @@ struct Order
 
     //! Is the order with slippage?
     bool IsSlippage() const noexcept { return Slippage < std::numeric_limits<uint64_t>::max(); }
+    //! Is the order with 'All-Or-None' flag?
+    bool IsAON() const noexcept { return AllOrNone; }
 
     friend std::ostream& operator<<(std::ostream& stream, const Order& order);
 
-    //! Prepare a new limit order
-    static Order Limit(uint64_t id, uint32_t symbol, OrderSide side, uint64_t price, uint64_t quantity) noexcept;
-    //! Prepare a new buy limit order
-    static Order BuyLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity) noexcept;
-    //! Prepare a new sell limit order
-    static Order SellLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity) noexcept;
     //! Prepare a new market order
     static Order Market(uint64_t id, uint32_t symbol, OrderSide side, uint64_t quantity, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
     //! Prepare a new buy market order
     static Order BuyMarket(uint64_t id, uint32_t symbol, uint64_t quantity, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
     //! Prepare a new sell market order
     static Order SellMarket(uint64_t id, uint32_t symbol, uint64_t quantity, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
+    //! Prepare a new limit order
+    static Order Limit(uint64_t id, uint32_t symbol, OrderSide side, uint64_t price, uint64_t quantity, bool aon = false) noexcept;
+    //! Prepare a new buy limit order
+    static Order BuyLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity, bool aon = false) noexcept;
+    //! Prepare a new sell limit order
+    static Order SellLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity, bool aon = false) noexcept;
 };
 
 struct LevelNode;
