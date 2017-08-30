@@ -216,7 +216,7 @@ private:
     void Match(OrderBook* order_book_ptr);
     void MatchMarket(OrderBook* order_book_ptr, Order* order_ptr);
     void MatchLimit(OrderBook* order_book_ptr, Order* order_ptr);
-    void MatchOrder(OrderBook* order_book_ptr, Order* order_ptr, uint64_t market);
+    void MatchOrder(OrderBook* order_book_ptr, Order* order_ptr);
 
     void UpdateLevel(const OrderBook& order_book, const LevelUpdate& update) const;
 };

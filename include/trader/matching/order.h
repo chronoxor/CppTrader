@@ -93,6 +93,19 @@ struct Order
     Order& operator=(const Order&) noexcept = default;
     Order& operator=(Order&&) noexcept = default;
 
+    //! Is the market order?
+    bool IsMarket() const noexcept { return Type == OrderType::MARKET; }
+    //! Is the limit order?
+    bool IsLimit() const noexcept { return Type == OrderType::LIMIT; }
+
+    //! Is the order with buy side?
+    bool IsBuy() const noexcept { return Side == OrderSide::BUY; }
+    //! Is the order with sell side?
+    bool IsSell() const noexcept { return Side == OrderSide::SELL; }
+
+    //! Is the order with slippage?
+    bool IsSlippage() const noexcept { return Slippage < std::numeric_limits<uint64_t>::max(); }
+
     friend std::ostream& operator<<(std::ostream& stream, const Order& order);
 
     //! Prepare a new limit order
@@ -121,6 +134,7 @@ struct OrderNode : public Order, public CppCommon::List<OrderNode>::Node
     OrderNode(OrderNode&&) noexcept = default;
     ~OrderNode() noexcept = default;
 
+    OrderNode& operator=(const Order& order) noexcept;
     OrderNode& operator=(const OrderNode&) noexcept = default;
     OrderNode& operator=(OrderNode&&) noexcept = default;
 };

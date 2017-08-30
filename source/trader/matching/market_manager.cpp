@@ -214,8 +214,8 @@ ErrorCode MarketManager::AddLimitOrder(const Order& order)
         OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
         if (order_book_ptr != nullptr)
         {
-            // Add the new order into the order book
-            UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
+            // Add the new limit order into the order book
+            UpdateLevel(*order_book_ptr, order_book_ptr->AddLimitOrder(order_ptr));
         }
     }
     else
@@ -243,6 +243,9 @@ ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity)
     if (order_it == _orders.end())
         return ErrorCode::ORDER_NOT_FOUND;
     OrderNode* order_ptr = (OrderNode*)order_it->second;
+    assert(order_ptr->IsLimit() && "Reduce order operation is valid only for limit orders!");
+    if (!order_ptr->IsLimit())
+        return ErrorCode::ORDER_TYPE_INVALID;
 
     // Calculate the minimal possible order quantity to reduce
     quantity = std::min(quantity, order_ptr->Quantity);
@@ -261,7 +264,7 @@ ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity)
         if (order_book_ptr != nullptr)
         {
             // Reduce the order in the order book
-            UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity));
+            UpdateLevel(*order_book_ptr, order_book_ptr->ReduceLimitOrder(order_ptr, quantity));
         }
     }
     else
@@ -274,7 +277,7 @@ ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity)
         if (order_book_ptr != nullptr)
         {
             // Reduce the order in the order book
-            UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity));
+            UpdateLevel(*order_book_ptr, order_book_ptr->ReduceLimitOrder(order_ptr, quantity));
         }
 
         // Erase the order
@@ -300,13 +303,16 @@ ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t n
     if (order_it == _orders.end())
         return ErrorCode::ORDER_NOT_FOUND;
     OrderNode* order_ptr = (OrderNode*)order_it->second;
+    assert(order_ptr->IsLimit() && "Modify order operation is valid only for limit orders!");
+    if (!order_ptr->IsLimit())
+        return ErrorCode::ORDER_TYPE_INVALID;
 
     // Get the valid order book for the modifying order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Delete the order from the order book
-        UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
+        UpdateLevel(*order_book_ptr, order_book_ptr->DeleteLimitOrder(order_ptr));
     }
 
     // Modify the order
@@ -330,7 +336,7 @@ ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t n
             if (order_book_ptr != nullptr)
             {
                 // Add the modified order into the order book
-                UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
+                UpdateLevel(*order_book_ptr, order_book_ptr->AddLimitOrder(order_ptr));
             }
         }
     }
@@ -367,13 +373,16 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
     if (order_it == _orders.end())
         return ErrorCode::ORDER_NOT_FOUND;
     OrderNode* order_ptr = (OrderNode*)order_it->second;
+    assert(order_ptr->IsLimit() && "Replace order operation is valid only for limit orders!");
+    if (!order_ptr->IsLimit())
+        return ErrorCode::ORDER_TYPE_INVALID;
 
     // Get the valid order book for the replacing order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
         // Delete the old order from the order book
-        UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
+        UpdateLevel(*order_book_ptr, order_book_ptr->DeleteLimitOrder(order_ptr));
     }
 
     // Call the corresponding handler
@@ -413,7 +422,7 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
         if (order_book_ptr != nullptr)
         {
             // Add the modified order into the order book
-            UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
+            UpdateLevel(*order_book_ptr, order_book_ptr->AddLimitOrder(order_ptr));
         }
     }
     else
@@ -457,8 +466,15 @@ ErrorCode MarketManager::DeleteOrder(uint64_t id)
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order_ptr->SymbolId);
     if (order_book_ptr != nullptr)
     {
-        // Delete the order from the order book
-        UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
+        switch (order_ptr->Type)
+        {
+            case OrderType::LIMIT:
+            {
+                // Delete the limit order from the order book
+                UpdateLevel(*order_book_ptr, order_book_ptr->DeleteLimitOrder(order_ptr));
+                break;
+            }
+        }
     }
 
     // Call the corresponding handler
@@ -489,6 +505,9 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
     if (order_it == _orders.end())
         return ErrorCode::ORDER_NOT_FOUND;
     OrderNode* order_ptr = (OrderNode*)order_it->second;
+    assert(order_ptr->IsLimit() && "Execute order operation is valid only for limit orders!");
+    if (!order_ptr->IsLimit())
+        return ErrorCode::ORDER_TYPE_INVALID;
 
     // Calculate the minimal possible order quantity to execute
     quantity = std::min(quantity, order_ptr->Quantity);
@@ -504,7 +523,7 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
     if (order_book_ptr != nullptr)
     {
         // Reduce the order in the order book
-        UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity));
+        UpdateLevel(*order_book_ptr, order_book_ptr->ReduceLimitOrder(order_ptr, quantity));
     }
 
     // Update the order or delete the empty order
@@ -544,6 +563,9 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quan
     if (order_it == _orders.end())
         return ErrorCode::ORDER_NOT_FOUND;
     OrderNode* order_ptr = (OrderNode*)order_it->second;
+    assert(order_ptr->IsLimit() && "Execute order operation is valid only for limit orders!");
+    if (!order_ptr->IsLimit())
+        return ErrorCode::ORDER_TYPE_INVALID;
 
     // Calculate the minimal possible order quantity to execute
     quantity = std::min(quantity, order_ptr->Quantity);
@@ -559,7 +581,7 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quan
     if (order_book_ptr != nullptr)
     {
         // Reduce the order in the order book
-        UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity));
+        UpdateLevel(*order_book_ptr, order_book_ptr->ReduceLimitOrder(order_ptr, quantity));
     }
 
     // Update the order or delete the empty order
@@ -643,20 +665,18 @@ void MarketManager::MatchMarket(OrderBook* order_book_ptr, Order* order_ptr)
     if ((order_book_ptr == nullptr) || (order_ptr == nullptr))
         return;
 
-    uint64_t price;
-
     // Calculate acceptable marker order price with optional slippage value
-    if (order_ptr->Side == OrderSide::BUY)
+    if (order_ptr->IsBuy())
     {
         // Check if there is nothing to buy
         if (order_book_ptr->best_ask() == nullptr)
             return;
 
-        price = order_book_ptr->best_ask()->Price;
-        if (price > (std::numeric_limits<uint64_t>::max() - order_ptr->Slippage))
-            price = std::numeric_limits<uint64_t>::max();
+        order_ptr->Price = order_book_ptr->best_ask()->Price;
+        if (order_ptr->Price > (std::numeric_limits<uint64_t>::max() - order_ptr->Slippage))
+            order_ptr->Price = std::numeric_limits<uint64_t>::max();
         else
-            price += order_ptr->Slippage;
+            order_ptr->Price += order_ptr->Slippage;
     }
     else
     {
@@ -664,15 +684,15 @@ void MarketManager::MatchMarket(OrderBook* order_book_ptr, Order* order_ptr)
         if (order_book_ptr->best_bid() == nullptr)
             return;
 
-        price = order_book_ptr->best_bid()->Price;
-        if (price < (std::numeric_limits<uint64_t>::min() + order_ptr->Slippage))
-            price = std::numeric_limits<uint64_t>::min();
+        order_ptr->Price = order_book_ptr->best_bid()->Price;
+        if (order_ptr->Price < (std::numeric_limits<uint64_t>::min() + order_ptr->Slippage))
+            order_ptr->Price = std::numeric_limits<uint64_t>::min();
         else
-            price -= order_ptr->Slippage;
+            order_ptr->Price -= order_ptr->Slippage;
     }
 
     // Match the market order
-    MatchOrder(order_book_ptr, order_ptr, price);
+    MatchOrder(order_book_ptr, order_ptr);
 }
 
 void MarketManager::MatchLimit(OrderBook* order_book_ptr, Order* order_ptr)
@@ -682,18 +702,17 @@ void MarketManager::MatchLimit(OrderBook* order_book_ptr, Order* order_ptr)
         return;
 
     // Match the limit order
-    MatchOrder(order_book_ptr, order_ptr, order_ptr->Price);
+    MatchOrder(order_book_ptr, order_ptr);
 }
 
-void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr, uint64_t market)
+void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr)
 {
-    LevelNode* level;
-
     // Start the matching from the top of the book
-    while ((level = (order_ptr->Side == OrderSide::BUY) ? order_book_ptr->_best_ask : order_book_ptr->_best_bid) != nullptr)
+    LevelNode* level;
+    while ((level = (order_ptr->IsBuy()) ? order_book_ptr->_best_ask : order_book_ptr->_best_bid) != nullptr)
     {
         // Check the arbitrage bid/ask prices
-        bool arbitrage = (order_ptr->Side == OrderSide::BUY) ? (market >= level->Price) : (market <= level->Price);
+        bool arbitrage = (order_ptr->IsBuy()) ? (order_ptr->Price >= level->Price) : (order_ptr->Price <= level->Price);
         if (!arbitrage)
             return;
 
@@ -748,6 +767,7 @@ void MarketManager::UpdateLevel(const OrderBook& order_book, const LevelUpdate& 
         default:
             break;
     }
+
     _market_handler.onUpdateOrderBook(order_book, update.Top);
 }
 

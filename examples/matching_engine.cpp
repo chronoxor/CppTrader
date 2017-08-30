@@ -51,7 +51,7 @@ protected:
 
 void AddSymbol(MarketManager& market, const std::string& command)
 {
-    static std::regex pattern("add symbol (\\d+) (.+)");
+    static std::regex pattern("^add symbol (\\d+) (.+)$");
     std::smatch match;
 
     if (std::regex_search(command, match, pattern))
@@ -73,7 +73,7 @@ void AddSymbol(MarketManager& market, const std::string& command)
 
 void DeleteSymbol(MarketManager& market, const std::string& command)
 {
-    static std::regex pattern("delete symbol (\\d+)");
+    static std::regex pattern("^delete symbol (\\d+)$");
     std::smatch match;
 
     if (std::regex_search(command, match, pattern))
@@ -92,7 +92,7 @@ void DeleteSymbol(MarketManager& market, const std::string& command)
 
 void AddOrderBook(MarketManager& market, const std::string& command)
 {
-    static std::regex pattern("add book (\\d+)");
+    static std::regex pattern("^add book (\\d+)$");
     std::smatch match;
 
     if (std::regex_search(command, match, pattern))
@@ -113,7 +113,7 @@ void AddOrderBook(MarketManager& market, const std::string& command)
 
 void DeleteOrderBook(MarketManager& market, const std::string& command)
 {
-    static std::regex pattern("delete book (\\d+)");
+    static std::regex pattern("^delete book (\\d+)$");
     std::smatch match;
 
     if (std::regex_search(command, match, pattern))
@@ -132,7 +132,39 @@ void DeleteOrderBook(MarketManager& market, const std::string& command)
 
 void AddMarketOrder(MarketManager& market, const std::string& command)
 {
-    static std::regex pattern("add market (buy|sell) (\\d+) (\\d+) (\\d+) (\\d+)");
+    static std::regex pattern("^add market (buy|sell) (\\d+) (\\d+) (\\d+)$");
+    std::smatch match;
+
+    if (std::regex_search(command, match, pattern))
+    {
+        uint64_t id = std::stoi(match[2]);
+        uint32_t symbol_id = std::stoi(match[3]);
+        uint64_t quantity = std::stoi(match[4]);
+
+        Order order;
+        if (match[1] == "buy")
+            order = Order::BuyMarket(id, symbol_id, quantity);
+        else if (match[1] == "sell")
+            order = Order::SellMarket(id, symbol_id, quantity);
+        else
+        {
+            std::cerr << "Invalid market order side: " << match[1] << std::endl;
+            return;
+        }
+
+        ErrorCode result = market.AddOrder(order);
+        if (result != ErrorCode::OK)
+            std::cerr << "Failed 'add market' command: " << result << std::endl;
+
+        return;
+    }
+
+    std::cerr << "Invalid 'add market' command: " << command << std::endl;
+}
+
+void AddSlippageMarketOrder(MarketManager& market, const std::string& command)
+{
+    static std::regex pattern("^add slippage market (buy|sell) (\\d+) (\\d+) (\\d+) (\\d+)$");
     std::smatch match;
 
     if (std::regex_search(command, match, pattern))
@@ -155,17 +187,17 @@ void AddMarketOrder(MarketManager& market, const std::string& command)
 
         ErrorCode result = market.AddOrder(order);
         if (result != ErrorCode::OK)
-            std::cerr << "Failed 'add market' command: " << result << std::endl;
+            std::cerr << "Failed 'add slippage market' command: " << result << std::endl;
 
         return;
     }
 
-    std::cerr << "Invalid 'add market' command: " << command << std::endl;
+    std::cerr << "Invalid 'add slippage market' command: " << command << std::endl;
 }
 
 void AddLimitOrder(MarketManager& market, const std::string& command)
 {
-    static std::regex pattern("add limit (buy|sell) (\\d+) (\\d+) (\\d+) (\\d+)");
+    static std::regex pattern("^add limit (buy|sell) (\\d+) (\\d+) (\\d+) (\\d+)$");
     std::smatch match;
 
     if (std::regex_search(command, match, pattern))
@@ -196,9 +228,9 @@ void AddLimitOrder(MarketManager& market, const std::string& command)
     std::cerr << "Invalid 'add limit' command: " << command << std::endl;
 }
 
-void ReduceOrder(MarketManager& market, const std::string& command)
+void ReduceLimitOrder(MarketManager& market, const std::string& command)
 {
-    static std::regex pattern("reduce order (\\d+) (\\d+)");
+    static std::regex pattern("^reduce limit (\\d+) (\\d+)$");
     std::smatch match;
 
     if (std::regex_search(command, match, pattern))
@@ -208,17 +240,17 @@ void ReduceOrder(MarketManager& market, const std::string& command)
 
         ErrorCode result = market.ReduceOrder(id, quantity);
         if (result != ErrorCode::OK)
-            std::cerr << "Failed 'reduce order' command: " << result << std::endl;
+            std::cerr << "Failed 'reduce limit' command: " << result << std::endl;
 
         return;
     }
 
-    std::cerr << "Invalid 'reduce order' command: " << command << std::endl;
+    std::cerr << "Invalid 'reduce limit' command: " << command << std::endl;
 }
 
-void ModifyOrder(MarketManager& market, const std::string& command)
+void ModifyLimitOrder(MarketManager& market, const std::string& command)
 {
-    static std::regex pattern("modify order (\\d+) (\\d+) (\\d+)");
+    static std::regex pattern("^modify limit (\\d+) (\\d+) (\\d+)$");
     std::smatch match;
 
     if (std::regex_search(command, match, pattern))
@@ -229,17 +261,17 @@ void ModifyOrder(MarketManager& market, const std::string& command)
 
         ErrorCode result = market.ModifyOrder(id, new_price, new_quantity);
         if (result != ErrorCode::OK)
-            std::cerr << "Failed 'modify order' command: " << result << std::endl;
+            std::cerr << "Failed 'modify limit' command: " << result << std::endl;
 
         return;
     }
 
-    std::cerr << "Invalid 'modify order' command: " << command << std::endl;
+    std::cerr << "Invalid 'modify limit' command: " << command << std::endl;
 }
 
-void ReplaceOrder(MarketManager& market, const std::string& command)
+void ReplaceLimitOrder(MarketManager& market, const std::string& command)
 {
-    static std::regex pattern("replace order (\\d+) (\\d+) (\\d+) (\\d+)");
+    static std::regex pattern("^replace limit (\\d+) (\\d+) (\\d+) (\\d+)$");
     std::smatch match;
 
     if (std::regex_search(command, match, pattern))
@@ -251,17 +283,17 @@ void ReplaceOrder(MarketManager& market, const std::string& command)
 
         ErrorCode result = market.ReplaceOrder(id, new_id, new_price, new_quantity);
         if (result != ErrorCode::OK)
-            std::cerr << "Failed 'replace order' command: " << result << std::endl;
+            std::cerr << "Failed 'replace limit' command: " << result << std::endl;
 
         return;
     }
 
-    std::cerr << "Invalid 'replace order' command: " << command << std::endl;
+    std::cerr << "Invalid 'replace limit' command: " << command << std::endl;
 }
 
 void DeleteOrder(MarketManager& market, const std::string& command)
 {
-    static std::regex pattern("delete order (\\d+)");
+    static std::regex pattern("^delete order (\\d+)$");
     std::smatch match;
 
     if (std::regex_search(command, match, pattern))
@@ -283,32 +315,34 @@ int main(int argc, char** argv)
     MyMarketHandler market_handler;
     MarketManager market(market_handler);
 
-    // Enable automatic matching
-    market.EnableMatching();
-
     // Perform text input
     std::string line;
     while (getline(std::cin, line))
     {
-        if (line.find("help") != std::string::npos)
+        if (line == "help")
         {
             std::cout << "Supported commands: " << std::endl;
             std::cout << "add symbol {Id} {Name} - Add a new symbol with {Id} and {Name}" << std::endl;
             std::cout << "delete symbol {Id} - Delete the symbol with {Id}" << std::endl;
             std::cout << "add book {Id} - Add a new order book for the symbol with {Id}" << std::endl;
             std::cout << "delete book {Id} - Delete the order book with {Id}" << std::endl;
-            std::cout << "add market {Side} {Id} {SymbolId} {Quantity} {Slippage} - Add a new market order of {Type} (buy/sell) with {Id}, {SymbolId}, {Quantity} and {Slippage}" << std::endl;
+            std::cout << "add market {Side} {Id} {SymbolId} {Quantity} - Add a new market order of {Type} (buy/sell) with {Id}, {SymbolId} and {Quantity}" << std::endl;
+            std::cout << "add slippage market {Side} {Id} {SymbolId} {Quantity} {Slippage} - Add a new slippage market order of {Type} (buy/sell) with {Id}, {SymbolId}, {Quantity} and {Slippage}" << std::endl;
             std::cout << "add limit {Side} {Id} {SymbolId} {Price} {Quantity} - Add a new limit order of {Type} (buy/sell) with {Id}, {SymbolId}, {Price} and {Quantity}" << std::endl;
-            std::cout << "reduce order {Id} {Quantity} - Reduce the order with {Id} by the given {Quantity}" << std::endl;
-            std::cout << "modify order {Id} {NewPrice} {NewQuantity} - Modify the order with {Id} and set {NewPrice} and {NewQuantity}" << std::endl;
-            std::cout << "replace order {Id} {NewId} {NewPrice} {NewQuantity} - Replace the order with {Id} and set {NewId}, {NewPrice} and {NewQuantity}" << std::endl;
+            std::cout << "reduce limit {Id} {Quantity} - Reduce the limit order with {Id} by the given {Quantity}" << std::endl;
+            std::cout << "modify limit {Id} {NewPrice} {NewQuantity} - Modify the limit order with {Id} and set {NewPrice} and {NewQuantity}" << std::endl;
+            std::cout << "replace limit {Id} {NewId} {NewPrice} {NewQuantity} - Replace the limit order with {Id} and set {NewId}, {NewPrice} and {NewQuantity}" << std::endl;
             std::cout << "delete order {Id} - Delete the order with {Id}" << std::endl;
             std::cout << "exit/quit - Exit the program" << std::endl;
         }
-        else if ((line.find("exit") != std::string::npos) || (line.find("quit") != std::string::npos))
+        else if ((line == "exit") || (line == "quit"))
             break;
-        else if ((line.find("#") != std::string::npos) || (line == ""))
+        else if ((line.find("#") == 0) || (line == ""))
             continue;
+        else if (line == "enable matching")
+            market.EnableMatching();
+        else if (line == "disable matching")
+            market.DisableMatching();
         else if (line.find("add symbol") != std::string::npos)
             AddSymbol(market, line);
         else if (line.find("delete symbol") != std::string::npos)
@@ -319,14 +353,16 @@ int main(int argc, char** argv)
             DeleteOrderBook(market, line);
         else if (line.find("add market") != std::string::npos)
             AddMarketOrder(market, line);
+        else if (line.find("add slippage market") != std::string::npos)
+            AddSlippageMarketOrder(market, line);
         else if (line.find("add limit") != std::string::npos)
             AddLimitOrder(market, line);
-        else if (line.find("reduce order") != std::string::npos)
-            ReduceOrder(market, line);
-        else if (line.find("modify order") != std::string::npos)
-            ModifyOrder(market, line);
-        else if (line.find("replace order") != std::string::npos)
-            ReplaceOrder(market, line);
+        else if (line.find("reduce limit") != std::string::npos)
+            ReduceLimitOrder(market, line);
+        else if (line.find("modify limit") != std::string::npos)
+            ModifyLimitOrder(market, line);
+        else if (line.find("replace limit") != std::string::npos)
+            ReplaceLimitOrder(market, line);
         else if (line.find("delete order") != std::string::npos)
             DeleteOrder(market, line);
         else

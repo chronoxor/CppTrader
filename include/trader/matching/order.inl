@@ -93,5 +93,12 @@ inline OrderNode::OrderNode(const Order& order) noexcept : Order(order), Level(n
 {
 }
 
+inline OrderNode& OrderNode::operator=(const Order& order) noexcept
+{
+    Order::operator=(order);
+    Level = nullptr;
+    return *this;
+}
+
 } // namespace Matching
 } // namespace CppTrader

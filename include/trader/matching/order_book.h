@@ -43,23 +43,23 @@ public:
     explicit operator bool() const noexcept { return !empty(); }
 
     //! Is the order book empty?
-    bool empty() const noexcept { return _bids.empty() && _asks.empty(); }
+    bool empty() const noexcept { return size() == 0; }
 
     //! Get the order book size
     size_t size() const noexcept { return _bids.size() + _asks.size(); }
 
-    //! Get the order book bids container
-    const Levels& bids() const noexcept { return _bids; }
-    //! Get the order book asks container
-    const Levels& asks() const noexcept { return _asks; }
+    //! Get the order book symbol
+    const Symbol& symbol() const noexcept { return _symbol; }
 
     //! Get the order book best bid price level
     const LevelNode* best_bid() const noexcept { return _best_bid; }
     //! Get the order book best ask price level
     const LevelNode* best_ask() const noexcept { return _best_ask; }
 
-    //! Get the order book symbol
-    const Symbol& symbol() const noexcept { return _symbol; }
+    //! Get the order book bids container
+    const Levels& bids() const noexcept { return _bids; }
+    //! Get the order book asks container
+    const Levels& asks() const noexcept { return _asks; }
 
     friend std::ostream& operator<<(std::ostream& stream, const OrderBook& order_book);
 
@@ -86,17 +86,17 @@ private:
     // Bid/Ask price levels
     CppCommon::PoolMemoryManager<CppCommon::DefaultMemoryManager> _level_memory_manager;
     CppCommon::PoolAllocator<LevelNode, CppCommon::DefaultMemoryManager> _level_pool;
-    Levels _bids;
-    Levels _asks;
     LevelNode* _best_bid;
     LevelNode* _best_ask;
+    Levels _bids;
+    Levels _asks;
 
     LevelNode* AddLevel(OrderNode* order_ptr);
     LevelNode* DeleteLevel(OrderNode* order_ptr);
 
-    LevelUpdate AddOrder(OrderNode* order_ptr);
-    LevelUpdate ReduceOrder(OrderNode* order_ptr, uint64_t quantity);
-    LevelUpdate DeleteOrder(OrderNode* order_ptr);
+    LevelUpdate AddLimitOrder(OrderNode* order_ptr);
+    LevelUpdate ReduceLimitOrder(OrderNode* order_ptr, uint64_t quantity);
+    LevelUpdate DeleteLimitOrder(OrderNode* order_ptr);
 };
 
 } // namespace Matching

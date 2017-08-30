@@ -1,3 +1,4 @@
+enable matching
 add symbol 1 EURUSD
 add book 1
 
@@ -30,5 +31,6 @@ add limit sell 16 1 40 30
 add limit sell 17 1 40 20
 add limit sell 18 1 40 10
 
-# Send buy limit order to match half of the sell orders
-add limit buy 19 1 50 100
+# Send sell market order with slippage = 10 to match half of the buy orders
+# Market order will slip down to price = best bid - 10 and will stop at 20
+add slippage market sell 19 1 1000 10
