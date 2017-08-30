@@ -218,6 +218,9 @@ private:
     void MatchLimit(OrderBook* order_book_ptr, Order* order_ptr);
     void MatchOrder(OrderBook* order_book_ptr, Order* order_ptr);
 
+    uint64_t CalculateAllOrNoneChain(OrderNode* bid_order_ptr, OrderNode* ask_order_ptr);
+    void ExecuteAllOrNoneChain(OrderNode* order_ptr, uint64_t chain);
+
     void UpdateLevel(const OrderBook& order_book, const LevelUpdate& update) const;
 };
 

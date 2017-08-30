@@ -62,7 +62,7 @@ inline std::ostream& operator<<(std::ostream& stream, const Order& order)
     if ((order.IsMarket() || order.IsStop()) && order.IsSlippage())
         stream << "; Slippage=" << order.Slippage;
     if ((order.IsLimit() || order.IsStopLimit()) && order.IsAON())
-        stream << "; AllOrNone=" << order.AllOrNone;
+        stream << "; AllOrNone";
     return stream << ")";
 }
 

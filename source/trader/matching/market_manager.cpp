@@ -216,6 +216,10 @@ ErrorCode MarketManager::AddLimitOrder(const Order& order)
         {
             // Add the new limit order into the order book
             UpdateLevel(*order_book_ptr, order_book_ptr->AddLimitOrder(order_ptr));
+
+            // Automatic order matching
+            if (_matching)
+                Match(order_book_ptr);
         }
     }
     else
@@ -337,6 +341,10 @@ ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t n
             {
                 // Add the modified order into the order book
                 UpdateLevel(*order_book_ptr, order_book_ptr->AddLimitOrder(order_ptr));
+
+                // Automatic order matching
+                if (_matching)
+                    Match(order_book_ptr);
             }
         }
     }
@@ -423,6 +431,10 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
         {
             // Add the modified order into the order book
             UpdateLevel(*order_book_ptr, order_book_ptr->AddLimitOrder(order_ptr));
+
+            // Automatic order matching
+            if (_matching)
+                Match(order_book_ptr);
         }
     }
     else
@@ -625,36 +637,52 @@ void MarketManager::Match(OrderBook* order_book_ptr)
         // Execute crossed orders
         while (!bid->OrderList.empty() && !ask->OrderList.empty())
         {
-            size_t bid_volume = bid->Volume;
-            size_t ask_volume = ask->Volume;
-
             // Find the order to execute and the order to reduce
-            Order* executing_order_ptr = bid->OrderList.front();
-            Order* reducing_order_ptr = ask->OrderList.front();
-            if (executing_order_ptr->Quantity > reducing_order_ptr->Quantity)
-                std::swap(executing_order_ptr, reducing_order_ptr);
+            OrderNode* bid_order_ptr = bid->OrderList.front();
+            OrderNode* ask_order_ptr = ask->OrderList.front();
 
-            // Get the execution quantity
-            uint64_t quantity = executing_order_ptr->Quantity;
+            // Special case for 'All-Or-None' orders
+            if (bid_order_ptr->IsAON() || ask_order_ptr->IsAON())
+            {
+                // Calculate the 'All-Or-None' orders chain
+                uint64_t chain = CalculateAllOrNoneChain(bid_order_ptr, ask_order_ptr);
 
-            // Get the execution price
-            uint64_t price = executing_order_ptr->Price;
+                // Matching is not avaliable
+                if (chain == 0)
+                    return;
 
-            // Call the corresponding handler
-            _market_handler.onExecuteOrder(*executing_order_ptr, price, quantity);
+                // Execute bid orders
+                ExecuteAllOrNoneChain(bid_order_ptr, chain);
 
-            // Delete the executing order from the order book
-            DeleteOrder(executing_order_ptr->Id);
+                // Execute ask orders
+                ExecuteAllOrNoneChain(ask_order_ptr, chain);
+            }
+            else
+            {
+                // Find the order to execute and the order to reduce
+                OrderNode* executing_order_ptr = bid_order_ptr;
+                OrderNode* reducing_order_ptr = ask_order_ptr;
+                if (executing_order_ptr->Quantity > reducing_order_ptr->Quantity)
+                    std::swap(executing_order_ptr, reducing_order_ptr);
 
-            // Call the corresponding handler
-            _market_handler.onExecuteOrder(*reducing_order_ptr, price, quantity);
+                // Get the execution quantity
+                uint64_t quantity = executing_order_ptr->Quantity;
 
-            // Reduce the remaining order in the order book
-            ReduceOrder(reducing_order_ptr->Id, quantity);
+                // Get the execution price
+                uint64_t price = executing_order_ptr->Price;
 
-            // If some level becomes empty start again from the best bid/ask level
-            if ((quantity == bid_volume) || (quantity == ask_volume))
-                break;
+                // Call the corresponding handler
+                _market_handler.onExecuteOrder(*executing_order_ptr, price, quantity);
+
+                // Delete the executing order from the order book
+                DeleteOrder(executing_order_ptr->Id);
+
+                // Call the corresponding handler
+                _market_handler.onExecuteOrder(*reducing_order_ptr, price, quantity);
+
+                // Reduce the remaining order in the order book
+                ReduceOrder(reducing_order_ptr->Id, quantity);
+            }
         }
     }
 }
@@ -709,23 +737,33 @@ void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr)
 {
     // Start the matching from the top of the book
     LevelNode* level;
-    while ((level = (order_ptr->IsBuy()) ? order_book_ptr->_best_ask : order_book_ptr->_best_bid) != nullptr)
+    while ((level = order_ptr->IsBuy() ? order_book_ptr->_best_ask : order_book_ptr->_best_bid) != nullptr)
     {
         // Check the arbitrage bid/ask prices
-        bool arbitrage = (order_ptr->IsBuy()) ? (order_ptr->Price >= level->Price) : (order_ptr->Price <= level->Price);
+        bool arbitrage = order_ptr->IsBuy() ? (order_ptr->Price >= level->Price) : (order_ptr->Price <= level->Price);
         if (!arbitrage)
             return;
 
         // Execute crossed orders
         while (!level->OrderList.empty())
         {
-            size_t level_volume = level->Volume;
-
             // Find the order to execute
-            Order* executing_order_ptr = level->OrderList.front();
+            OrderNode* executing_order_ptr = level->OrderList.front();
 
             // Get the execution quantity
             uint64_t quantity = std::min(executing_order_ptr->Quantity, order_ptr->Quantity);
+
+            // Special case for 'All-Or-None' orders
+            if (executing_order_ptr->IsAON() && order_ptr->IsAON())
+            {
+                // In order to match two 'All-Or-None' orders their quantities must be equal
+                if (executing_order_ptr->Quantity != order_ptr->Quantity)
+                    return;
+            }
+            else if (executing_order_ptr->IsAON() && (executing_order_ptr->Quantity > order_ptr->Quantity))
+                return;
+            else if (order_ptr->IsAON() && (order_ptr->Quantity > executing_order_ptr->Quantity))
+                return;
 
             // Get the execution price
             uint64_t price = executing_order_ptr->Price;
@@ -743,11 +781,116 @@ void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr)
             order_ptr->Quantity -= quantity;
             if (order_ptr->Quantity == 0)
                 return;
-
-            // If the level becomes empty start again from the best bid/ask level
-            if (quantity == level_volume)
-                break;
         }
+    }
+}
+
+uint64_t MarketManager::CalculateAllOrNoneChain(OrderNode* bid_order_ptr, OrderNode* ask_order_ptr)
+{
+    uint64_t required;
+    uint64_t available;
+    OrderNode* longest;
+    OrderNode* shortest;
+
+    // Find the initial longest order chain
+    if (bid_order_ptr->IsAON() && ask_order_ptr->IsAON())
+    {
+        // Choose the longest 'All-Or-None' order
+        if (bid_order_ptr->Quantity > ask_order_ptr->Quantity)
+        {
+            required = bid_order_ptr->Quantity;
+            available = 0;
+            longest = bid_order_ptr;
+            shortest = ask_order_ptr;
+        }
+        else
+        {
+            required = ask_order_ptr->Quantity;
+            available = 0;
+            longest = ask_order_ptr;
+            shortest = bid_order_ptr;
+        }
+    }
+    else if (bid_order_ptr->IsAON())
+    {
+        required = bid_order_ptr->Quantity;
+        available = 0;
+        longest = bid_order_ptr;
+        shortest = ask_order_ptr;
+    }
+    else
+    {
+        required = ask_order_ptr->Quantity;
+        available = 0;
+        longest = ask_order_ptr;
+        shortest = bid_order_ptr;
+    }
+
+    // Find volume to match
+    while (shortest != nullptr)
+    {
+        uint64_t need = required - available;
+        uint64_t volume = shortest->IsAON() ? shortest->Quantity : std::min(shortest->Quantity, need);
+        available += volume;
+
+        // Matching is possible, return the chain size
+        if (required == available)
+            return required;
+
+        // Swap longest and shortest chains
+        if (required < available)
+        {
+            OrderNode* next = longest->next;
+            longest = shortest;
+            shortest = next;
+            std::swap(required, available);
+            continue;
+        }
+            
+        // Take the next order
+        shortest = shortest->next;
+    }
+
+    // Matching is not available
+    return 0;
+}
+
+void MarketManager::ExecuteAllOrNoneChain(OrderNode* order_ptr, uint64_t chain)
+{
+    // Execute all orders in chain
+    while (chain > 0)
+    {
+        OrderNode* executing_order_ptr = order_ptr;
+        order_ptr = executing_order_ptr->next;
+
+        uint64_t quantity;
+
+        // Execute order
+        if (executing_order_ptr->IsAON())
+        {
+            // Get the execution quantity
+            quantity = executing_order_ptr->Quantity;
+
+            // Call the corresponding handler
+            _market_handler.onExecuteOrder(*executing_order_ptr, executing_order_ptr->Price, quantity);
+
+            // Delete the executing order from the order book
+            DeleteOrder(executing_order_ptr->Id);
+        }
+        else
+        {
+            // Get the execution quantity
+            quantity = std::min(executing_order_ptr->Quantity, chain);
+
+            // Call the corresponding handler
+            _market_handler.onExecuteOrder(*executing_order_ptr, executing_order_ptr->Price, quantity);
+
+            // Reduce the executing order in the order book
+            ReduceOrder(executing_order_ptr->Id, quantity);
+        }
+
+        // Reduce the execution chain
+        chain -= quantity;
     }
 }
 
