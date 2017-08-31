@@ -61,6 +61,30 @@ enum class OrderType : uint8_t
 };
 std::ostream& operator<<(std::ostream& stream, OrderType type);
 
+//! Order Time in Force
+/*!
+    Possible values:
+    * <b>Good-Til-Cancelled (GTC)</b> - A GTC order is an order to buy or sell a stock that
+      lasts until the order is completed or cancelled.
+    * <b>Immediate-Or-Cancel (IOC)</b> - An IOC order is an order to buy or sell a stock that
+      must be executed immediately. Any portion of the order that cannot be filled immediately
+      will be cancelled.
+    * <b>Fill-Or-Kill (FOK)</b> - An FOK order is an order to buy or sell a stock that must
+      be executed immediately in its entirety; otherwise, the entire order will be cancelled
+      (i.e., no partial execution of the order is allowed).
+    * <b>All-Or-None (AON)</b> - An All-Or-None (AON) order is an order to buy or sell a stock
+      that must be executed in its entirety, or not executed at all. AON orders that cannot be
+      executed immediately remain active until they are executed or cancelled.
+*/
+enum class OrderTimeInForce : uint8_t
+{
+    GTC,    //!< Good-Til-Cancelled
+    IOC,    //!< Immediate-Or-Cancel
+    FOK,    //!< Fill-Or-Kill
+    AON     //!< All-Or-None
+};
+std::ostream& operator<<(std::ostream& stream, OrderTimeInForce tif);
+
 //! Order
 /*!
     An order is an instruction to buy or sell on a trading venue such as a stock market,
@@ -83,6 +107,9 @@ struct Order
     //! Order quantity
     uint64_t Quantity;
 
+    //! Time in Force
+    OrderTimeInForce TimeInForce;
+
     //! Market order slippage
     /*!
         Slippage is useful to protect market order from executions at prices
@@ -96,19 +123,8 @@ struct Order
     */
     uint64_t Slippage;
 
-    //! Limit/Stop-limit order 'All-Or-None' flag
-    /*!
-        An All-Or-None (AON) order is an order to buy or sell a stock that
-        must be executed in its entirety, or not executed at all. AON orders
-        that cannot be executed immediately remain active until they are
-        executed or cancelled.
-
-        Supported only for limit and stop-limit orders!
-    */
-    bool AllOrNone;
-
     Order() noexcept = default;
-    Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity, uint64_t slippage = std::numeric_limits<uint64_t>::max(), bool aon = false) noexcept;
+    Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
     Order(const Order&) noexcept = default;
     Order(Order&&) noexcept = default;
     ~Order() noexcept = default;
@@ -132,10 +148,17 @@ struct Order
     //! Is the order with sell side?
     bool IsSell() const noexcept { return Side == OrderSide::SELL; }
 
+    //! Is the 'Good-Til-Cancelled' order?
+    bool IsGTC() const noexcept { return TimeInForce == OrderTimeInForce::GTC; }
+    //! Is the 'Immediate-Or-Cancel' order?
+    bool IsIOC() const noexcept { return TimeInForce == OrderTimeInForce::IOC; }
+    //! Is the 'Fill-Or-Kill' order?
+    bool IsFOK() const noexcept { return TimeInForce == OrderTimeInForce::FOK; }
+    //! Is the 'All-Or-None' order?
+    bool IsAON() const noexcept { return TimeInForce == OrderTimeInForce::AON; }
+
     //! Is the order with slippage?
     bool IsSlippage() const noexcept { return Slippage < std::numeric_limits<uint64_t>::max(); }
-    //! Is the order with 'All-Or-None' flag?
-    bool IsAON() const noexcept { return AllOrNone; }
 
     //! Prepare a new market order
     static Order Market(uint64_t id, uint32_t symbol, OrderSide side, uint64_t quantity, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
@@ -144,11 +167,11 @@ struct Order
     //! Prepare a new sell market order
     static Order SellMarket(uint64_t id, uint32_t symbol, uint64_t quantity, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
     //! Prepare a new limit order
-    static Order Limit(uint64_t id, uint32_t symbol, OrderSide side, uint64_t price, uint64_t quantity, bool aon = false) noexcept;
+    static Order Limit(uint64_t id, uint32_t symbol, OrderSide side, uint64_t price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC) noexcept;
     //! Prepare a new buy limit order
-    static Order BuyLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity, bool aon = false) noexcept;
+    static Order BuyLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC) noexcept;
     //! Prepare a new sell limit order
-    static Order SellLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity, bool aon = false) noexcept;
+    static Order SellLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC) noexcept;
 };
 
 struct LevelNode;

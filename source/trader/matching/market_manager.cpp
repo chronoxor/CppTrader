@@ -148,8 +148,6 @@ ErrorCode MarketManager::AddOrder(const Order& order)
 
 ErrorCode MarketManager::AddMarketOrder(const Order& order)
 {
-    assert(_matching && "Market orders can be placed only in automatic matching mode!");
-
     // Validate parameters
     assert((order.Id > 0) && "Order Id must be greater than zero!");
     if (order.Id == 0)
@@ -206,8 +204,8 @@ ErrorCode MarketManager::AddLimitOrder(const Order& order)
     if (_matching)
         MatchLimit(order_book_ptr, &new_order);
 
-    // Add a new order
-    if (new_order.Quantity > 0)
+    // Add a new order or delete remaining part in case of 'Immediate-Or-Cancel'/'Fill-Or-Kill' order
+    if ((new_order.Quantity > 0) && !new_order.IsIOC() && !new_order.IsFOK())
     {
         // Create a new order
         OrderNode* order_ptr = _order_pool.Create(new_order);
@@ -731,8 +729,8 @@ void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr)
         if (!arbitrage)
             return;
 
-        // Special case for 'All-Or-None' order
-        if (order_ptr->IsAON())
+        // Special case for 'Fill-Or-Kill'/'All-Or-None' order
+        if (order_ptr->IsFOK() || order_ptr->IsAON())
         {
             // Calculate the matching chain
             uint64_t chain = CalculateMatchingChain(order_book_ptr, level_ptr, order_ptr->Price, order_ptr->Quantity);

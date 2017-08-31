@@ -1,0 +1,20 @@
+enable matching
+add symbol 1 EURUSD
+add book 1
+
+# Fill the EURUSD order book
+# Ask:
+#
+# Bid: 30 -> 30 (best bid)
+# Bid: 20 -> 20
+# Bid: 10 -> 10
+
+add limit buy 1 1 10 10
+add limit buy 2 1 20 20
+add limit buy 3 1 30 30
+
+# Send 'Fill-Or-Kill' limit order with huge quantity that will be killed
+add fok limit sell 4 1 10 100
+
+# Send 'Fill-Or-Kill' limit order that will be filled
+add fok limit sell 5 1 10 40
