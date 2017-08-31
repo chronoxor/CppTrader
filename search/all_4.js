@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['empty',['empty',['../class_cpp_trader_1_1_matching_1_1_order_book.html#a04f54563fd257783c108e59d302d4ae8',1,'CppTrader::Matching::OrderBook']]],
+  ['empty',['empty',['../class_cpp_trader_1_1_matching_1_1_order_book.html#a42ee3c31ee38bbcc56861472da13e031',1,'CppTrader::Matching::OrderBook']]],
   ['enablematching',['EnableMatching',['../class_cpp_trader_1_1_matching_1_1_market_manager.html#a4bd7f531ee55fdd76974d75115e18687',1,'CppTrader::Matching::MarketManager']]],
   ['errorcode',['ErrorCode',['../namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86e',1,'CppTrader::Matching']]],
   ['errors_2eh',['errors.h',['../errors_8h.html',1,'']]],
