@@ -39,5 +39,21 @@ inline const LevelNode* OrderBook::GetAsk(uint64_t price) const noexcept
     return (it != _asks.end()) ? it.operator->() : nullptr;
 }
 
+inline LevelNode* OrderBook::GetNextLevel(LevelNode* level) noexcept
+{
+    if (level->IsBid())
+    {
+        Levels::reverse_iterator it(&_bids, level);
+        ++it;
+        return it.operator->();
+    }
+    else
+    {
+        Levels::iterator it(&_asks, level);
+        ++it;
+        return it.operator->();
+    }
+}
+
 } // namespace Matching
 } // namespace CppTrader

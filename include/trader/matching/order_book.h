@@ -91,6 +91,8 @@ private:
     Levels _bids;
     Levels _asks;
 
+    LevelNode* GetNextLevel(LevelNode* level) noexcept;
+
     LevelNode* AddLevel(OrderNode* order_ptr);
     LevelNode* DeleteLevel(OrderNode* order_ptr);
 

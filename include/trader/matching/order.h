@@ -116,6 +116,8 @@ struct Order
     Order& operator=(const Order&) noexcept = default;
     Order& operator=(Order&&) noexcept = default;
 
+    friend std::ostream& operator<<(std::ostream& stream, const Order& order);
+
     //! Is the market order?
     bool IsMarket() const noexcept { return Type == OrderType::MARKET; }
     //! Is the limit order?
@@ -134,8 +136,6 @@ struct Order
     bool IsSlippage() const noexcept { return Slippage < std::numeric_limits<uint64_t>::max(); }
     //! Is the order with 'All-Or-None' flag?
     bool IsAON() const noexcept { return AllOrNone; }
-
-    friend std::ostream& operator<<(std::ostream& stream, const Order& order);
 
     //! Prepare a new market order
     static Order Market(uint64_t id, uint32_t symbol, OrderSide side, uint64_t quantity, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;

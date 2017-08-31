@@ -6,14 +6,14 @@ add book 1
 # Despite best ask and best bid prices are equal matching is not avaliable!
 # Ask: 10 -> <10>, 5, <15> (best ask)
 #
-# Bid: 10 -> <20>, 5, <15> (best bid)
+# Bid: 10 -> <20>, 5, <20> (best bid)
 
 add aon limit buy 1 1 10 20
 add aon limit sell 2 1 10 10
 add limit sell 3 1 10 5
 add aon limit sell 4 1 10 15
 add limit buy 5 1 10 5
-add aon limit buy 6 1 10 15
+add aon limit buy 6 1 10 20
 
 # Send sell limit order to perform complex matching of 'All-Or-None' orders.
-add limit sell 7 1 10 10
+add limit sell 7 1 10 15

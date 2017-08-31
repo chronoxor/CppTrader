@@ -218,8 +218,9 @@ private:
     void MatchLimit(OrderBook* order_book_ptr, Order* order_ptr);
     void MatchOrder(OrderBook* order_book_ptr, Order* order_ptr);
 
-    uint64_t CalculateAllOrNoneChain(OrderNode* bid_order_ptr, OrderNode* ask_order_ptr);
-    void ExecuteAllOrNoneChain(OrderNode* order_ptr, uint64_t chain);
+    uint64_t CalculateMatchingChain(OrderBook* order_book_ptr, LevelNode* level_ptr, uint64_t price, uint64_t volume);
+    uint64_t CalculateMatchingChain(OrderBook* order_book_ptr, LevelNode* bid_level_ptr, LevelNode* ask_level_ptr);
+    void ExecuteMatchingChain(OrderBook* order_book_ptr, LevelNode* level_ptr, uint64_t price, uint64_t volume);
 
     void UpdateLevel(const OrderBook& order_book, const LevelUpdate& update) const;
 };

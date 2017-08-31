@@ -60,6 +60,11 @@ struct Level
     { return level1.Price >= level2.Price; }
 
     friend std::ostream& operator<<(std::ostream& stream, const Level& level);
+
+    //! Is the bid price level?
+    bool IsBid() const noexcept { return Type == LevelType::BID; }
+    //! Is the ask price level?
+    bool IsAsk() const noexcept { return Type == LevelType::ASK; }
 };
 
 //! Price level node
