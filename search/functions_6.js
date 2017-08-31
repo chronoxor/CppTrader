@@ -1,6 +1,8 @@
 var searchData=
 [
   ['isaon',['IsAON',['../struct_cpp_trader_1_1_matching_1_1_order.html#a30dea10e2ad1b54efc0173c9717cf1ec',1,'CppTrader::Matching::Order']]],
+  ['isask',['IsAsk',['../struct_cpp_trader_1_1_matching_1_1_level.html#af28dc9bb02c3af16795a340b674a2a5a',1,'CppTrader::Matching::Level']]],
+  ['isbid',['IsBid',['../struct_cpp_trader_1_1_matching_1_1_level.html#a0f5daf5427a7d69421d303ab32cfc21e',1,'CppTrader::Matching::Level']]],
   ['isbuy',['IsBuy',['../struct_cpp_trader_1_1_matching_1_1_order.html#a6aa7cc4356e15d2d6dbf1c9061a13ea0',1,'CppTrader::Matching::Order']]],
   ['islimit',['IsLimit',['../struct_cpp_trader_1_1_matching_1_1_order.html#a8c957c7615be4455baf779bc6fd75d8f',1,'CppTrader::Matching::Order']]],
   ['ismarket',['IsMarket',['../struct_cpp_trader_1_1_matching_1_1_order.html#aaa9cae97e88133e91342eeb984afa905',1,'CppTrader::Matching::Order']]],

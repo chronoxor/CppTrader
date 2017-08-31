@@ -11,6 +11,8 @@ var searchData=
   ['iporeleasequalifier',['IPOReleaseQualifier',['../struct_cpp_trader_1_1_i_t_c_h_1_1_i_p_o_quoting_message.html#a52866ecfca3eefa63e6a13cb299e3700',1,'CppTrader::ITCH::IPOQuotingMessage']]],
   ['iporeleasetime',['IPOReleaseTime',['../struct_cpp_trader_1_1_i_t_c_h_1_1_i_p_o_quoting_message.html#a8951e20ae828e5ddbaf3fcf433266934',1,'CppTrader::ITCH::IPOQuotingMessage']]],
   ['isaon',['IsAON',['../struct_cpp_trader_1_1_matching_1_1_order.html#a30dea10e2ad1b54efc0173c9717cf1ec',1,'CppTrader::Matching::Order']]],
+  ['isask',['IsAsk',['../struct_cpp_trader_1_1_matching_1_1_level.html#af28dc9bb02c3af16795a340b674a2a5a',1,'CppTrader::Matching::Level']]],
+  ['isbid',['IsBid',['../struct_cpp_trader_1_1_matching_1_1_level.html#a0f5daf5427a7d69421d303ab32cfc21e',1,'CppTrader::Matching::Level']]],
   ['isbuy',['IsBuy',['../struct_cpp_trader_1_1_matching_1_1_order.html#a6aa7cc4356e15d2d6dbf1c9061a13ea0',1,'CppTrader::Matching::Order']]],
   ['islimit',['IsLimit',['../struct_cpp_trader_1_1_matching_1_1_order.html#a8c957c7615be4455baf779bc6fd75d8f',1,'CppTrader::Matching::Order']]],
   ['ismarket',['IsMarket',['../struct_cpp_trader_1_1_matching_1_1_order.html#aaa9cae97e88133e91342eeb984afa905',1,'CppTrader::Matching::Order']]],
@@ -24,5 +26,6 @@ var searchData=
   ['itch_5fhandler_2ecpp',['itch_handler.cpp',['../itch__handler_8cpp.html',1,'']]],
   ['itch_5fhandler_2eh',['itch_handler.h',['../itch__handler_8h.html',1,'']]],
   ['itch_5fhandler_2einl',['itch_handler.inl',['../itch__handler_8inl.html',1,'']]],
-  ['itchhandler',['ITCHHandler',['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html',1,'CppTrader::ITCH::ITCHHandler'],['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#abcf8e0c8fab2fe8f9c90cb4db5b0318d',1,'CppTrader::ITCH::ITCHHandler::ITCHHandler()'],['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#aa53fd288010e9c630b605d04edbde80d',1,'CppTrader::ITCH::ITCHHandler::ITCHHandler(const ITCHHandler &amp;)=delete'],['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#a859f0f2efd273d0575f983bdc0abc987',1,'CppTrader::ITCH::ITCHHandler::ITCHHandler(ITCHHandler &amp;&amp;) noexcept=default']]]
+  ['itchhandler',['ITCHHandler',['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#abcf8e0c8fab2fe8f9c90cb4db5b0318d',1,'CppTrader::ITCH::ITCHHandler::ITCHHandler()'],['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#aa53fd288010e9c630b605d04edbde80d',1,'CppTrader::ITCH::ITCHHandler::ITCHHandler(const ITCHHandler &amp;)=delete'],['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#a859f0f2efd273d0575f983bdc0abc987',1,'CppTrader::ITCH::ITCHHandler::ITCHHandler(ITCHHandler &amp;&amp;) noexcept=default']]],
+  ['itchhandler',['ITCHHandler',['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html',1,'CppTrader::ITCH']]]
 ];
