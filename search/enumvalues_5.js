@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['none',['NONE',['../namespace_cpp_trader_1_1_matching.html#a65e7458e06071097f75be96f4ae16f3bab50339a10e1de285ac99d4c3990b8693',1,'CppTrader::Matching']]]
+  ['ioc',['IOC',['../namespace_cpp_trader_1_1_matching.html#a3c4a6bd3748dd98d9daff8e5c40b2b9aa7245a636843f38ae56d5862d502a4303',1,'CppTrader::Matching']]]
 ];
