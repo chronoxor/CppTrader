@@ -25,6 +25,6 @@ var searchData=
   ['symbol_5fduplicate',['SYMBOL_DUPLICATE',['../namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86ea6541d38b7ecc236bdf19bfd60706322c',1,'CppTrader::Matching']]],
   ['symbol_5fnot_5ffound',['SYMBOL_NOT_FOUND',['../namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86ea7e154a753690fd4e3fe5d08566431cb0',1,'CppTrader::Matching']]],
   ['symbolid',['SymbolId',['../struct_cpp_trader_1_1_matching_1_1_order.html#ad78901a32671682eb2e829e73e5a6839',1,'CppTrader::Matching::Order']]],
-  ['symbols',['symbols',['../class_cpp_trader_1_1_matching_1_1_market_manager.html#a68f3456c803eae7221f21c081ab7af88',1,'CppTrader::Matching::MarketManager::symbols() const noexcept'],['../class_cpp_trader_1_1_matching_1_1_market_manager.html#ac7a71d163d114ca0bc5f4fa8f714ccc5',1,'CppTrader::Matching::MarketManager::Symbols()']]],
+  ['symbols',['Symbols',['../class_cpp_trader_1_1_matching_1_1_market_manager.html#ac7a71d163d114ca0bc5f4fa8f714ccc5',1,'CppTrader::Matching::MarketManager::Symbols()'],['../class_cpp_trader_1_1_matching_1_1_market_manager.html#a68f3456c803eae7221f21c081ab7af88',1,'CppTrader::Matching::MarketManager::symbols() const noexcept']]],
   ['systemeventmessage',['SystemEventMessage',['../struct_cpp_trader_1_1_i_t_c_h_1_1_system_event_message.html',1,'CppTrader::ITCH']]]
 ];

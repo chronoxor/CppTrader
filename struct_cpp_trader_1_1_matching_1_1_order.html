@@ -173,8 +173,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a0cd1433ebde9773d0c084dc094fc2b51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is the 'Iceberg' order?  <a href="#a0cd1433ebde9773d0c084dc094fc2b51">More...</a><br/></td></tr>
 <tr class="separator:a0cd1433ebde9773d0c084dc094fc2b51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a51cc41350e9b75a79db52b6437f3a850"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_cpp_trader_1_1_matching_1_1_order.html#a51cc41350e9b75a79db52b6437f3a850">IsSlippage</a> () const noexcept</td></tr>
-<tr class="memdesc:a51cc41350e9b75a79db52b6437f3a850"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is the order with slippage?  <a href="#a51cc41350e9b75a79db52b6437f3a850">More...</a><br/></td></tr>
+<tr class="memdesc:a51cc41350e9b75a79db52b6437f3a850"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is the order have slippage?  <a href="#a51cc41350e9b75a79db52b6437f3a850">More...</a><br/></td></tr>
 <tr class="separator:a51cc41350e9b75a79db52b6437f3a850"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c7b2a715d97c6c649c0ffec659a3794"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86e">ErrorCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_cpp_trader_1_1_matching_1_1_order.html#a0c7b2a715d97c6c649c0ffec659a3794">Validate</a> () const noexcept</td></tr>
+<tr class="memdesc:a0c7b2a715d97c6c649c0ffec659a3794"><td class="mdescLeft">&#160;</td><td class="mdescRight">Validate order parameters.  <a href="#a0c7b2a715d97c6c649c0ffec659a3794">More...</a><br/></td></tr>
+<tr class="separator:a0c7b2a715d97c6c649c0ffec659a3794"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -258,7 +261,7 @@ Friends</h2></td></tr>
 <p>An order is an instruction to buy or sell on a trading venue such as a stock market, bond market, commodity market, or financial derivative market. These instructions can be simple or complicated, and can be sent to either a broker or directly to a trading venue via direct market access. </p>
 <dl><dt><b>Examples: </b></dt><dd><a class="el" href="market_manager_8cpp-example.html#_a4">market_manager.cpp</a>, and <a class="el" href="matching_engine_8cpp-example.html#_a4">matching_engine.cpp</a>.</dd>
 </dl>
-<p>Definition at line <a class="el" href="order_8h_source.html#l00096">96</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00098">98</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a2633459fd635821d399a49f690bfed7b"></a>
 <div class="memitem">
@@ -706,7 +709,7 @@ Friends</h2></td></tr>
 
 <p>Get the hidden order quantity. </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00126">126</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00128">128</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -733,7 +736,7 @@ Friends</h2></td></tr>
 
 <p>Is the 'All-Or-None' order? </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00175">175</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00177">177</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -760,7 +763,7 @@ Friends</h2></td></tr>
 
 <p>Is the order with buy side? </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00164">164</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00166">166</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -787,7 +790,7 @@ Friends</h2></td></tr>
 
 <p>Is the 'Fill-Or-Kill' order? </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00173">173</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00175">175</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -814,7 +817,7 @@ Friends</h2></td></tr>
 
 <p>Is the 'Good-Til-Cancelled' order? </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00169">169</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00171">171</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -841,7 +844,7 @@ Friends</h2></td></tr>
 
 <p>Is the 'Hidden' order? </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00178">178</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00180">180</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -868,7 +871,7 @@ Friends</h2></td></tr>
 
 <p>Is the 'Iceberg' order? </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00180">180</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00182">182</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -895,7 +898,7 @@ Friends</h2></td></tr>
 
 <p>Is the 'Immediate-Or-Cancel' order? </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00171">171</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00173">173</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -922,7 +925,7 @@ Friends</h2></td></tr>
 
 <p>Is the limit order? </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00157">157</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00159">159</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -949,7 +952,7 @@ Friends</h2></td></tr>
 
 <p>Is the market order? </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00155">155</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00157">157</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -976,7 +979,7 @@ Friends</h2></td></tr>
 
 <p>Is the order with sell side? </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00166">166</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00168">168</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -1001,9 +1004,9 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Is the order with slippage? </p>
+<p>Is the order have slippage? </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00183">183</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00185">185</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -1030,7 +1033,7 @@ Friends</h2></td></tr>
 
 <p>Is the stop order? </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00159">159</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00161">161</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -1057,7 +1060,7 @@ Friends</h2></td></tr>
 
 <p>Is the stop-limit order? </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00161">161</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00163">163</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -1619,6 +1622,33 @@ Friends</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a0c7b2a715d97c6c649c0ffec659a3794"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86e">ErrorCode</a> CppTrader::Matching::Order::Validate </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Validate order parameters. </p>
+
+<p>Definition at line <a class="el" href="order_8cpp_source.html#l00014">14</a> of file <a class="el" href="order_8cpp_source.html">order.cpp</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="a07b939303653e9135a9c9fb31dd3e9c8"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1642,7 +1672,7 @@ Friends</h2></td></tr>
 
 <p>Get the visible order quantity. </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00128">128</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00130">130</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -1696,7 +1726,7 @@ Friends</h2></td></tr>
 
 <p><a class="el" href="struct_cpp_trader_1_1_matching_1_1_order.html" title="Order. ">Order</a> Id. </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00099">99</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00101">101</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -1713,7 +1743,7 @@ Friends</h2></td></tr>
 <p><a class="el" href="struct_cpp_trader_1_1_matching_1_1_order.html" title="Order. ">Order</a> max visible quantity. </p>
 <p>This property allows to prepare 'iceberg'/'hidden' orders with the following rules: <b>MaxVisibleQuantity &gt;= Quantity</b> - Regular order <b>MaxVisibleQuantity == 0</b> - 'Hidden' order <b>MaxVisibleQuantity &lt; Quantity</b> - 'Iceberg' order </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00124">124</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00126">126</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -1729,7 +1759,7 @@ Friends</h2></td></tr>
 
 <p><a class="el" href="struct_cpp_trader_1_1_matching_1_1_order.html" title="Order. ">Order</a> price. </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00107">107</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00109">109</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -1745,7 +1775,7 @@ Friends</h2></td></tr>
 
 <p><a class="el" href="struct_cpp_trader_1_1_matching_1_1_order.html" title="Order. ">Order</a> quantity. </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00111">111</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00113">113</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -1761,7 +1791,7 @@ Friends</h2></td></tr>
 
 <p><a class="el" href="struct_cpp_trader_1_1_matching_1_1_order.html" title="Order. ">Order</a> side. </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00105">105</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00107">107</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -1779,7 +1809,7 @@ Friends</h2></td></tr>
 <p>Slippage is useful to protect market order from executions at prices which are too far from the best price. If the slippage is provided for market order its execution will be stopped when the price run out of the market for the given slippage value. Zero slippage will allow to execute market order only at the best price, non executed part of the market order will be canceled.</p>
 <p>Supported only for market and stop orders! </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00141">141</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00143">143</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -1795,7 +1825,7 @@ Friends</h2></td></tr>
 
 <p><a class="el" href="struct_cpp_trader_1_1_matching_1_1_order.html" title="Order. ">Order</a> stop price. </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00109">109</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00111">111</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -1811,7 +1841,7 @@ Friends</h2></td></tr>
 
 <p><a class="el" href="struct_cpp_trader_1_1_matching_1_1_symbol.html" title="Symbol. ">Symbol</a> Id. </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00101">101</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00103">103</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -1827,7 +1857,7 @@ Friends</h2></td></tr>
 
 <p>Time in Force. </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00114">114</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00116">116</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
@@ -1843,13 +1873,14 @@ Friends</h2></td></tr>
 
 <p><a class="el" href="struct_cpp_trader_1_1_matching_1_1_order.html" title="Order. ">Order</a> type. </p>
 
-<p>Definition at line <a class="el" href="order_8h_source.html#l00103">103</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
+<p>Definition at line <a class="el" href="order_8h_source.html#l00105">105</a> of file <a class="el" href="order_8h_source.html">order.h</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following files:<ul>
 <li>include/trader/matching/<a class="el" href="order_8h_source.html">order.h</a></li>
 <li>include/trader/matching/<a class="el" href="order_8inl_source.html">order.inl</a></li>
+<li>source/trader/matching/<a class="el" href="order_8cpp_source.html">order.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
