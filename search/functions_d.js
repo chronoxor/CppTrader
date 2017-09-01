@@ -1,14 +1,13 @@
 var searchData=
 [
-  ['_7efasthash',['~FastHash',['../class_cpp_trader_1_1_matching_1_1_fast_hash.html#a82ff7902b30251856379edda3ae3af04',1,'CppTrader::Matching::FastHash']]],
-  ['_7eitchhandler',['~ITCHHandler',['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#a47e4a9b6eecb2f8ad81fd6adb921ba4a',1,'CppTrader::ITCH::ITCHHandler']]],
-  ['_7elevel',['~Level',['../struct_cpp_trader_1_1_matching_1_1_level.html#a02172f1a02164e0c1e189655bfbe8c6b',1,'CppTrader::Matching::Level']]],
-  ['_7elevelnode',['~LevelNode',['../struct_cpp_trader_1_1_matching_1_1_level_node.html#a48a58cc04ebfd4ff80520aa6706c5233',1,'CppTrader::Matching::LevelNode']]],
-  ['_7elevelupdate',['~LevelUpdate',['../struct_cpp_trader_1_1_matching_1_1_level_update.html#a40a56448755b6f1495eba8808ed0c7d4',1,'CppTrader::Matching::LevelUpdate']]],
-  ['_7emarkethandler',['~MarketHandler',['../class_cpp_trader_1_1_matching_1_1_market_handler.html#afb28883b36614f81e5afed0d63fd8a95',1,'CppTrader::Matching::MarketHandler']]],
-  ['_7emarketmanager',['~MarketManager',['../class_cpp_trader_1_1_matching_1_1_market_manager.html#ab904cbdb5135a3aa6f2d3bf91bcc8aa5',1,'CppTrader::Matching::MarketManager']]],
-  ['_7eorder',['~Order',['../struct_cpp_trader_1_1_matching_1_1_order.html#a55e3097c1b4a2e52ea85b2b70df8bbab',1,'CppTrader::Matching::Order']]],
-  ['_7eorderbook',['~OrderBook',['../class_cpp_trader_1_1_matching_1_1_order_book.html#a83cc723d420a29d19b531e5f6f1e027b',1,'CppTrader::Matching::OrderBook']]],
-  ['_7eordernode',['~OrderNode',['../struct_cpp_trader_1_1_matching_1_1_order_node.html#ac628abacbccad4ba34fc225f490c25fc',1,'CppTrader::Matching::OrderNode']]],
-  ['_7esymbol',['~Symbol',['../struct_cpp_trader_1_1_matching_1_1_symbol.html#aef685d6248d19ebe52bd3a28f3df172d',1,'CppTrader::Matching::Symbol']]]
+  ['sell_5fstop',['sell_stop',['../class_cpp_trader_1_1_matching_1_1_order_book.html#aae9573477cc3b606861879761f189b63',1,'CppTrader::Matching::OrderBook']]],
+  ['selllimit',['SellLimit',['../struct_cpp_trader_1_1_matching_1_1_order.html#a18031643b63fa885dae09c7ee8144c68',1,'CppTrader::Matching::Order']]],
+  ['sellmarket',['SellMarket',['../struct_cpp_trader_1_1_matching_1_1_order.html#a96667676a7f9f5ffe6e65c1d49f0fe8f',1,'CppTrader::Matching::Order']]],
+  ['sellstop',['SellStop',['../struct_cpp_trader_1_1_matching_1_1_order.html#aa073c66ce90d36428a9832ec566625fb',1,'CppTrader::Matching::Order']]],
+  ['sellstoplimit',['SellStopLimit',['../struct_cpp_trader_1_1_matching_1_1_order.html#a61a046857b3daac9cdd836a3c39b9234',1,'CppTrader::Matching::Order']]],
+  ['size',['size',['../class_cpp_trader_1_1_matching_1_1_order_book.html#a6cf7f3856184478471ffad543b386b67',1,'CppTrader::Matching::OrderBook']]],
+  ['stop',['Stop',['../struct_cpp_trader_1_1_matching_1_1_order.html#a2cec088123bef9a5f6af082b7d66b239',1,'CppTrader::Matching::Order']]],
+  ['stoplimit',['StopLimit',['../struct_cpp_trader_1_1_matching_1_1_order.html#a6efe2eff88314fd37190e7f28d55a5e5',1,'CppTrader::Matching::Order']]],
+  ['symbol',['symbol',['../class_cpp_trader_1_1_matching_1_1_order_book.html#aa97a9382fa85bd99a3978577634b68cc',1,'CppTrader::Matching::OrderBook::symbol()'],['../struct_cpp_trader_1_1_matching_1_1_symbol.html#a1fe0874e52e6b18af045410f068eb319',1,'CppTrader::Matching::Symbol::Symbol() noexcept=default'],['../struct_cpp_trader_1_1_matching_1_1_symbol.html#ab377f804b856f70a9b07bd524f48253b',1,'CppTrader::Matching::Symbol::Symbol(uint32_t id, const char name[8]) noexcept'],['../struct_cpp_trader_1_1_matching_1_1_symbol.html#a193f54117d133c0c28f8c3353385058d',1,'CppTrader::Matching::Symbol::Symbol(const Symbol &amp;) noexcept=default'],['../struct_cpp_trader_1_1_matching_1_1_symbol.html#a9a082f48b11b3fae3464d87bf31130e4',1,'CppTrader::Matching::Symbol::Symbol(Symbol &amp;&amp;) noexcept=default']]],
+  ['symbols',['symbols',['../class_cpp_trader_1_1_matching_1_1_market_manager.html#a68f3456c803eae7221f21c081ab7af88',1,'CppTrader::Matching::MarketManager']]]
 ];

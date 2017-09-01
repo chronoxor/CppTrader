@@ -1,7 +1,20 @@
 var searchData=
 [
-  ['level',['Level',['../struct_cpp_trader_1_1_matching_1_1_level.html#a8f8082c6c89d9d6141f8bfed89fdd4a1',1,'CppTrader::Matching::Level::Level(LevelType type, uint64_t price) noexcept'],['../struct_cpp_trader_1_1_matching_1_1_level.html#a4dfd44b1cc57eaa705c5bab31ee055d4',1,'CppTrader::Matching::Level::Level(const Level &amp;) noexcept=default'],['../struct_cpp_trader_1_1_matching_1_1_level.html#a5a717d933dc0742fb63a621c306d30e0',1,'CppTrader::Matching::Level::Level(Level &amp;&amp;) noexcept=default']]],
-  ['levelnode',['LevelNode',['../struct_cpp_trader_1_1_matching_1_1_level_node.html#aabf4fe9921ed627053824d5b58dc1dd8',1,'CppTrader::Matching::LevelNode::LevelNode(LevelType type, uint64_t price) noexcept'],['../struct_cpp_trader_1_1_matching_1_1_level_node.html#a12a53bc3477a2163750f335634ab80b6',1,'CppTrader::Matching::LevelNode::LevelNode(const Level &amp;level) noexcept'],['../struct_cpp_trader_1_1_matching_1_1_level_node.html#abdf8c0c1440084ef4aecb9727316a03c',1,'CppTrader::Matching::LevelNode::LevelNode(const LevelNode &amp;) noexcept=default'],['../struct_cpp_trader_1_1_matching_1_1_level_node.html#aa8374c2fefc0e68344de2e04ea932660',1,'CppTrader::Matching::LevelNode::LevelNode(LevelNode &amp;&amp;) noexcept=default']]],
-  ['levelupdate',['LevelUpdate',['../struct_cpp_trader_1_1_matching_1_1_level_update.html#ac1e070741afeddab2bc4e69e1e9b781d',1,'CppTrader::Matching::LevelUpdate::LevelUpdate(UpdateType type, const Level &amp;update, bool top) noexcept'],['../struct_cpp_trader_1_1_matching_1_1_level_update.html#aadcd57b6770a61589eb798fbce741423',1,'CppTrader::Matching::LevelUpdate::LevelUpdate(const LevelUpdate &amp;) noexcept=default'],['../struct_cpp_trader_1_1_matching_1_1_level_update.html#a1f4738825ca0cc678ac5bad65956fbd3',1,'CppTrader::Matching::LevelUpdate::LevelUpdate(LevelUpdate &amp;&amp;) noexcept=default']]],
-  ['limit',['Limit',['../struct_cpp_trader_1_1_matching_1_1_order.html#a3a35c7b96ad41287891730a3cdd04446',1,'CppTrader::Matching::Order']]]
+  ['isaon',['IsAON',['../struct_cpp_trader_1_1_matching_1_1_order.html#a30dea10e2ad1b54efc0173c9717cf1ec',1,'CppTrader::Matching::Order']]],
+  ['isask',['IsAsk',['../struct_cpp_trader_1_1_matching_1_1_level.html#af28dc9bb02c3af16795a340b674a2a5a',1,'CppTrader::Matching::Level']]],
+  ['isbid',['IsBid',['../struct_cpp_trader_1_1_matching_1_1_level.html#a0f5daf5427a7d69421d303ab32cfc21e',1,'CppTrader::Matching::Level']]],
+  ['isbuy',['IsBuy',['../struct_cpp_trader_1_1_matching_1_1_order.html#a6aa7cc4356e15d2d6dbf1c9061a13ea0',1,'CppTrader::Matching::Order']]],
+  ['isfok',['IsFOK',['../struct_cpp_trader_1_1_matching_1_1_order.html#a02a1f11b616363e9fdbe7c21f887eaba',1,'CppTrader::Matching::Order']]],
+  ['isgtc',['IsGTC',['../struct_cpp_trader_1_1_matching_1_1_order.html#a665e3fea79dee09976c2dedf984d74d4',1,'CppTrader::Matching::Order']]],
+  ['ishidden',['IsHidden',['../struct_cpp_trader_1_1_matching_1_1_order.html#a020f762b9b3d40816d3ac083edb5fbec',1,'CppTrader::Matching::Order']]],
+  ['isiceberg',['IsIceberg',['../struct_cpp_trader_1_1_matching_1_1_order.html#a0cd1433ebde9773d0c084dc094fc2b51',1,'CppTrader::Matching::Order']]],
+  ['isioc',['IsIOC',['../struct_cpp_trader_1_1_matching_1_1_order.html#ab78472496674443e7f50d8c654aeb63e',1,'CppTrader::Matching::Order']]],
+  ['islimit',['IsLimit',['../struct_cpp_trader_1_1_matching_1_1_order.html#a8c957c7615be4455baf779bc6fd75d8f',1,'CppTrader::Matching::Order']]],
+  ['ismarket',['IsMarket',['../struct_cpp_trader_1_1_matching_1_1_order.html#aaa9cae97e88133e91342eeb984afa905',1,'CppTrader::Matching::Order']]],
+  ['ismatchingenabled',['IsMatchingEnabled',['../class_cpp_trader_1_1_matching_1_1_market_manager.html#a29805141155fa8746fe530564b1fee24',1,'CppTrader::Matching::MarketManager']]],
+  ['issell',['IsSell',['../struct_cpp_trader_1_1_matching_1_1_order.html#aee5a720a45c09b6303266f9c8e720288',1,'CppTrader::Matching::Order']]],
+  ['isslippage',['IsSlippage',['../struct_cpp_trader_1_1_matching_1_1_order.html#a51cc41350e9b75a79db52b6437f3a850',1,'CppTrader::Matching::Order']]],
+  ['isstop',['IsStop',['../struct_cpp_trader_1_1_matching_1_1_order.html#ad6974b6a1184d3b6d1986dbdf5784bd6',1,'CppTrader::Matching::Order']]],
+  ['isstoplimit',['IsStopLimit',['../struct_cpp_trader_1_1_matching_1_1_order.html#a0dfe47bcc858391edf97199f168c3e6e',1,'CppTrader::Matching::Order']]],
+  ['itchhandler',['ITCHHandler',['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#abcf8e0c8fab2fe8f9c90cb4db5b0318d',1,'CppTrader::ITCH::ITCHHandler::ITCHHandler()'],['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#aa53fd288010e9c630b605d04edbde80d',1,'CppTrader::ITCH::ITCHHandler::ITCHHandler(const ITCHHandler &amp;)=delete'],['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#a859f0f2efd273d0575f983bdc0abc987',1,'CppTrader::ITCH::ITCHHandler::ITCHHandler(ITCHHandler &amp;&amp;) noexcept=default']]]
 ];

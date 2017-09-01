@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['selllimit',['SellLimit',['../struct_cpp_trader_1_1_matching_1_1_order.html#ac2aec4d1908f5c9ecb0ecc8a271a482e',1,'CppTrader::Matching::Order']]],
-  ['sellmarket',['SellMarket',['../struct_cpp_trader_1_1_matching_1_1_order.html#a96667676a7f9f5ffe6e65c1d49f0fe8f',1,'CppTrader::Matching::Order']]],
-  ['size',['size',['../class_cpp_trader_1_1_matching_1_1_order_book.html#a6cf7f3856184478471ffad543b386b67',1,'CppTrader::Matching::OrderBook']]],
-  ['symbol',['Symbol',['../struct_cpp_trader_1_1_matching_1_1_symbol.html#a1fe0874e52e6b18af045410f068eb319',1,'CppTrader::Matching::Symbol::Symbol() noexcept=default'],['../struct_cpp_trader_1_1_matching_1_1_symbol.html#ab377f804b856f70a9b07bd524f48253b',1,'CppTrader::Matching::Symbol::Symbol(uint32_t id, const char name[8]) noexcept'],['../struct_cpp_trader_1_1_matching_1_1_symbol.html#a193f54117d133c0c28f8c3353385058d',1,'CppTrader::Matching::Symbol::Symbol(const Symbol &amp;) noexcept=default'],['../struct_cpp_trader_1_1_matching_1_1_symbol.html#a9a082f48b11b3fae3464d87bf31130e4',1,'CppTrader::Matching::Symbol::Symbol(Symbol &amp;&amp;) noexcept=default'],['../class_cpp_trader_1_1_matching_1_1_order_book.html#aa97a9382fa85bd99a3978577634b68cc',1,'CppTrader::Matching::OrderBook::symbol()']]],
-  ['symbols',['symbols',['../class_cpp_trader_1_1_matching_1_1_market_manager.html#a68f3456c803eae7221f21c081ab7af88',1,'CppTrader::Matching::MarketManager']]]
+  ['reduceorder',['ReduceOrder',['../class_cpp_trader_1_1_matching_1_1_market_manager.html#a0de974448f76a5d97b033a969bc5b0b8',1,'CppTrader::Matching::MarketManager']]],
+  ['replaceorder',['ReplaceOrder',['../class_cpp_trader_1_1_matching_1_1_market_manager.html#a937554e308537e4d05180ebf54b05966',1,'CppTrader::Matching::MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_price, uint64_t new_quantity)'],['../class_cpp_trader_1_1_matching_1_1_market_manager.html#a5837f5d95ec8604e34d1c3c91a653a45',1,'CppTrader::Matching::MarketManager::ReplaceOrder(uint64_t id, const Order &amp;new_order)']]],
+  ['reset',['Reset',['../class_cpp_trader_1_1_i_t_c_h_1_1_i_t_c_h_handler.html#adf8689a926d593223192552bcde3f09f',1,'CppTrader::ITCH::ITCHHandler']]]
 ];
