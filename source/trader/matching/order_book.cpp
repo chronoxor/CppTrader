@@ -271,8 +271,6 @@ void OrderBook::ReduceStopOrder(OrderNode* order_ptr, uint64_t quantity, uint64_
         --level_ptr->Orders;
     }
 
-    Level level(*level_ptr);
-
     // Delete the empty price level
     if (level_ptr->TotalVolume == 0)
     {
@@ -294,8 +292,6 @@ void OrderBook::DeleteStopOrder(OrderNode* order_ptr)
     // Unlink the empty order from the orders list of the price level
     level_ptr->OrderList.pop_current(*order_ptr);
     --level_ptr->Orders;
-
-    Level level(*level_ptr);
 
     // Delete the empty price level
     if (level_ptr->TotalVolume == 0)
