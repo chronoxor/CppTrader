@@ -28,6 +28,7 @@ enum class ErrorCode : uint8_t
     ORDER_NOT_FOUND,
     ORDER_ID_INVALID,
     ORDER_TYPE_INVALID,
+    ORDER_PARAMETER_INVALID,
     ORDER_QUANTITY_INVALID
 };
 std::ostream& operator<<(std::ostream& stream, ErrorCode error);

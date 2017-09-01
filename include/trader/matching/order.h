@@ -9,6 +9,8 @@
 #ifndef CPPTRADER_MATCHING_ORDER_H
 #define CPPTRADER_MATCHING_ORDER_H
 
+#include "errors.h"
+
 #include "containers/list.h"
 #include "utility/iostream.h"
 
@@ -179,8 +181,11 @@ struct Order
     //! Is the 'Iceberg' order?
     bool IsIceberg() const noexcept { return MaxVisibleQuantity < std::numeric_limits<uint64_t>::max(); }
 
-    //! Is the order with slippage?
+    //! Is the order have slippage?
     bool IsSlippage() const noexcept { return Slippage < std::numeric_limits<uint64_t>::max(); }
+
+    //! Validate order parameters
+    ErrorCode Validate() const noexcept;
 
     //! Prepare a new market order
     static Order Market(uint64_t id, uint32_t symbol, OrderSide side, uint64_t quantity, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;

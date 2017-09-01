@@ -9,7 +9,6 @@
 #ifndef CPPTRADER_MATCHING_MARKET_MANAGER_H
 #define CPPTRADER_MATCHING_MARKET_MANAGER_H
 
-#include "errors.h"
 #include "fast_hash.h"
 #include "market_handler.h"
 

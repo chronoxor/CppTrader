@@ -31,6 +31,8 @@ inline std::ostream& operator<<(std::ostream& stream, ErrorCode error)
             return stream << "ORDER_ID_INVALID";
         case ErrorCode::ORDER_TYPE_INVALID:
             return stream << "ORDER_TYPE_INVALID";
+        case ErrorCode::ORDER_PARAMETER_INVALID:
+            return stream << "ORDER_PARAMETER_INVALID";
         case ErrorCode::ORDER_QUANTITY_INVALID:
             return stream << "ORDER_QUANTITY_INVALID";
         default:

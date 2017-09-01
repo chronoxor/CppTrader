@@ -134,6 +134,11 @@ ErrorCode MarketManager::DeleteOrderBook(uint32_t id)
 
 ErrorCode MarketManager::AddOrder(const Order& order)
 {
+    // Validate order parameters
+    ErrorCode result = order.Validate();
+    if (result != ErrorCode::OK)
+        return result;
+
     // Add the corresponding order type
     switch (order.Type)
     {
@@ -148,14 +153,6 @@ ErrorCode MarketManager::AddOrder(const Order& order)
 
 ErrorCode MarketManager::AddMarketOrder(const Order& order)
 {
-    // Validate parameters
-    assert((order.Id > 0) && "Order Id must be greater than zero!");
-    if (order.Id == 0)
-        return ErrorCode::ORDER_ID_INVALID;
-    assert((order.Quantity > 0) && "Order quantity must be greater than zero!");
-    if (order.Quantity == 0)
-        return ErrorCode::ORDER_QUANTITY_INVALID;
-
     // Get the valid order book for the order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order.SymbolId);
     if (order_book_ptr == nullptr)
@@ -182,14 +179,6 @@ ErrorCode MarketManager::AddMarketOrder(const Order& order)
 
 ErrorCode MarketManager::AddLimitOrder(const Order& order)
 {
-    // Validate parameters
-    assert((order.Id > 0) && "Order Id must be greater than zero!");
-    if (order.Id == 0)
-        return ErrorCode::ORDER_ID_INVALID;
-    assert((order.Quantity > 0) && "Order quantity must be greater than zero!");
-    if (order.Quantity == 0)
-        return ErrorCode::ORDER_QUANTITY_INVALID;
-
     // Get the valid order book for the order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order.SymbolId);
     if (order_book_ptr == nullptr)
@@ -308,6 +297,9 @@ ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t n
     assert((id > 0) && "Order Id must be greater than zero!");
     if (id == 0)
         return ErrorCode::ORDER_ID_INVALID;
+    assert((new_quantity > 0) && "Order quantity must be greater than zero!");
+    if (new_quantity == 0)
+        return ErrorCode::ORDER_QUANTITY_INVALID;
 
     // Get the order to modify
     auto order_it = _orders.find(id);
@@ -378,6 +370,9 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
     assert((new_id > 0) && "New order Id must be greater than zero!");
     if (new_id == 0)
         return ErrorCode::ORDER_ID_INVALID;
+    assert((new_quantity > 0) && "Order quantity must be greater than zero!");
+    if (new_quantity == 0)
+        return ErrorCode::ORDER_QUANTITY_INVALID;
 
     // Get the order to replace
     auto order_it = _orders.find(id);
