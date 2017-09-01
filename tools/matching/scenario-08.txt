@@ -1,6 +1,6 @@
 enable matching
-add symbol 1 EURUSD
-add book 1
+add symbol 0 EURUSD
+add book 0
 
 # Fill the EURUSD order book with some 'All-Or-None' orders.
 # Despite best ask and best bid prices are equal matching is not avaliable!
@@ -8,12 +8,12 @@ add book 1
 #
 # Bid: 10 -> <20>, 5, <20> (best bid)
 
-add aon limit buy 1 1 10 20
-add aon limit sell 2 1 10 10
-add limit sell 3 1 10 5
-add aon limit sell 4 1 10 15
-add limit buy 5 1 10 5
-add aon limit buy 6 1 10 20
+add aon limit buy 1 0 10 20
+add aon limit sell 2 0 10 10
+add limit sell 3 0 10 5
+add aon limit sell 4 0 10 15
+add limit buy 5 0 10 5
+add aon limit buy 6 0 10 20
 
 # Send sell limit order to perform complex matching of 'All-Or-None' orders
-add limit sell 7 1 10 15
+add limit sell 7 0 10 15

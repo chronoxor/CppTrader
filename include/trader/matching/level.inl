@@ -25,7 +25,9 @@ inline std::ostream& operator<<(std::ostream& stream, LevelType type)
 inline Level::Level(LevelType type, uint64_t price) noexcept
     : Type(type),
       Price(price),
-      Volume(0),
+      TotalVolume(0),
+      HiddenVolume(0),
+      VisibleVolume(0),
       Orders(0)
 {
 }
@@ -34,7 +36,9 @@ inline std::ostream& operator<<(std::ostream& stream, const Level& level)
 {
     return stream << "Level(Type=" << level.Type
         << "; Price=" << level.Price
-        << "; Volume=" << level.Volume
+        << "; TotalVolume=" << level.TotalVolume
+        << "; HiddenVolume=" << level.HiddenVolume
+        << "; VisibleVolume=" << level.VisibleVolume
         << "; Orders=" << level.Orders
         << ")";
 }

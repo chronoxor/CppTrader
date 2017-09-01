@@ -327,9 +327,9 @@ void AddAONLimitOrder(MarketManager& market, const std::string& command)
     std::cerr << "Invalid 'add aon limit' command: " << command << std::endl;
 }
 
-void ReduceLimitOrder(MarketManager& market, const std::string& command)
+void ReduceOrder(MarketManager& market, const std::string& command)
 {
-    static std::regex pattern("^reduce limit (\\d+) (\\d+)$");
+    static std::regex pattern("^reduce order (\\d+) (\\d+)$");
     std::smatch match;
 
     if (std::regex_search(command, match, pattern))
@@ -339,17 +339,17 @@ void ReduceLimitOrder(MarketManager& market, const std::string& command)
 
         ErrorCode result = market.ReduceOrder(id, quantity);
         if (result != ErrorCode::OK)
-            std::cerr << "Failed 'reduce limit' command: " << result << std::endl;
+            std::cerr << "Failed 'reduce order' command: " << result << std::endl;
 
         return;
     }
 
-    std::cerr << "Invalid 'reduce limit' command: " << command << std::endl;
+    std::cerr << "Invalid 'reduce order' command: " << command << std::endl;
 }
 
-void ModifyLimitOrder(MarketManager& market, const std::string& command)
+void ModifyOrder(MarketManager& market, const std::string& command)
 {
-    static std::regex pattern("^modify limit (\\d+) (\\d+) (\\d+)$");
+    static std::regex pattern("^modify order (\\d+) (\\d+) (\\d+)$");
     std::smatch match;
 
     if (std::regex_search(command, match, pattern))
@@ -360,17 +360,17 @@ void ModifyLimitOrder(MarketManager& market, const std::string& command)
 
         ErrorCode result = market.ModifyOrder(id, new_price, new_quantity);
         if (result != ErrorCode::OK)
-            std::cerr << "Failed 'modify limit' command: " << result << std::endl;
+            std::cerr << "Failed 'modify order' command: " << result << std::endl;
 
         return;
     }
 
-    std::cerr << "Invalid 'modify limit' command: " << command << std::endl;
+    std::cerr << "Invalid 'modify order' command: " << command << std::endl;
 }
 
-void ReplaceLimitOrder(MarketManager& market, const std::string& command)
+void ReplaceOrder(MarketManager& market, const std::string& command)
 {
-    static std::regex pattern("^replace limit (\\d+) (\\d+) (\\d+) (\\d+)$");
+    static std::regex pattern("^replace order (\\d+) (\\d+) (\\d+) (\\d+)$");
     std::smatch match;
 
     if (std::regex_search(command, match, pattern))
@@ -382,12 +382,12 @@ void ReplaceLimitOrder(MarketManager& market, const std::string& command)
 
         ErrorCode result = market.ReplaceOrder(id, new_id, new_price, new_quantity);
         if (result != ErrorCode::OK)
-            std::cerr << "Failed 'replace limit' command: " << result << std::endl;
+            std::cerr << "Failed 'replace order' command: " << result << std::endl;
 
         return;
     }
 
-    std::cerr << "Invalid 'replace limit' command: " << command << std::endl;
+    std::cerr << "Invalid 'replace order' command: " << command << std::endl;
 }
 
 void DeleteOrder(MarketManager& market, const std::string& command)
@@ -431,9 +431,9 @@ int main(int argc, char** argv)
             std::cout << "add ioc limit {Side} {Id} {SymbolId} {Price} {Quantity} - Add a new 'Immediate-Or-Cancel' limit order of {Type} (buy/sell) with {Id}, {SymbolId}, {Price} and {Quantity}" << std::endl;
             std::cout << "add fok limit {Side} {Id} {SymbolId} {Price} {Quantity} - Add a new 'Fill-Or-Kill' limit order of {Type} (buy/sell) with {Id}, {SymbolId}, {Price} and {Quantity}" << std::endl;
             std::cout << "add aon limit {Side} {Id} {SymbolId} {Price} {Quantity} - Add a new 'All-Or-None' limit order of {Type} (buy/sell) with {Id}, {SymbolId}, {Price} and {Quantity}" << std::endl;
-            std::cout << "reduce limit {Id} {Quantity} - Reduce the limit order with {Id} by the given {Quantity}" << std::endl;
-            std::cout << "modify limit {Id} {NewPrice} {NewQuantity} - Modify the limit order with {Id} and set {NewPrice} and {NewQuantity}" << std::endl;
-            std::cout << "replace limit {Id} {NewId} {NewPrice} {NewQuantity} - Replace the limit order with {Id} and set {NewId}, {NewPrice} and {NewQuantity}" << std::endl;
+            std::cout << "reduce order {Id} {Quantity} - Reduce the order with {Id} by the given {Quantity}" << std::endl;
+            std::cout << "modify order {Id} {NewPrice} {NewQuantity} - Modify the order with {Id} and set {NewPrice} and {NewQuantity}" << std::endl;
+            std::cout << "replace order {Id} {NewId} {NewPrice} {NewQuantity} - Replace the order with {Id} and set {NewId}, {NewPrice} and {NewQuantity}" << std::endl;
             std::cout << "delete order {Id} - Delete the order with {Id}" << std::endl;
             std::cout << "exit/quit - Exit the program" << std::endl;
         }
@@ -465,12 +465,12 @@ int main(int argc, char** argv)
             AddFOKLimitOrder(market, line);
         else if (line.find("add aon limit") != std::string::npos)
             AddAONLimitOrder(market, line);
-        else if (line.find("reduce limit") != std::string::npos)
-            ReduceLimitOrder(market, line);
-        else if (line.find("modify limit") != std::string::npos)
-            ModifyLimitOrder(market, line);
-        else if (line.find("replace limit") != std::string::npos)
-            ReplaceLimitOrder(market, line);
+        else if (line.find("reduce order") != std::string::npos)
+            ReduceOrder(market, line);
+        else if (line.find("modify order") != std::string::npos)
+            ModifyOrder(market, line);
+        else if (line.find("replace order") != std::string::npos)
+            ReplaceOrder(market, line);
         else if (line.find("delete order") != std::string::npos)
             DeleteOrder(market, line);
         else

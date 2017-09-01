@@ -1,6 +1,6 @@
 enable matching
-add symbol 1 EURUSD
-add book 1
+add symbol 0 EURUSD
+add book 0
 
 # Fill the EURUSD order book
 # Ask:
@@ -9,9 +9,9 @@ add book 1
 # Bid: 20 -> 20
 # Bid: 10 -> 10
 
-add limit buy 1 1 10 10
-add limit buy 2 1 20 20
-add limit buy 3 1 30 30
+add limit buy 1 0 10 10
+add limit buy 2 0 20 20
+add limit buy 3 0 30 30
 
 # Send 'Immediate-Or-Cancel' limit order
-add ioc limit sell 4 1 10 100
+add ioc limit sell 4 0 10 100

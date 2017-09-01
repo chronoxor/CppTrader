@@ -33,7 +33,11 @@ struct Level
     //! Level price
     uint64_t Price;
     //! Level volume
-    uint64_t Volume;
+    uint64_t TotalVolume;
+    //! Level hidden volume
+    uint64_t HiddenVolume;
+    //! Level visible volume
+    uint64_t VisibleVolume;
     //! Level orders
     size_t Orders;
 

@@ -1,11 +1,11 @@
 enable matching
-add symbol 1 EURUSD
-add book 1
+add symbol 0 EURUSD
+add book 0
 
-# Add buy limit order (Id = 1, SymbolId = 1) with price = 10 and quantity = 10
-add limit buy 1 1 10 10
+# Add buy limit order (Id = 1, SymbolId = 0) with price = 10 and quantity = 10
+add limit buy 1 0 10 10
 
-# Add sell limit order (Id = 2, SymbolId = 1) with price = 10 and quantity = 10
-add limit sell 2 1 10 10
+# Add sell limit order (Id = 2, SymbolId = 0) with price = 10 and quantity = 10
+add limit sell 2 0 10 10
 
 # Orders will be fully matched!

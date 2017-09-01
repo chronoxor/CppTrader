@@ -1,5 +1,5 @@
-# Add EURUSD symbol with Id = 1
-add symbol 1 EURUSD
+# Add EURUSD symbol with Id = 0
+add symbol 0 EURUSD
 
-# Delete EURUSD symbol with Id = 1
-delete symbol 1
+# Delete EURUSD symbol with Id = 0
+delete symbol 0

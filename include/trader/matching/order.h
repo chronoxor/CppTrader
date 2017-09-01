@@ -12,6 +12,7 @@
 #include "containers/list.h"
 #include "utility/iostream.h"
 
+#include <algorithm>
 #include <cstdint>
 #include <limits>
 
@@ -104,11 +105,27 @@ struct Order
     OrderSide Side;
     //! Order price
     uint64_t Price;
+    //! Order stop price
+    uint64_t StopPrice;
     //! Order quantity
     uint64_t Quantity;
 
     //! Time in Force
     OrderTimeInForce TimeInForce;
+
+    //! Order max visible quantity
+    /*!
+        This property allows to prepare 'iceberg'/'hidden' orders with the
+        following rules:
+        * <b>MaxVisibleQuantity >= Quantity</b> - Regular order
+        * <b>MaxVisibleQuantity == 0</b> - 'Hidden' order
+        * <b>MaxVisibleQuantity < Quantity</b> - 'Iceberg' order
+    */
+    uint64_t MaxVisibleQuantity;
+    //! Get the hidden order quantity
+    uint64_t HiddenQuantity() const noexcept { return (Quantity > MaxVisibleQuantity) ? (Quantity - MaxVisibleQuantity) : 0; }
+    //! Get the visible order quantity
+    uint64_t VisibleQuantity() const noexcept { return std::min(Quantity, MaxVisibleQuantity); }
 
     //! Market order slippage
     /*!
@@ -124,7 +141,7 @@ struct Order
     uint64_t Slippage;
 
     Order() noexcept = default;
-    Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
+    Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t stop_price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t max_visible_quantity = std::numeric_limits<uint64_t>::max(), uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
     Order(const Order&) noexcept = default;
     Order(Order&&) noexcept = default;
     ~Order() noexcept = default;
@@ -157,6 +174,11 @@ struct Order
     //! Is the 'All-Or-None' order?
     bool IsAON() const noexcept { return TimeInForce == OrderTimeInForce::AON; }
 
+    //! Is the 'Hidden' order?
+    bool IsHidden() const noexcept { return MaxVisibleQuantity == 0; }
+    //! Is the 'Iceberg' order?
+    bool IsIceberg() const noexcept { return MaxVisibleQuantity < std::numeric_limits<uint64_t>::max(); }
+
     //! Is the order with slippage?
     bool IsSlippage() const noexcept { return Slippage < std::numeric_limits<uint64_t>::max(); }
 
@@ -166,12 +188,27 @@ struct Order
     static Order BuyMarket(uint64_t id, uint32_t symbol, uint64_t quantity, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
     //! Prepare a new sell market order
     static Order SellMarket(uint64_t id, uint32_t symbol, uint64_t quantity, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
+
     //! Prepare a new limit order
-    static Order Limit(uint64_t id, uint32_t symbol, OrderSide side, uint64_t price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC) noexcept;
+    static Order Limit(uint64_t id, uint32_t symbol, OrderSide side, uint64_t price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t max_visible_quantity = std::numeric_limits<uint64_t>::max()) noexcept;
     //! Prepare a new buy limit order
-    static Order BuyLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC) noexcept;
+    static Order BuyLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t max_visible_quantity = std::numeric_limits<uint64_t>::max()) noexcept;
     //! Prepare a new sell limit order
-    static Order SellLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC) noexcept;
+    static Order SellLimit(uint64_t id, uint32_t symbol, uint64_t price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t max_visible_quantity = std::numeric_limits<uint64_t>::max()) noexcept;
+
+    //! Prepare a new stop order
+    static Order Stop(uint64_t id, uint32_t symbol, OrderSide side, uint64_t stop_price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
+    //! Prepare a new buy stop order
+    static Order BuyStop(uint64_t id, uint32_t symbol, uint64_t stop_price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
+    //! Prepare a new sell stop order
+    static Order SellStop(uint64_t id, uint32_t symbol, uint64_t stop_price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
+
+    //! Prepare a new stop-limit order
+    static Order StopLimit(uint64_t id, uint32_t symbol, OrderSide side, uint64_t stop_price, uint64_t price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t max_visible_quantity = std::numeric_limits<uint64_t>::max()) noexcept;
+    //! Prepare a new buy stop-limit order
+    static Order BuyStopLimit(uint64_t id, uint32_t symbol, uint64_t stop_price, uint64_t price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t max_visible_quantity = std::numeric_limits<uint64_t>::max()) noexcept;
+    //! Prepare a new sell stop-limit order
+    static Order SellStopLimit(uint64_t id, uint32_t symbol, uint64_t stop_price, uint64_t price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t max_visible_quantity = std::numeric_limits<uint64_t>::max()) noexcept;
 };
 
 struct LevelNode;

@@ -223,7 +223,7 @@ ErrorCode MarketManager::AddLimitOrder(const Order& order)
         }
 
         // Add the new limit order into the order book
-        UpdateLevel(*order_book_ptr, order_book_ptr->AddLimitOrder(order_ptr));
+        UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
     }
     else
     {
@@ -266,8 +266,14 @@ ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity)
     // Calculate the minimal possible order quantity to reduce
     quantity = std::min(quantity, order_ptr->Quantity);
 
+    uint64_t hidden = order_ptr->HiddenQuantity();
+    uint64_t visible = order_ptr->VisibleQuantity();
+
     // Reduce the order quantity
     order_ptr->Quantity -= quantity;
+
+    hidden -= order_ptr->HiddenQuantity();
+    visible -= order_ptr->VisibleQuantity();
 
     // Update the order or delete the empty order
     if (order_ptr->Quantity > 0)
@@ -276,7 +282,7 @@ ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity)
         _market_handler.onUpdateOrder(*order_ptr);
 
         // Reduce the order in the order book
-        UpdateLevel(*order_book_ptr, order_book_ptr->ReduceLimitOrder(order_ptr, quantity));
+        UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity, hidden, visible));
      }
     else
     {
@@ -284,7 +290,7 @@ ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity)
         _market_handler.onDeleteOrder(*order_ptr);
 
         // Reduce the order in the order book
-        UpdateLevel(*order_book_ptr, order_book_ptr->ReduceLimitOrder(order_ptr, quantity));
+        UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity, hidden, visible));
 
         // Erase the order
         _orders.erase(order_it);
@@ -319,7 +325,7 @@ ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t n
         return ErrorCode::ORDER_BOOK_NOT_FOUND;
 
     // Delete the order from the order book
-    UpdateLevel(*order_book_ptr, order_book_ptr->DeleteLimitOrder(order_ptr));
+    UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
 
     // Modify the order
     order_ptr->Price = new_price;
@@ -339,7 +345,7 @@ ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t n
         if (order_ptr->Quantity > 0)
         {
             // Add the modified order into the order book
-            UpdateLevel(*order_book_ptr, order_book_ptr->AddLimitOrder(order_ptr));
+            UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
         }
 
         // Automatic order matching
@@ -389,7 +395,7 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
         return ErrorCode::ORDER_BOOK_NOT_FOUND;
 
     // Delete the old order from the order book
-    UpdateLevel(*order_book_ptr, order_book_ptr->DeleteLimitOrder(order_ptr));
+    UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
 
     // Call the corresponding handler
     _market_handler.onDeleteOrder(*order_ptr);
@@ -424,7 +430,7 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
         }
 
         // Add the modified order into the order book
-        UpdateLevel(*order_book_ptr, order_book_ptr->AddLimitOrder(order_ptr));
+        UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
     }
     else
     {
@@ -477,7 +483,7 @@ ErrorCode MarketManager::DeleteOrder(uint64_t id)
         case OrderType::LIMIT:
         {
             // Delete the limit order from the order book
-            UpdateLevel(*order_book_ptr, order_book_ptr->DeleteLimitOrder(order_ptr));
+            UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
             break;
         }
         default:
@@ -527,11 +533,17 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
     // Call the corresponding handler
     _market_handler.onExecuteOrder(*order_ptr, order_ptr->Price, quantity);
 
+    uint64_t hidden = order_ptr->HiddenQuantity();
+    uint64_t visible = order_ptr->VisibleQuantity();
+
     // Reduce the order quantity
     order_ptr->Quantity -= quantity;
 
+    hidden -= order_ptr->HiddenQuantity();
+    visible -= order_ptr->VisibleQuantity();
+
     // Reduce the order in the order book
-    UpdateLevel(*order_book_ptr, order_book_ptr->ReduceLimitOrder(order_ptr, quantity));
+    UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity, hidden, visible));
 
     // Update the order or delete the empty order
     if (order_ptr->Quantity > 0)
@@ -585,11 +597,17 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quan
     // Call the corresponding handler
     _market_handler.onExecuteOrder(*order_ptr, price, quantity);
 
+    uint64_t hidden = order_ptr->HiddenQuantity();
+    uint64_t visible = order_ptr->VisibleQuantity();
+
     // Reduce the order quantity
     order_ptr->Quantity -= quantity;
 
+    hidden -= order_ptr->HiddenQuantity();
+    visible -= order_ptr->VisibleQuantity();
+
     // Reduce the order in the order book
-    UpdateLevel(*order_book_ptr, order_book_ptr->ReduceLimitOrder(order_ptr, quantity));
+    UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity, hidden, visible));
 
     // Update the order or delete the empty order
     if (order_ptr->Quantity > 0)

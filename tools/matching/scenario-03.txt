@@ -1,18 +1,18 @@
 enable matching
-add symbol 1 EURUSD
-add book 1
+add symbol 0 EURUSD
+add book 0
 
-# Add buy limit order (Id = 1, SymbolId = 1) with price = 10 and quantity = 10
-add limit buy 1 1 10 10
+# Add buy limit order (Id = 1, SymbolId = 0) with price = 10 and quantity = 10
+add limit buy 1 0 10 10
 
-# Reduce the limit order with Id = 1 by quantity = 5
-reduce limit 1 5
+# Reduce the order with Id = 1 by quantity = 5
+reduce order 1 5
 
-# Modify the limit order with Id = 1 and set new price = 20 and new quantity = 20
-modify limit 1 20 20
+# Modify the order with Id = 1 and set new price = 20 and new quantity = 20
+modify order 1 20 20
 
-# Replace the limit order with Id = 1 and set new Id = 2, new price = 30 and new quantity = 30
-replace limit 1 2 30 30
+# Replace the order with Id = 1 and set new Id = 2, new price = 30 and new quantity = 30
+replace order 1 2 30 30
 
 # Delete the order with Id = 2
 delete order 2

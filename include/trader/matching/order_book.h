@@ -46,7 +46,7 @@ public:
     bool empty() const noexcept { return size() == 0; }
 
     //! Get the order book size
-    size_t size() const noexcept { return _bids.size() + _asks.size(); }
+    size_t size() const noexcept { return _bids.size() + _asks.size() + _buy_stop.size() + _sell_stop.size(); }
 
     //! Get the order book symbol
     const Symbol& symbol() const noexcept { return _symbol; }
@@ -60,6 +60,11 @@ public:
     const Levels& bids() const noexcept { return _bids; }
     //! Get the order book asks container
     const Levels& asks() const noexcept { return _asks; }
+
+    //! Get the order book buy stop orders container
+    const Levels& buy_stop() const noexcept { return _buy_stop; }
+    //! Get the order book sell stop orders container
+    const Levels& sell_stop() const noexcept { return _sell_stop; }
 
     friend std::ostream& operator<<(std::ostream& stream, const OrderBook& order_book);
 
@@ -76,6 +81,19 @@ public:
     */
     const LevelNode* GetAsk(uint64_t price) const noexcept;
 
+    //! Get the order book buy stop level with the given price
+    /*!
+        \param price - Price
+        \return Pointer to the order book buy stop level with the given price or nullptr
+    */
+    const LevelNode* GetBuyStopLevel(uint64_t price) const noexcept;
+    //! Get the order book sell stop level with the given price
+    /*!
+        \param price - Price
+        \return Pointer to the order book sell stop level with the given price or nullptr
+    */
+    const LevelNode* GetSellStopLevel(uint64_t price) const noexcept;
+
 private:
     // Order book symbol
     Symbol _symbol;
@@ -91,14 +109,29 @@ private:
     Levels _bids;
     Levels _asks;
 
+    // Price level management
     LevelNode* GetNextLevel(LevelNode* level) noexcept;
-
     LevelNode* AddLevel(OrderNode* order_ptr);
     LevelNode* DeleteLevel(OrderNode* order_ptr);
 
-    LevelUpdate AddLimitOrder(OrderNode* order_ptr);
-    LevelUpdate ReduceLimitOrder(OrderNode* order_ptr, uint64_t quantity);
-    LevelUpdate DeleteLimitOrder(OrderNode* order_ptr);
+    // Orders management
+    LevelUpdate AddOrder(OrderNode* order_ptr);
+    LevelUpdate ReduceOrder(OrderNode* order_ptr, uint64_t quantity, uint64_t hidden, uint64_t visible);
+    LevelUpdate DeleteOrder(OrderNode* order_ptr);
+
+    // Buy/Sell stop orders levels
+    Levels _buy_stop;
+    Levels _sell_stop;
+
+    // Stop orders level management
+    LevelNode* GetNextStopLevel(LevelNode* level) noexcept;
+    LevelNode* AddStopLevel(OrderNode* order_ptr);
+    LevelNode* DeleteStopLevel(OrderNode* order_ptr);
+
+    // Stop orders management
+    void AddStopOrder(OrderNode* order_ptr);
+    void ReduceStopOrder(OrderNode* order_ptr, uint64_t quantity, uint64_t hidden, uint64_t visible);
+    void DeleteStopOrder(OrderNode* order_ptr);
 };
 
 } // namespace Matching

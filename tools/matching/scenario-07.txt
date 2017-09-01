@@ -1,6 +1,6 @@
 enable matching
-add symbol 1 EURUSD
-add book 1
+add symbol 0 EURUSD
+add book 0
 
 # Fill the EURUSD order book
 # Ask: 60 -> 30, 20, 10
@@ -11,26 +11,26 @@ add book 1
 # Bid: 20 -> 10, 20, 30
 # Bid: 10 -> 10, 20, 30
 
-add limit buy 1 1 10 10
-add limit buy 2 1 10 20
-add limit buy 3 1 10 30
-add limit buy 4 1 20 10
-add limit buy 5 1 20 20
-add limit buy 6 1 20 30
-add limit buy 7 1 30 10
-add limit buy 8 1 30 20
-add limit buy 9 1 30 30
+add limit buy 1 0 10 10
+add limit buy 2 0 10 20
+add limit buy 3 0 10 30
+add limit buy 4 0 20 10
+add limit buy 5 0 20 20
+add limit buy 6 0 20 30
+add limit buy 7 0 30 10
+add limit buy 8 0 30 20
+add limit buy 9 0 30 30
 
-add limit sell 10 1 60 30
-add limit sell 11 1 60 20
-add limit sell 12 1 60 10
-add limit sell 13 1 50 30
-add limit sell 14 1 50 20
-add limit sell 15 1 50 10
-add limit sell 16 1 40 30
-add limit sell 17 1 40 20
-add limit sell 18 1 40 10
+add limit sell 10 0 60 30
+add limit sell 11 0 60 20
+add limit sell 12 0 60 10
+add limit sell 13 0 50 30
+add limit sell 14 0 50 20
+add limit sell 15 0 50 10
+add limit sell 16 0 40 30
+add limit sell 17 0 40 20
+add limit sell 18 0 40 10
 
 # Send sell market order with slippage = 10 to match half of the buy orders
 # Market order will slip down to price = best bid - 10 and will stop at 20
-add slippage market sell 19 1 1000 10
+add slippage market sell 19 0 1000 10

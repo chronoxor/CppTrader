@@ -1,8 +1,8 @@
-# Add symbol EURUSD with Id = 1
-add symbol 1 EURUSD
+# Add symbol EURUSD with Id = 0
+add symbol 0 EURUSD
 
-# Add order book for EURUSD symbol with Id = 1
-add book 1
+# Add order book for EURUSD symbol with Id = 0
+add book 0
 
-# Delete order book for EURUSD symbol with Id = 1
-delete book 1
+# Delete order book for EURUSD symbol with Id = 0
+delete book 0
