@@ -48,6 +48,9 @@ ErrorCode Order::Validate() const noexcept
         assert(!IsAON() && "Stop order cannot have 'All-Or-None' parameter!");
         if (IsAON())
             return ErrorCode::ORDER_PARAMETER_INVALID;
+        assert(!IsIceberg() && "Stop order cannot be 'Iceberg'!");
+        if (IsIceberg())
+            return ErrorCode::ORDER_PARAMETER_INVALID;
     }
 
     // Validate stop limit order

@@ -208,6 +208,7 @@ private:
 
     ErrorCode AddMarketOrder(const Order& order);
     ErrorCode AddLimitOrder(const Order& order);
+    ErrorCode AddStopOrder(const Order& order);
 
     // Matching
     bool _matching;
@@ -215,6 +216,7 @@ private:
     void Match(OrderBook* order_book_ptr);
     void MatchMarket(OrderBook* order_book_ptr, Order* order_ptr);
     void MatchLimit(OrderBook* order_book_ptr, Order* order_ptr);
+    void MatchStop(OrderBook* order_book_ptr, Order* order_ptr);
     void MatchOrder(OrderBook* order_book_ptr, Order* order_ptr);
 
     uint64_t CalculateMatchingChain(OrderBook* order_book_ptr, LevelNode* level_ptr, uint64_t price, uint64_t volume);
