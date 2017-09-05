@@ -865,12 +865,14 @@ void MarketManager::MatchStop(OrderBook* order_book_ptr, Order* order_ptr)
     if (level_ptr != nullptr)
     {
         // Check the arbitrage bid/ask prices
-        bool arbitrage = order_ptr->IsBuy() ? (order_ptr->Price >= level_ptr->Price) : (order_ptr->Price <= level_ptr->Price);
+        bool arbitrage = order_ptr->IsBuy() ? (order_ptr->StopPrice >= level_ptr->Price) : (order_ptr->StopPrice <= level_ptr->Price);
         if (!arbitrage)
             return;
 
         // Convert the stop order into the market order
         order_ptr->Type = OrderType::MARKET;
+        order_ptr->Price = 0;
+        order_ptr->StopPrice = 0;
         order_ptr->TimeInForce = order_ptr->IsFOK() ? OrderTimeInForce::FOK : OrderTimeInForce::IOC;
 
         // Call the corresponding handler
@@ -1006,6 +1008,8 @@ bool MarketManager::ActivateStopOrders(OrderBook* order_book_ptr, LevelNode* lev
             {
                 // Convert the stop order into the market order
                 order_ptr->Type = OrderType::MARKET;
+                order_ptr->Price = 0;
+                order_ptr->StopPrice = 0;
                 order_ptr->TimeInForce = order_ptr->IsFOK() ? OrderTimeInForce::FOK : OrderTimeInForce::IOC;
 
                 // Call the corresponding handler
@@ -1030,6 +1034,7 @@ bool MarketManager::ActivateStopOrders(OrderBook* order_book_ptr, LevelNode* lev
             {
                 // Convert the stop order into the limit order
                 order_ptr->Type = OrderType::LIMIT;
+                order_ptr->StopPrice = 0;
 
                 // Call the corresponding handler
                 _market_handler.onUpdateOrder(*order_ptr);

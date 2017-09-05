@@ -193,25 +193,25 @@ LevelNode* OrderBook::AddStopLevel(OrderNode* order_ptr)
     if (order_ptr->IsBuy())
     {
         // Create a new price level
-        level_ptr = _level_pool.Create(LevelType::ASK, order_ptr->Price);
+        level_ptr = _level_pool.Create(LevelType::ASK, order_ptr->StopPrice);
 
         // Insert the price level into the buy stop orders collection
         _buy_stop.insert(*level_ptr);
 
         // Update best buy stop order price level
-        if ((_best_buy_stop == nullptr) || (level_ptr->Price < _best_buy_stop->Price))
+        if ((_best_buy_stop == nullptr) || (level_ptr->Price < _best_buy_stop->StopPrice))
             _best_buy_stop = level_ptr;
     }
     else
     {
         // Create a new price level
-        level_ptr = _level_pool.Create(LevelType::BID, order_ptr->Price);
+        level_ptr = _level_pool.Create(LevelType::BID, order_ptr->StopPrice);
 
         // Insert the price level into the sell stop orders collection
         _sell_stop.insert(*level_ptr);
 
         // Update best sell stop order price level
-        if ((_best_sell_stop == nullptr) || (level_ptr->Price > _best_sell_stop->Price))
+        if ((_best_sell_stop == nullptr) || (level_ptr->Price > _best_sell_stop->StopPrice))
             _best_sell_stop = level_ptr;
     }
 
@@ -251,7 +251,7 @@ LevelNode* OrderBook::DeleteStopLevel(OrderNode* order_ptr)
 void OrderBook::AddStopOrder(OrderNode* order_ptr)
 {
     // Find the price level for the order
-    LevelNode* level_ptr = order_ptr->IsBuy() ? (LevelNode*)GetBuyStopLevel(order_ptr->Price) : (LevelNode*)GetSellStopLevel(order_ptr->Price);
+    LevelNode* level_ptr = order_ptr->IsBuy() ? (LevelNode*)GetBuyStopLevel(order_ptr->StopPrice) : (LevelNode*)GetSellStopLevel(order_ptr->StopPrice);
 
     // Create a new price level if no one found
     if (level_ptr == nullptr)
