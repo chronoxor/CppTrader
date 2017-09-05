@@ -209,6 +209,7 @@ private:
     ErrorCode AddMarketOrder(const Order& order, bool internal);
     ErrorCode AddLimitOrder(const Order& order, bool internal);
     ErrorCode AddStopOrder(const Order& order, bool internal);
+    ErrorCode AddStopLimitOrder(const Order& order, bool internal);
     ErrorCode ReduceOrder(uint64_t id, uint64_t quantity, bool internal);
     ErrorCode ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity, bool internal);
     ErrorCode ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_price, uint64_t new_quantity, bool internal);
@@ -220,11 +221,12 @@ private:
     void Match(OrderBook* order_book_ptr, bool internal);
     void MatchMarket(OrderBook* order_book_ptr, Order* order_ptr);
     void MatchLimit(OrderBook* order_book_ptr, Order* order_ptr);
-    void MatchStop(OrderBook* order_book_ptr, Order* order_ptr);
     void MatchOrder(OrderBook* order_book_ptr, Order* order_ptr);
 
     bool ActivateStopOrders(OrderBook* order_book_ptr);
     bool ActivateStopOrders(OrderBook* order_book_ptr, LevelNode* level_ptr, uint64_t price);
+    bool ActivateStopOrder(OrderBook* order_book_ptr, OrderNode* order_ptr);
+    bool ActivateStopLimitOrder(OrderBook* order_book_ptr, OrderNode* order_ptr);
 
     uint64_t CalculateMatchingChain(OrderBook* order_book_ptr, LevelNode* level_ptr, uint64_t price, uint64_t volume);
     uint64_t CalculateMatchingChain(OrderBook* order_book_ptr, LevelNode* bid_level_ptr, LevelNode* ask_level_ptr);

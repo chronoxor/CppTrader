@@ -199,7 +199,7 @@ LevelNode* OrderBook::AddStopLevel(OrderNode* order_ptr)
         _buy_stop.insert(*level_ptr);
 
         // Update best buy stop order price level
-        if ((_best_buy_stop == nullptr) || (level_ptr->Price < _best_buy_stop->StopPrice))
+        if ((_best_buy_stop == nullptr) || (level_ptr->Price < _best_buy_stop->Price))
             _best_buy_stop = level_ptr;
     }
     else
@@ -211,7 +211,7 @@ LevelNode* OrderBook::AddStopLevel(OrderNode* order_ptr)
         _sell_stop.insert(*level_ptr);
 
         // Update best sell stop order price level
-        if ((_best_sell_stop == nullptr) || (level_ptr->Price > _best_sell_stop->StopPrice))
+        if ((_best_sell_stop == nullptr) || (level_ptr->Price > _best_sell_stop->Price))
             _best_sell_stop = level_ptr;
     }
 
