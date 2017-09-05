@@ -197,6 +197,10 @@ LevelNode* OrderBook::AddStopLevel(OrderNode* order_ptr)
 
         // Insert the price level into the buy stop orders collection
         _buy_stop.insert(*level_ptr);
+
+        // Update best buy stop order price level
+        if ((_best_buy_stop == nullptr) || (level_ptr->Price < _best_buy_stop->Price))
+            _best_buy_stop = level_ptr;
     }
     else
     {
@@ -205,6 +209,10 @@ LevelNode* OrderBook::AddStopLevel(OrderNode* order_ptr)
 
         // Insert the price level into the sell stop orders collection
         _sell_stop.insert(*level_ptr);
+
+        // Update best sell stop order price level
+        if ((_best_sell_stop == nullptr) || (level_ptr->Price > _best_sell_stop->Price))
+            _best_sell_stop = level_ptr;
     }
 
     return level_ptr;
@@ -217,11 +225,19 @@ LevelNode* OrderBook::DeleteStopLevel(OrderNode* order_ptr)
 
     if (order_ptr->IsBuy())
     {
+        // Update best buy stop order price level
+        if (level_ptr == _best_buy_stop)
+            _best_buy_stop = (_best_buy_stop->right != nullptr) ? _best_buy_stop->right : _best_buy_stop->parent;
+
         // Erase the price level from the buy stop orders collection
         _buy_stop.erase(Levels::iterator(&_buy_stop, level_ptr));
     }
     else
     {
+        // Update best sell stop order price level
+        if (level_ptr == _best_sell_stop)
+            _best_sell_stop = (_best_sell_stop->left != nullptr) ? _best_sell_stop->left : _best_sell_stop->parent;
+
         // Erase the price level from the sell stop orders collection
         _sell_stop.erase(Levels::iterator(&_sell_stop, level_ptr));
     }
@@ -239,7 +255,7 @@ void OrderBook::AddStopOrder(OrderNode* order_ptr)
 
     // Create a new price level if no one found
     if (level_ptr == nullptr)
-        level_ptr = AddLevel(order_ptr);
+        level_ptr = AddStopLevel(order_ptr);
 
     // Update the price level volume
     level_ptr->TotalVolume += order_ptr->Quantity;
@@ -275,7 +291,7 @@ void OrderBook::ReduceStopOrder(OrderNode* order_ptr, uint64_t quantity, uint64_
     if (level_ptr->TotalVolume == 0)
     {
         // Clear the price level cache in the given order
-        order_ptr->Level = DeleteLevel(order_ptr);
+        order_ptr->Level = DeleteStopLevel(order_ptr);
     }
 }
 
@@ -297,7 +313,7 @@ void OrderBook::DeleteStopOrder(OrderNode* order_ptr)
     if (level_ptr->TotalVolume == 0)
     {
         // Clear the price level cache in the given order
-        order_ptr->Level = DeleteLevel(order_ptr);
+        order_ptr->Level = DeleteStopLevel(order_ptr);
     }
 }
 

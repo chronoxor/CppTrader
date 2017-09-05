@@ -15,7 +15,9 @@ inline OrderBook::OrderBook(const Symbol& symbol)
       _level_memory_manager(_auxiliary_memory_manager, 1024),
       _level_pool(_level_memory_manager),
       _best_bid(nullptr),
-      _best_ask(nullptr)
+      _best_ask(nullptr),
+      _best_buy_stop(nullptr),
+      _best_sell_stop(nullptr)
 {
 }
 

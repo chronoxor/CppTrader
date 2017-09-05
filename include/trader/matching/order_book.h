@@ -61,6 +61,11 @@ public:
     //! Get the order book asks container
     const Levels& asks() const noexcept { return _asks; }
 
+    //! Get the order book best buy stop order price level
+    const LevelNode* best_buy_stop() const noexcept { return _best_buy_stop; }
+    //! Get the order book best sell stop order price level
+    const LevelNode* best_sell_stop() const noexcept { return _best_sell_stop; }
+
     //! Get the order book buy stop orders container
     const Levels& buy_stop() const noexcept { return _buy_stop; }
     //! Get the order book sell stop orders container
@@ -120,6 +125,8 @@ private:
     LevelUpdate DeleteOrder(OrderNode* order_ptr);
 
     // Buy/Sell stop orders levels
+    LevelNode* _best_buy_stop;
+    LevelNode* _best_sell_stop;
     Levels _buy_stop;
     Levels _sell_stop;
 

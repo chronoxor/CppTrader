@@ -143,18 +143,18 @@ ErrorCode MarketManager::AddOrder(const Order& order)
     switch (order.Type)
     {
         case OrderType::MARKET:
-            return AddMarketOrder(order);
+            return AddMarketOrder(order, false);
         case OrderType::LIMIT:
-            return AddLimitOrder(order);
+            return AddLimitOrder(order, false);
         case OrderType::STOP:
         case OrderType::STOPLIMIT:
-            return AddStopOrder(order);
+            return AddStopOrder(order, false);
         default:
             return ErrorCode::ORDER_TYPE_INVALID;
     }
 }
 
-ErrorCode MarketManager::AddMarketOrder(const Order& order)
+ErrorCode MarketManager::AddMarketOrder(const Order& order, bool internal)
 {
     // Get the valid order book for the order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order.SymbolId);
@@ -175,12 +175,12 @@ ErrorCode MarketManager::AddMarketOrder(const Order& order)
 
     // Automatic order matching
     if (_matching)
-        Match(order_book_ptr);
+        Match(order_book_ptr, internal);
 
     return ErrorCode::OK;
 }
 
-ErrorCode MarketManager::AddLimitOrder(const Order& order)
+ErrorCode MarketManager::AddLimitOrder(const Order& order, bool internal)
 {
     // Get the valid order book for the order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order.SymbolId);
@@ -225,12 +225,12 @@ ErrorCode MarketManager::AddLimitOrder(const Order& order)
 
     // Automatic order matching
     if (_matching)
-        Match(order_book_ptr);
+        Match(order_book_ptr, internal);
 
     return ErrorCode::OK;
 }
 
-ErrorCode MarketManager::AddStopOrder(const Order& order)
+ErrorCode MarketManager::AddStopOrder(const Order& order, bool internal)
 {
     // Get the valid order book for the order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order.SymbolId);
@@ -275,12 +275,17 @@ ErrorCode MarketManager::AddStopOrder(const Order& order)
 
     // Automatic order matching
     if (_matching)
-        Match(order_book_ptr);
+        Match(order_book_ptr, internal);
 
     return ErrorCode::OK;
 }
 
 ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity)
+{
+    return ReduceOrder(id, quantity, false);
+}
+
+ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity, bool internal)
 {
     // Validate parameters
     assert((id > 0) && "Order Id must be greater than zero!");
@@ -344,10 +349,19 @@ ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity)
         _order_pool.Release(order_ptr);
     }
 
+    // Automatic order matching
+    if (_matching)
+        Match(order_book_ptr, internal);
+
     return ErrorCode::OK;
 }
 
 ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity)
+{
+    return ModifyOrder(id, new_price, new_quantity, false);
+}
+
+ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity, bool internal)
 {
     // Validate parameters
     assert((id > 0) && "Order Id must be greater than zero!");
@@ -398,10 +412,6 @@ ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t n
             else
                 UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
         }
-
-        // Automatic order matching
-        if (_matching)
-            Match(order_book_ptr);
     }
 
     // Delete the empty order
@@ -417,10 +427,19 @@ ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t n
         _order_pool.Release(order_ptr);
     }
 
+    // Automatic order matching
+    if (_matching)
+        Match(order_book_ptr, internal);
+
     return ErrorCode::OK;
 }
 
 ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_price, uint64_t new_quantity)
+{
+    return ReplaceOrder(id, new_id, new_price, new_quantity, false);
+}
+
+ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_price, uint64_t new_quantity, bool internal)
 {
     // Validate parameters
     assert((id > 0) && "Order Id must be greater than zero!");
@@ -503,7 +522,7 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
 
     // Automatic order matching
     if (_matching)
-        Match(order_book_ptr);
+        Match(order_book_ptr, internal);
 
     return ErrorCode::OK;
 }
@@ -520,6 +539,11 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, const Order& new_order)
 }
 
 ErrorCode MarketManager::DeleteOrder(uint64_t id)
+{
+    return DeleteOrder(id, false);
+}
+
+ErrorCode MarketManager::DeleteOrder(uint64_t id, bool internal)
 {
     // Validate parameters
     assert((id > 0) && "Order Id must be greater than zero!");
@@ -552,6 +576,10 @@ ErrorCode MarketManager::DeleteOrder(uint64_t id)
 
     // Relase the order
     _order_pool.Release(order_ptr);
+
+    // Automatic order matching
+    if (_matching)
+        Match(order_book_ptr, internal);
 
     return ErrorCode::OK;
 }
@@ -620,6 +648,10 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
         _order_pool.Release(order_ptr);
     }
 
+    // Automatic order matching
+    if (_matching)
+        Match(order_book_ptr, false);
+
     return ErrorCode::OK;
 }
 
@@ -687,6 +719,10 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quan
         _order_pool.Release(order_ptr);
     }
 
+    // Automatic order matching
+    if (_matching)
+        Match(order_book_ptr, false);
+
     return ErrorCode::OK;
 }
 
@@ -694,67 +730,89 @@ void MarketManager::Match()
 {
     for (auto order_book_ptr : _order_books)
         if (order_book_ptr != nullptr)
-            Match(order_book_ptr);
+            Match(order_book_ptr, false);
 }
 
-void MarketManager::Match(OrderBook* order_book_ptr)
+void MarketManager::Match(OrderBook* order_book_ptr, bool internal)
 {
-    // Check the arbitrage bid/ask prices
-    while ((order_book_ptr->_best_bid != nullptr) &&
-           (order_book_ptr->_best_ask != nullptr) &&
-           (order_book_ptr->_best_bid->Price >= order_book_ptr->_best_ask->Price))
+    // Matching loop
+    for (;;)
     {
-        LevelNode* bid_level_ptr = order_book_ptr->_best_bid;
-        LevelNode* ask_level_ptr = order_book_ptr->_best_ask;
-
-        // Execute crossed orders
-        while (!bid_level_ptr->OrderList.empty() && !ask_level_ptr->OrderList.empty())
+        // Check the arbitrage bid/ask prices
+        while ((order_book_ptr->_best_bid != nullptr) &&
+               (order_book_ptr->_best_ask != nullptr) &&
+               (order_book_ptr->_best_bid->Price >= order_book_ptr->_best_ask->Price))
         {
-            // Find the order to execute and the order to reduce
-            OrderNode* bid_order_ptr = bid_level_ptr->OrderList.front();
-            OrderNode* ask_order_ptr = ask_level_ptr->OrderList.front();
+            LevelNode* bid_level_ptr = order_book_ptr->_best_bid;
+            LevelNode* ask_level_ptr = order_book_ptr->_best_ask;
 
-            // Special case for 'All-Or-None' orders
-            if (bid_order_ptr->IsAON() || ask_order_ptr->IsAON())
+            uint64_t bid_level_price = bid_level_ptr->Price;
+            uint64_t ask_level_price = ask_level_ptr->Price;
+
+            // Execute crossed orders
+            while (!bid_level_ptr->OrderList.empty() && !ask_level_ptr->OrderList.empty())
             {
-                // Calculate the matching chain
-                uint64_t chain = CalculateMatchingChain(order_book_ptr, bid_level_ptr, ask_level_ptr);
+                // Find the order to execute and the order to reduce
+                OrderNode* bid_order_ptr = bid_level_ptr->OrderList.front();
+                OrderNode* ask_order_ptr = ask_level_ptr->OrderList.front();
 
-                // Matching is not avaliable
-                if (chain == 0)
-                    return;
+                // Special case for 'All-Or-None' orders
+                if (bid_order_ptr->IsAON() || ask_order_ptr->IsAON())
+                {
+                    // Calculate the matching chain
+                    uint64_t chain = CalculateMatchingChain(order_book_ptr, bid_level_ptr, ask_level_ptr);
 
-                // Execute orders in the matching chain
-                ExecuteMatchingChain(order_book_ptr, bid_level_ptr, bid_order_ptr->Price, chain);
-                ExecuteMatchingChain(order_book_ptr, ask_level_ptr, ask_order_ptr->Price, chain);
+                    // Matching is not avaliable
+                    if (chain == 0)
+                        return;
 
-                break;
+                    // Execute orders in the matching chain
+                    ExecuteMatchingChain(order_book_ptr, bid_level_ptr, bid_order_ptr->Price, chain);
+                    ExecuteMatchingChain(order_book_ptr, ask_level_ptr, ask_order_ptr->Price, chain);
+
+                    break;
+                }
+
+                // Find the order to execute and the order to reduce
+                OrderNode* executing_order_ptr = bid_order_ptr;
+                OrderNode* reducing_order_ptr = ask_order_ptr;
+                if (executing_order_ptr->Quantity > reducing_order_ptr->Quantity)
+                    std::swap(executing_order_ptr, reducing_order_ptr);
+
+                // Get the execution quantity
+                uint64_t quantity = executing_order_ptr->Quantity;
+
+                // Get the execution price
+                uint64_t price = executing_order_ptr->Price;
+
+                // Call the corresponding handler
+                _market_handler.onExecuteOrder(*executing_order_ptr, price, quantity);
+
+                // Delete the executing order from the order book
+                DeleteOrder(executing_order_ptr->Id, true);
+
+                // Call the corresponding handler
+                _market_handler.onExecuteOrder(*reducing_order_ptr, price, quantity);
+
+                // Reduce the remaining order in the order book
+                ReduceOrder(reducing_order_ptr->Id, quantity, true);
             }
 
-            // Find the order to execute and the order to reduce
-            OrderNode* executing_order_ptr = bid_order_ptr;
-            OrderNode* reducing_order_ptr = ask_order_ptr;
-            if (executing_order_ptr->Quantity > reducing_order_ptr->Quantity)
-                std::swap(executing_order_ptr, reducing_order_ptr);
-
-            // Get the execution quantity
-            uint64_t quantity = executing_order_ptr->Quantity;
-
-            // Get the execution price
-            uint64_t price = executing_order_ptr->Price;
-
-            // Call the corresponding handler
-            _market_handler.onExecuteOrder(*executing_order_ptr, price, quantity);
-
-            // Delete the executing order from the order book
-            DeleteOrder(executing_order_ptr->Id);
-
-            // Call the corresponding handler
-            _market_handler.onExecuteOrder(*reducing_order_ptr, price, quantity);
-
-            // Reduce the remaining order in the order book
-            ReduceOrder(reducing_order_ptr->Id, quantity);
+            // Activate stop orders
+            if (!internal)
+            {
+                ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_buy_stop(), ask_level_price);
+                ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_sell_stop(), bid_level_price);
+            }
         }
+
+        // Internal matching should not activate stop orders
+        if (internal)
+            break;
+
+        // Activate stop orders until there is something to activate
+        if (!ActivateStopOrders(order_book_ptr))
+            break;
     }
 }
 
@@ -876,7 +934,7 @@ void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr)
             _market_handler.onExecuteOrder(*executing_order_ptr, price, quantity);
 
             // Reduce the executing order in the order book
-            ReduceOrder(executing_order_ptr->Id, quantity);
+            ReduceOrder(executing_order_ptr->Id, quantity, true);
 
             // Call the corresponding handler
             _market_handler.onExecuteOrder(*order_ptr, price, quantity);
@@ -887,6 +945,122 @@ void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr)
                 return;
         }
     }
+}
+
+bool MarketManager::ActivateStopOrders(OrderBook* order_book_ptr)
+{
+    bool result = false;
+    bool stop = false;
+
+    while (!stop)
+    {
+        stop = true;
+
+        // Try to activate buy stop orders
+        LevelNode* ask_level_ptr = order_book_ptr->_best_ask;
+        if (ask_level_ptr != nullptr)
+        {
+            uint64_t ask_level_price = ask_level_ptr->Price;
+            if (ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_buy_stop(), ask_level_price))
+            {
+                result = true;
+                stop = false;
+            }
+        }
+
+        // Try to activate sell stop orders
+        LevelNode* bid_level_ptr = order_book_ptr->_best_bid;
+        if (bid_level_ptr != nullptr)
+        {
+            uint64_t bid_level_price = bid_level_ptr->Price;
+            if (ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_sell_stop(), bid_level_price))
+            {
+                result = true;
+                stop = false;
+            }
+        }
+    }
+
+    return result;
+}
+
+bool MarketManager::ActivateStopOrders(OrderBook* order_book_ptr, LevelNode* level_ptr, uint64_t price)
+{
+    bool result = false;
+
+    while (level_ptr != nullptr)
+    {
+        // Check the arbitrage bid/ask prices
+        bool arbitrage = level_ptr->IsBid() ? (price <= level_ptr->Price) : (price >= level_ptr->Price);
+        if (!arbitrage)
+            return result;
+
+        // Activate all stop orders
+        while (!level_ptr->OrderList.empty())
+        {
+            // Find the order to activate
+            OrderNode* order_ptr = level_ptr->OrderList.pop_front();
+
+            // Activate stop order
+            if (order_ptr->IsStop())
+            {
+                // Convert the stop order into the market order
+                order_ptr->Type = OrderType::MARKET;
+                order_ptr->TimeInForce = order_ptr->IsFOK() ? OrderTimeInForce::FOK : OrderTimeInForce::IOC;
+
+                // Call the corresponding handler
+                _market_handler.onUpdateOrder(*order_ptr);
+
+                // Match the market order
+                MatchMarket(order_book_ptr, order_ptr);
+
+                // Call the corresponding handler
+                _market_handler.onDeleteOrder(*order_ptr);
+
+                // Erase the order
+                _orders.erase(_orders.find(order_ptr->Id));
+
+                // Relase the order
+                _order_pool.Release(order_ptr);
+
+                result = true;
+            }
+            // Activate stop-limit order
+            else if (order_ptr->IsStopLimit())
+            {
+                // Convert the stop order into the limit order
+                order_ptr->Type = OrderType::LIMIT;
+
+                // Call the corresponding handler
+                _market_handler.onUpdateOrder(*order_ptr);
+
+                // Match the limit order
+                MatchLimit(order_book_ptr, order_ptr);
+
+                // Add a new limit order or delete remaining part in case of 'Immediate-Or-Cancel'/'Fill-Or-Kill' order
+                if ((order_ptr->Quantity > 0) && !order_ptr->IsIOC() && !order_ptr->IsFOK())
+                {
+                    // Add the new limit order into the order book
+                    UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
+                }
+                else
+                {
+                    // Call the corresponding handler
+                    _market_handler.onDeleteOrder(*order_ptr);
+
+                    // Erase the order
+                    _orders.erase(_orders.find(order_ptr->Id));
+
+                    // Relase the order
+                    _order_pool.Release(order_ptr);
+                }
+
+                result = true;
+            }
+        }
+    }
+
+    return result;
 }
 
 uint64_t MarketManager::CalculateMatchingChain(OrderBook* order_book_ptr, LevelNode* level_ptr, uint64_t price, uint64_t volume)
@@ -1040,7 +1214,7 @@ void MarketManager::ExecuteMatchingChain(OrderBook* order_book_ptr, LevelNode* l
                 _market_handler.onExecuteOrder(*executing_order_ptr, price, quantity);
 
                 // Delete the executing order from the order book
-                DeleteOrder(executing_order_ptr->Id);
+                DeleteOrder(executing_order_ptr->Id, true);
             }
             else
             {
@@ -1051,7 +1225,7 @@ void MarketManager::ExecuteMatchingChain(OrderBook* order_book_ptr, LevelNode* l
                 _market_handler.onExecuteOrder(*executing_order_ptr, price, quantity);
 
                 // Reduce the executing order in the order book
-                ReduceOrder(executing_order_ptr->Id, quantity);
+                ReduceOrder(executing_order_ptr->Id, quantity, true);
             }
 
             // Reduce the execution chain

@@ -206,18 +206,25 @@ private:
     CppCommon::PoolAllocator<OrderNode, CppCommon::DefaultMemoryManager> _order_pool;
     Orders _orders;
 
-    ErrorCode AddMarketOrder(const Order& order);
-    ErrorCode AddLimitOrder(const Order& order);
-    ErrorCode AddStopOrder(const Order& order);
+    ErrorCode AddMarketOrder(const Order& order, bool internal);
+    ErrorCode AddLimitOrder(const Order& order, bool internal);
+    ErrorCode AddStopOrder(const Order& order, bool internal);
+    ErrorCode ReduceOrder(uint64_t id, uint64_t quantity, bool internal);
+    ErrorCode ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity, bool internal);
+    ErrorCode ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_price, uint64_t new_quantity, bool internal);
+    ErrorCode DeleteOrder(uint64_t id, bool internal);
 
     // Matching
     bool _matching;
 
-    void Match(OrderBook* order_book_ptr);
+    void Match(OrderBook* order_book_ptr, bool internal);
     void MatchMarket(OrderBook* order_book_ptr, Order* order_ptr);
     void MatchLimit(OrderBook* order_book_ptr, Order* order_ptr);
     void MatchStop(OrderBook* order_book_ptr, Order* order_ptr);
     void MatchOrder(OrderBook* order_book_ptr, Order* order_ptr);
+
+    bool ActivateStopOrders(OrderBook* order_book_ptr);
+    bool ActivateStopOrders(OrderBook* order_book_ptr, LevelNode* level_ptr, uint64_t price);
 
     uint64_t CalculateMatchingChain(OrderBook* order_book_ptr, LevelNode* level_ptr, uint64_t price, uint64_t volume);
     uint64_t CalculateMatchingChain(OrderBook* order_book_ptr, LevelNode* bid_level_ptr, LevelNode* ask_level_ptr);
