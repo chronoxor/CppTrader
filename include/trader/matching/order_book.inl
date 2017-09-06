@@ -17,7 +17,9 @@ inline OrderBook::OrderBook(const Symbol& symbol)
       _best_bid(nullptr),
       _best_ask(nullptr),
       _best_buy_stop(nullptr),
-      _best_sell_stop(nullptr)
+      _best_sell_stop(nullptr),
+      _best_trailing_buy_stop(nullptr),
+      _best_trailing_sell_stop(nullptr)
 {
 }
 
@@ -28,6 +30,8 @@ inline std::ostream& operator<<(std::ostream& stream, const OrderBook& order_boo
         << "; Asks=" << order_book._asks.size()
         << "; BuyStop=" << order_book._buy_stop.size()
         << "; SellStop=" << order_book._sell_stop.size()
+        << "; TrailingBuyStop=" << order_book._trailing_buy_stop.size()
+        << "; TrailingSellStop=" << order_book._trailing_sell_stop.size()
         << ")";
 }
 
@@ -53,6 +57,18 @@ inline const LevelNode* OrderBook::GetSellStopLevel(uint64_t price) const noexce
 {
     auto it = _sell_stop.find(LevelNode(LevelType::BID, price));
     return (it != _sell_stop.end()) ? it.operator->() : nullptr;
+}
+
+inline const LevelNode* OrderBook::GetTrailingBuyStopLevel(uint64_t price) const noexcept
+{
+    auto it = _trailing_buy_stop.find(LevelNode(LevelType::ASK, price));
+    return (it != _trailing_buy_stop.end()) ? it.operator->() : nullptr;
+}
+
+inline const LevelNode* OrderBook::GetTrailingSellStopLevel(uint64_t price) const noexcept
+{
+    auto it = _trailing_sell_stop.find(LevelNode(LevelType::BID, price));
+    return (it != _trailing_sell_stop.end()) ? it.operator->() : nullptr;
 }
 
 inline LevelNode* OrderBook::GetNextLevel(LevelNode* level) noexcept
@@ -82,6 +98,22 @@ inline LevelNode* OrderBook::GetNextStopLevel(LevelNode* level) noexcept
     else
     {
         Levels::iterator it(&_buy_stop, level);
+        ++it;
+        return it.operator->();
+    }
+}
+
+inline LevelNode* OrderBook::GetNextTrailingStopLevel(LevelNode* level) noexcept
+{
+    if (level->IsBid())
+    {
+        Levels::reverse_iterator it(&_trailing_sell_stop, level);
+        ++it;
+        return it.operator->();
+    }
+    else
+    {
+        Levels::iterator it(&_trailing_buy_stop, level);
         ++it;
         return it.operator->();
     }

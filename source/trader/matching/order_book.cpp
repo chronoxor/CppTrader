@@ -46,7 +46,7 @@ LevelNode* OrderBook::AddLevel(OrderNode* order_ptr)
         // Insert the price level into the bid collection
         _bids.insert(*level_ptr);
 
-        // Update best bid price level
+        // Update the best bid price level
         if ((_best_bid == nullptr) || (level_ptr->Price > _best_bid->Price))
             _best_bid = level_ptr;
     }
@@ -58,7 +58,7 @@ LevelNode* OrderBook::AddLevel(OrderNode* order_ptr)
         // Insert the price level into the ask collection
         _asks.insert(*level_ptr);
 
-        // Update best ask price level
+        // Update the best ask price level
         if ((_best_ask == nullptr) || (level_ptr->Price < _best_ask->Price))
             _best_ask = level_ptr;
     }
@@ -73,7 +73,7 @@ LevelNode* OrderBook::DeleteLevel(OrderNode* order_ptr)
 
     if (order_ptr->IsBuy())
     {
-        // Update best bid price level
+        // Update the best bid price level
         if (level_ptr == _best_bid)
             _best_bid = (_best_bid->left != nullptr) ? _best_bid->left : _best_bid->parent;
 
@@ -82,7 +82,7 @@ LevelNode* OrderBook::DeleteLevel(OrderNode* order_ptr)
     }
     else
     {
-        // Update best ask price level
+        // Update the best ask price level
         if (level_ptr == _best_ask)
             _best_ask = (_best_ask->right != nullptr) ? _best_ask->right : _best_ask->parent;
 
@@ -198,7 +198,7 @@ LevelNode* OrderBook::AddStopLevel(OrderNode* order_ptr)
         // Insert the price level into the buy stop orders collection
         _buy_stop.insert(*level_ptr);
 
-        // Update best buy stop order price level
+        // Update the best buy stop order price level
         if ((_best_buy_stop == nullptr) || (level_ptr->Price < _best_buy_stop->Price))
             _best_buy_stop = level_ptr;
     }
@@ -210,7 +210,7 @@ LevelNode* OrderBook::AddStopLevel(OrderNode* order_ptr)
         // Insert the price level into the sell stop orders collection
         _sell_stop.insert(*level_ptr);
 
-        // Update best sell stop order price level
+        // Update the best sell stop order price level
         if ((_best_sell_stop == nullptr) || (level_ptr->Price > _best_sell_stop->Price))
             _best_sell_stop = level_ptr;
     }
@@ -225,7 +225,7 @@ LevelNode* OrderBook::DeleteStopLevel(OrderNode* order_ptr)
 
     if (order_ptr->IsBuy())
     {
-        // Update best buy stop order price level
+        // Update the best buy stop order price level
         if (level_ptr == _best_buy_stop)
             _best_buy_stop = (_best_buy_stop->right != nullptr) ? _best_buy_stop->right : _best_buy_stop->parent;
 
@@ -234,7 +234,7 @@ LevelNode* OrderBook::DeleteStopLevel(OrderNode* order_ptr)
     }
     else
     {
-        // Update best sell stop order price level
+        // Update the best sell stop order price level
         if (level_ptr == _best_sell_stop)
             _best_sell_stop = (_best_sell_stop->left != nullptr) ? _best_sell_stop->left : _best_sell_stop->parent;
 
@@ -314,6 +314,137 @@ void OrderBook::DeleteStopOrder(OrderNode* order_ptr)
     {
         // Clear the price level cache in the given order
         order_ptr->Level = DeleteStopLevel(order_ptr);
+    }
+}
+
+LevelNode* OrderBook::AddTrailingStopLevel(OrderNode* order_ptr)
+{
+    LevelNode* level_ptr = nullptr;
+
+    if (order_ptr->IsBuy())
+    {
+        // Create a new price level
+        level_ptr = _level_pool.Create(LevelType::ASK, order_ptr->StopPrice);
+
+        // Insert the price level into the trailing buy stop orders collection
+        _trailing_buy_stop.insert(*level_ptr);
+
+        // Update the best trailing buy stop order price level
+        if ((_best_trailing_buy_stop == nullptr) || (level_ptr->Price < _best_trailing_buy_stop->Price))
+            _best_trailing_buy_stop = level_ptr;
+    }
+    else
+    {
+        // Create a new price level
+        level_ptr = _level_pool.Create(LevelType::BID, order_ptr->StopPrice);
+
+        // Insert the price level into the trailing sell stop orders collection
+        _trailing_sell_stop.insert(*level_ptr);
+
+        // Update the best trailing sell stop order price level
+        if ((_best_trailing_sell_stop == nullptr) || (level_ptr->Price > _best_trailing_sell_stop->Price))
+            _best_trailing_sell_stop = level_ptr;
+    }
+
+    return level_ptr;
+}
+
+LevelNode* OrderBook::DeleteTrailingStopLevel(OrderNode* order_ptr)
+{
+    // Find the price level for the order
+    LevelNode* level_ptr = order_ptr->Level;
+
+    if (order_ptr->IsBuy())
+    {
+        // Update the best trailing buy stop order price level
+        if (level_ptr == _best_trailing_buy_stop)
+            _best_trailing_buy_stop = (_best_trailing_buy_stop->right != nullptr) ? _best_trailing_buy_stop->right : _best_trailing_buy_stop->parent;
+
+        // Erase the price level from the trailing buy stop orders collection
+        _trailing_buy_stop.erase(Levels::iterator(&_trailing_buy_stop, level_ptr));
+    }
+    else
+    {
+        // Update the best trailing sell stop order price level
+        if (level_ptr == _best_trailing_sell_stop)
+            _best_trailing_sell_stop = (_best_trailing_sell_stop->left != nullptr) ? _best_trailing_sell_stop->left : _best_trailing_sell_stop->parent;
+
+        // Erase the price level from the trailing sell stop orders collection
+        _trailing_sell_stop.erase(Levels::iterator(&_trailing_sell_stop, level_ptr));
+    }
+
+    // Release the price level
+    _level_pool.Release(level_ptr);
+
+    return nullptr;
+}
+
+void OrderBook::AddTrailingStopOrder(OrderNode* order_ptr)
+{
+    // Find the price level for the order
+    LevelNode* level_ptr = order_ptr->IsBuy() ? (LevelNode*)GetTrailingBuyStopLevel(order_ptr->StopPrice) : (LevelNode*)GetTrailingSellStopLevel(order_ptr->StopPrice);
+
+    // Create a new price level if no one found
+    if (level_ptr == nullptr)
+        level_ptr = AddTrailingStopLevel(order_ptr);
+
+    // Update the price level volume
+    level_ptr->TotalVolume += order_ptr->Quantity;
+    level_ptr->HiddenVolume += order_ptr->HiddenQuantity();
+    level_ptr->VisibleVolume += order_ptr->VisibleQuantity();
+
+    // Link the new order to the orders list of the price level
+    level_ptr->OrderList.push_back(*order_ptr);
+    ++level_ptr->Orders;
+
+    // Cache the price level in the given order
+    order_ptr->Level = level_ptr;
+}
+
+void OrderBook::ReduceTrailingStopOrder(OrderNode* order_ptr, uint64_t quantity, uint64_t hidden, uint64_t visible)
+{
+    // Find the price level for the order
+    LevelNode* level_ptr = order_ptr->Level;
+
+    // Update the price level volume
+    level_ptr->TotalVolume -= quantity;
+    level_ptr->HiddenVolume -= hidden;
+    level_ptr->VisibleVolume -= visible;
+
+    // Unlink the empty order from the orders list of the price level
+    if (order_ptr->Quantity == 0)
+    {
+        level_ptr->OrderList.pop_current(*order_ptr);
+        --level_ptr->Orders;
+    }
+
+    // Delete the empty price level
+    if (level_ptr->TotalVolume == 0)
+    {
+        // Clear the price level cache in the given order
+        order_ptr->Level = DeleteTrailingStopLevel(order_ptr);
+    }
+}
+
+void OrderBook::DeleteTrailingStopOrder(OrderNode* order_ptr)
+{
+    // Find the price level for the order
+    LevelNode* level_ptr = order_ptr->Level;
+
+    // Update the price level volume
+    level_ptr->TotalVolume -= order_ptr->Quantity;
+    level_ptr->HiddenVolume -= order_ptr->HiddenQuantity();
+    level_ptr->VisibleVolume -= order_ptr->VisibleQuantity();
+
+    // Unlink the empty order from the orders list of the price level
+    level_ptr->OrderList.pop_current(*order_ptr);
+    --level_ptr->Orders;
+
+    // Delete the empty price level
+    if (level_ptr->TotalVolume == 0)
+    {
+        // Clear the price level cache in the given order
+        order_ptr->Level = DeleteTrailingStopLevel(order_ptr);
     }
 }
 

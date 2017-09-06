@@ -148,7 +148,7 @@ ErrorCode MarketManager::AddOrder(const Order& order)
             return AddLimitOrder(order, false);
         case OrderType::STOP:
             return AddStopOrder(order, false);
-        case OrderType::STOPLIMIT:
+        case OrderType::STOP_LIMIT:
             return AddStopLimitOrder(order, false);
         default:
             return ErrorCode::ORDER_TYPE_INVALID;
@@ -463,10 +463,23 @@ ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity, bool intern
         _market_handler.onUpdateOrder(*order_ptr);
 
         // Reduce the order in the order book
-        if (order_ptr->IsStop() || order_ptr->IsStopLimit())
-            order_book_ptr->ReduceStopOrder(order_ptr, quantity, hidden, visible);
-        else
-            UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity, hidden, visible));
+        switch (order_ptr->Type)
+        {
+            case OrderType::LIMIT:
+                UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity, hidden, visible));
+                break;
+            case OrderType::STOP:
+            case OrderType::STOP_LIMIT:
+                order_book_ptr->ReduceStopOrder(order_ptr, quantity, hidden, visible);
+                break;
+            case OrderType::TRAILING_STOP:
+            case OrderType::TRAILING_STOP_LIMIT:
+                order_book_ptr->ReduceTrailingStopOrder(order_ptr, quantity, hidden, visible);
+                break;
+            default:
+                assert(false && "Unsupported order type!");
+                break;
+        }
      }
     else
     {
@@ -474,10 +487,23 @@ ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity, bool intern
         _market_handler.onDeleteOrder(*order_ptr);
 
         // Reduce the order in the order book
-        if (order_ptr->IsStop() || order_ptr->IsStopLimit())
-            order_book_ptr->ReduceStopOrder(order_ptr, quantity, hidden, visible);
-        else
-            UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity, hidden, visible));
+        switch (order_ptr->Type)
+        {
+            case OrderType::LIMIT:
+                UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity, hidden, visible));
+                break;
+            case OrderType::STOP:
+            case OrderType::STOP_LIMIT:
+                order_book_ptr->ReduceStopOrder(order_ptr, quantity, hidden, visible);
+                break;
+            case OrderType::TRAILING_STOP:
+            case OrderType::TRAILING_STOP_LIMIT:
+                order_book_ptr->ReduceTrailingStopOrder(order_ptr, quantity, hidden, visible);
+                break;
+            default:
+                assert(false && "Unsupported order type!");
+                break;
+        }
 
         // Erase the order
         _orders.erase(order_it);
@@ -521,10 +547,23 @@ ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t n
         return ErrorCode::ORDER_BOOK_NOT_FOUND;
 
     // Delete the order from the order book
-    if (order_ptr->IsStop() || order_ptr->IsStopLimit())
-        order_book_ptr->DeleteStopOrder(order_ptr);
-    else
-        UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
+    switch (order_ptr->Type)
+    {
+        case OrderType::LIMIT:
+            UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
+            break;
+        case OrderType::STOP:
+        case OrderType::STOP_LIMIT:
+            order_book_ptr->DeleteStopOrder(order_ptr);
+            break;
+        case OrderType::TRAILING_STOP:
+        case OrderType::TRAILING_STOP_LIMIT:
+            order_book_ptr->DeleteTrailingStopOrder(order_ptr);
+            break;
+        default:
+            assert(false && "Unsupported order type!");
+            break;
+    }
 
     // Modify the order
     order_ptr->Price = new_price;
@@ -544,10 +583,23 @@ ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t n
         if (order_ptr->Quantity > 0)
         {
             // Add the modified order into the order book
-            if (order_ptr->IsStop() || order_ptr->IsStopLimit())
-                order_book_ptr->AddStopOrder(order_ptr);
-            else
-                UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
+            switch (order_ptr->Type)
+            {
+                case OrderType::LIMIT:
+                    UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
+                    break;
+                case OrderType::STOP:
+                case OrderType::STOP_LIMIT:
+                    order_book_ptr->AddStopOrder(order_ptr);
+                    break;
+                case OrderType::TRAILING_STOP:
+                case OrderType::TRAILING_STOP_LIMIT:
+                    order_book_ptr->AddTrailingStopOrder(order_ptr);
+                    break;
+                default:
+                    assert(false && "Unsupported order type!");
+                    break;
+            }
         }
     }
 
@@ -605,10 +657,23 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
         return ErrorCode::ORDER_BOOK_NOT_FOUND;
 
     // Delete the old order from the order book
-    if (order_ptr->IsStop() || order_ptr->IsStopLimit())
-        order_book_ptr->DeleteStopOrder(order_ptr);
-    else
-        UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
+    switch (order_ptr->Type)
+    {
+        case OrderType::LIMIT:
+            UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
+            break;
+        case OrderType::STOP:
+        case OrderType::STOP_LIMIT:
+            order_book_ptr->DeleteStopOrder(order_ptr);
+            break;
+        case OrderType::TRAILING_STOP:
+        case OrderType::TRAILING_STOP_LIMIT:
+            order_book_ptr->DeleteTrailingStopOrder(order_ptr);
+            break;
+        default:
+            assert(false && "Unsupported order type!");
+            break;
+    }
 
     // Call the corresponding handler
     _market_handler.onDeleteOrder(*order_ptr);
@@ -643,10 +708,23 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
         }
 
         // Add the modified order into the order book
-        if (order_ptr->IsStop() || order_ptr->IsStopLimit())
-            order_book_ptr->AddStopOrder(order_ptr);
-        else
-            UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
+        switch (order_ptr->Type)
+        {
+            case OrderType::LIMIT:
+                UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
+                break;
+            case OrderType::STOP:
+            case OrderType::STOP_LIMIT:
+                order_book_ptr->AddStopOrder(order_ptr);
+                break;
+            case OrderType::TRAILING_STOP:
+            case OrderType::TRAILING_STOP_LIMIT:
+                order_book_ptr->AddTrailingStopOrder(order_ptr);
+                break;
+            default:
+                assert(false && "Unsupported order type!");
+                break;
+        }
     }
     else
     {
@@ -700,10 +778,23 @@ ErrorCode MarketManager::DeleteOrder(uint64_t id, bool internal)
         return ErrorCode::ORDER_BOOK_NOT_FOUND;
 
     // Delete the order from the order book
-    if (order_ptr->IsStop() || order_ptr->IsStopLimit())
-        order_book_ptr->DeleteStopOrder(order_ptr);
-    else
-        UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
+    switch (order_ptr->Type)
+    {
+        case OrderType::LIMIT:
+            UpdateLevel(*order_book_ptr, order_book_ptr->DeleteOrder(order_ptr));
+            break;
+        case OrderType::STOP:
+        case OrderType::STOP_LIMIT:
+            order_book_ptr->DeleteStopOrder(order_ptr);
+            break;
+        case OrderType::TRAILING_STOP:
+        case OrderType::TRAILING_STOP_LIMIT:
+            order_book_ptr->DeleteTrailingStopOrder(order_ptr);
+            break;
+        default:
+            assert(false && "Unsupported order type!");
+            break;
+    }
 
     // Call the corresponding handler
     _market_handler.onDeleteOrder(*order_ptr);
@@ -759,10 +850,23 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
     visible -= order_ptr->VisibleQuantity();
 
     // Reduce the order in the order book
-    if (order_ptr->IsStop() || order_ptr->IsStopLimit())
-        order_book_ptr->ReduceStopOrder(order_ptr, quantity, hidden, visible);
-    else
-        UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity, hidden, visible));
+    switch (order_ptr->Type)
+    {
+        case OrderType::LIMIT:
+            UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity, hidden, visible));
+            break;
+        case OrderType::STOP:
+        case OrderType::STOP_LIMIT:
+            order_book_ptr->ReduceStopOrder(order_ptr, quantity, hidden, visible);
+            break;
+        case OrderType::TRAILING_STOP:
+        case OrderType::TRAILING_STOP_LIMIT:
+            order_book_ptr->ReduceTrailingStopOrder(order_ptr, quantity, hidden, visible);
+            break;
+        default:
+            assert(false && "Unsupported order type!");
+            break;
+    }
 
     // Update the order or delete the empty order
     if (order_ptr->Quantity > 0)
@@ -827,10 +931,23 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quan
     visible -= order_ptr->VisibleQuantity();
 
     // Reduce the order in the order book
-    if (order_ptr->IsStop() || order_ptr->IsStopLimit())
-        order_book_ptr->ReduceStopOrder(order_ptr, quantity, hidden, visible);
-    else
-        UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity, hidden, visible));
+    switch (order_ptr->Type)
+    {
+        case OrderType::LIMIT:
+            UpdateLevel(*order_book_ptr, order_book_ptr->ReduceOrder(order_ptr, quantity, hidden, visible));
+            break;
+        case OrderType::STOP:
+        case OrderType::STOP_LIMIT:
+            order_book_ptr->ReduceStopOrder(order_ptr, quantity, hidden, visible);
+            break;
+        case OrderType::TRAILING_STOP:
+        case OrderType::TRAILING_STOP_LIMIT:
+            order_book_ptr->ReduceTrailingStopOrder(order_ptr, quantity, hidden, visible);
+            break;
+        default:
+            assert(false && "Unsupported order type!");
+            break;
+    }
 
     // Update the order or delete the empty order
     if (order_ptr->Quantity > 0)
@@ -1113,11 +1230,11 @@ bool MarketManager::ActivateStopOrders(OrderBook* order_book_ptr, LevelNode* lev
                 case OrderType::STOP:
                     result = ActivateStopOrder(order_book_ptr, order_ptr);
                     break;
-                case OrderType::STOPLIMIT:
+                case OrderType::STOP_LIMIT:
                     result = ActivateStopLimitOrder(order_book_ptr, order_ptr);
                     break;
                 default:
-                    assert(false && "Unsupported stop order type!");
+                    assert(false && "Unsupported order type!");
                     break;
 
             }

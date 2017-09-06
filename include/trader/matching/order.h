@@ -54,13 +54,36 @@ std::ostream& operator<<(std::ostream& stream, OrderSide side);
       market price reaches the limit price. While limit orders do not guarantee execution,
       they help ensure that an investor does not pay more than a predetermined price for a
       stock.
+    * <b>Stop order</b> - A stop order, also referred to as a stop-loss order, is an order
+      to buy or sell a stock once the price of the stock reaches a specified price, known
+      as the stop price. When the stop price is reached, a stop order becomes a market order.
+      A buy stop order is entered at a stop price above the current market price. Investors
+      generally use a buy stop order to limit a loss or to protect a profit on a stock that
+      they have sold short. A sell stop order is entered at a stop price below the current
+      market price. Investors generally use a sell stop order to limit a loss or to protect
+      a profit on a stock that they own.
+    * <b>Stop-limit order</b> - A stop-limit order is an order to buy or sell a stock that
+      combines the features of a stop order and a limit order. Once the stop price is reached,
+      a stop-limit order becomes a limit order that will be executed at a specified price (or
+      better). The benefit of a stop-limit order is that the investor can control the price at
+      which the order can be executed.
+    * <b>Trailing stop order</b> - A trailing stop order is entered with a stop parameter
+      that creates a moving or trailing activation price, hence the name. This parameter
+      is entered as a percentage change or actual specific amount of rise (or fall) in the
+      security price. Trailing stop sell orders are used to maximize and protect profit as
+      a stock's price rises and limit losses when its price falls.
+    * <b>Trailing stop-limit order</b> - A trailing stop-limit order is similar to a trailing
+      stop order. Instead of selling at market price when triggered, the order becomes a limit
+      order.
 */
 enum class OrderType : uint8_t
 {
     MARKET,
     LIMIT,
     STOP,
-    STOPLIMIT
+    STOP_LIMIT,
+    TRAILING_STOP,
+    TRAILING_STOP_LIMIT
 };
 std::ostream& operator<<(std::ostream& stream, OrderType type);
 
@@ -122,6 +145,8 @@ struct Order
         * <b>MaxVisibleQuantity >= Quantity</b> - Regular order
         * <b>MaxVisibleQuantity == 0</b> - 'Hidden' order
         * <b>MaxVisibleQuantity < Quantity</b> - 'Iceberg' order
+
+        Supported only for limit and stop-limit orders!
     */
     uint64_t MaxVisibleQuantity;
     //! Get the hidden order quantity
@@ -142,8 +167,32 @@ struct Order
     */
     uint64_t Slippage;
 
+    //! Trailing distance to market
+    /*!
+        Positive value represents absolute distance from the market.
+        Negative value represents percentage distance from the market
+        with 0.01% precision (-1 means 0.01, -10000 means 100%).
+
+        Supported only for trailing stop orders!
+    */
+    int64_t TrailingDistance;
+    //! Trailing step
+    /*!
+        Positive value represents absolute step from the market.
+        Negative value represents percentage step from the market
+        with 0.01% precision (-1 means 0.01%, -10000 means 100%).
+
+        Supported only for trailing stop orders!
+    */
+    int64_t TrailingStep;
+
     Order() noexcept = default;
-    Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t stop_price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t max_visible_quantity = std::numeric_limits<uint64_t>::max(), uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
+    Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t stop_price, uint64_t quantity,
+        OrderTimeInForce tif = OrderTimeInForce::GTC,
+        uint64_t max_visible_quantity = std::numeric_limits<uint64_t>::max(),
+        uint64_t slippage = std::numeric_limits<uint64_t>::max(),
+        int64_t trailing_distance = 0,
+        int64_t trailing_step = 0) noexcept;
     Order(const Order&) noexcept = default;
     Order(Order&&) noexcept = default;
     ~Order() noexcept = default;
@@ -160,7 +209,11 @@ struct Order
     //! Is the stop order?
     bool IsStop() const noexcept { return Type == OrderType::STOP; }
     //! Is the stop-limit order?
-    bool IsStopLimit() const noexcept { return Type == OrderType::STOPLIMIT; }
+    bool IsStopLimit() const noexcept { return Type == OrderType::STOP_LIMIT; }
+    //! Is the trailing stop order?
+    bool IsTrailingStop() const noexcept { return Type == OrderType::TRAILING_STOP; }
+    //! Is the trailing stop-limit order?
+    bool IsTrailingStopLimit() const noexcept { return Type == OrderType::TRAILING_STOP_LIMIT; }
 
     //! Is the order with buy side?
     bool IsBuy() const noexcept { return Side == OrderSide::BUY; }
@@ -214,6 +267,20 @@ struct Order
     static Order BuyStopLimit(uint64_t id, uint32_t symbol, uint64_t stop_price, uint64_t price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t max_visible_quantity = std::numeric_limits<uint64_t>::max()) noexcept;
     //! Prepare a new sell stop-limit order
     static Order SellStopLimit(uint64_t id, uint32_t symbol, uint64_t stop_price, uint64_t price, uint64_t quantity, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t max_visible_quantity = std::numeric_limits<uint64_t>::max()) noexcept;
+
+    //! Prepare a new trailing stop order
+    static Order TrailingStop(uint64_t id, uint32_t symbol, OrderSide side, uint64_t stop_price, uint64_t quantity, int64_t trailing_distance, int64_t trailing_step = 0, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
+    //! Prepare a new trailing buy stop order
+    static Order TrailingBuyStop(uint64_t id, uint32_t symbol, uint64_t stop_price, uint64_t quantity, int64_t trailing_distance, int64_t trailing_step = 0, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
+    //! Prepare a new trailing sell stop order
+    static Order TrailingSellStop(uint64_t id, uint32_t symbol, uint64_t stop_price, uint64_t quantity, int64_t trailing_distance, int64_t trailing_step = 0, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t slippage = std::numeric_limits<uint64_t>::max()) noexcept;
+
+    //! Prepare a new trailing stop-limit order
+    static Order TrailingStopLimit(uint64_t id, uint32_t symbol, OrderSide side, uint64_t stop_price, uint64_t price, uint64_t quantity, int64_t trailing_distance, int64_t trailing_step = 0, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t max_visible_quantity = std::numeric_limits<uint64_t>::max()) noexcept;
+    //! Prepare a new trailing buy stop-limit order
+    static Order TrailingBuyStopLimit(uint64_t id, uint32_t symbol, uint64_t stop_price, uint64_t price, uint64_t quantity, int64_t trailing_distance, int64_t trailing_step = 0, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t max_visible_quantity = std::numeric_limits<uint64_t>::max()) noexcept;
+    //! Prepare a new trailing sell stop-limit order
+    static Order TrailingSellStopLimit(uint64_t id, uint32_t symbol, uint64_t stop_price, uint64_t price, uint64_t quantity, int64_t trailing_distance, int64_t trailing_step = 0, OrderTimeInForce tif = OrderTimeInForce::GTC, uint64_t max_visible_quantity = std::numeric_limits<uint64_t>::max()) noexcept;
 };
 
 struct LevelNode;

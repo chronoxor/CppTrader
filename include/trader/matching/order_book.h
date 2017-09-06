@@ -46,7 +46,7 @@ public:
     bool empty() const noexcept { return size() == 0; }
 
     //! Get the order book size
-    size_t size() const noexcept { return _bids.size() + _asks.size() + _buy_stop.size() + _sell_stop.size(); }
+    size_t size() const noexcept { return _bids.size() + _asks.size() + _buy_stop.size() + _sell_stop.size() + _trailing_buy_stop.size() + _trailing_sell_stop.size(); }
 
     //! Get the order book symbol
     const Symbol& symbol() const noexcept { return _symbol; }
@@ -70,6 +70,16 @@ public:
     const Levels& buy_stop() const noexcept { return _buy_stop; }
     //! Get the order book sell stop orders container
     const Levels& sell_stop() const noexcept { return _sell_stop; }
+
+    //! Get the order book best trailing buy stop order price level
+    const LevelNode* best_trailing_buy_stop() const noexcept { return _best_trailing_buy_stop; }
+    //! Get the order book best trailing sell stop order price level
+    const LevelNode* best_trailing_sell_stop() const noexcept { return _best_trailing_sell_stop; }
+
+    //! Get the order book trailing buy stop orders container
+    const Levels& trailing_buy_stop() const noexcept { return _trailing_buy_stop; }
+    //! Get the order book trailing sell stop orders container
+    const Levels& trailing_sell_stop() const noexcept { return _trailing_sell_stop; }
 
     friend std::ostream& operator<<(std::ostream& stream, const OrderBook& order_book);
 
@@ -98,6 +108,19 @@ public:
         \return Pointer to the order book sell stop level with the given price or nullptr
     */
     const LevelNode* GetSellStopLevel(uint64_t price) const noexcept;
+
+    //! Get the order book trailing buy stop level with the given price
+    /*!
+        \param price - Price
+        \return Pointer to the order book trailing buy stop level with the given price or nullptr
+    */
+    const LevelNode* GetTrailingBuyStopLevel(uint64_t price) const noexcept;
+    //! Get the order book trailing sell stop level with the given price
+    /*!
+        \param price - Price
+        \return Pointer to the order book trailing sell stop level with the given price or nullptr
+    */
+    const LevelNode* GetTrailingSellStopLevel(uint64_t price) const noexcept;
 
 private:
     // Order book symbol
@@ -139,6 +162,22 @@ private:
     void AddStopOrder(OrderNode* order_ptr);
     void ReduceStopOrder(OrderNode* order_ptr, uint64_t quantity, uint64_t hidden, uint64_t visible);
     void DeleteStopOrder(OrderNode* order_ptr);
+
+    // Buy/Sell trailing stop orders levels
+    LevelNode* _best_trailing_buy_stop;
+    LevelNode* _best_trailing_sell_stop;
+    Levels _trailing_buy_stop;
+    Levels _trailing_sell_stop;
+
+    // Trailing stop orders level management
+    LevelNode* GetNextTrailingStopLevel(LevelNode* level) noexcept;
+    LevelNode* AddTrailingStopLevel(OrderNode* order_ptr);
+    LevelNode* DeleteTrailingStopLevel(OrderNode* order_ptr);
+
+    // Trailing stop orders management
+    void AddTrailingStopOrder(OrderNode* order_ptr);
+    void ReduceTrailingStopOrder(OrderNode* order_ptr, uint64_t quantity, uint64_t hidden, uint64_t visible);
+    void DeleteTrailingStopOrder(OrderNode* order_ptr);
 };
 
 } // namespace Matching

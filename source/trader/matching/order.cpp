@@ -43,7 +43,7 @@ ErrorCode Order::Validate() const noexcept
     }
 
     // Validate stop order
-    if (IsStop())
+    if (IsStop() || IsTrailingStop())
     {
         assert(!IsAON() && "Stop order cannot have 'All-Or-None' parameter!");
         if (IsAON())
@@ -53,12 +53,36 @@ ErrorCode Order::Validate() const noexcept
             return ErrorCode::ORDER_PARAMETER_INVALID;
     }
 
-    // Validate stop limit order
-    if (IsStopLimit())
+    // Validate stop-limit order
+    if (IsStopLimit() || IsTrailingStopLimit())
     {
         assert(!IsSlippage() && "Stop-limit order cannot have slippage!");
         if (IsSlippage())
             return ErrorCode::ORDER_PARAMETER_INVALID;
+    }
+
+    // Validate trailing order
+    if (IsTrailingStop() || IsTrailingStopLimit())
+    {
+        assert((TrailingDistance != 0) && "Trailing stop order must have non zero distance to the market!");
+        if (TrailingDistance == 0)
+            return ErrorCode::ORDER_PARAMETER_INVALID;
+
+        if (TrailingDistance > 0)
+        {
+            assert(((TrailingStep >= 0) && (TrailingStep < TrailingDistance)) && "Trailing step must be less than trailing distance!");
+            if ((TrailingStep < 0) || (TrailingStep >= TrailingDistance))
+                return ErrorCode::ORDER_PARAMETER_INVALID;
+        }
+        else
+        {
+            assert(((TrailingDistance <= -1) && (TrailingDistance >= -1000)) && "Trailing percentage distance must be in the range [0.01, 100%] (from -1 down to -10000)!");
+            if ((TrailingDistance > -1) || (TrailingDistance < -1000))
+                return ErrorCode::ORDER_PARAMETER_INVALID;
+            assert(((TrailingStep <= 0) && (TrailingStep > TrailingDistance)) && "Trailing step must be less than trailing distance!");
+            if ((TrailingStep > 0) || (TrailingStep <= TrailingDistance))
+                return ErrorCode::ORDER_PARAMETER_INVALID;
+        }
     }
 
     return ErrorCode::OK;
