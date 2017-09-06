@@ -246,35 +246,36 @@ ErrorCode MarketManager::AddStopOrder(const Order& order, bool internal)
     // Automatic order matching
     if (_matching)
     {
-        // Find the top or the book to match
+        // Find the price to match the stop order
+        uint64_t stop_price = new_order.IsBuy() ? std::numeric_limits<uint64_t>::max() : 0;
         LevelNode* level_ptr = new_order.IsBuy() ? order_book_ptr->_best_ask : order_book_ptr->_best_bid;
         if (level_ptr != nullptr)
+            stop_price = level_ptr->Price;
+
+        // Check the arbitrage bid/ask prices
+        bool arbitrage = new_order.IsBuy() ? (new_order.StopPrice <= stop_price) : (new_order.StopPrice >= stop_price);
+        if (arbitrage)
         {
-            // Check the arbitrage bid/ask prices
-            bool arbitrage = new_order.IsBuy() ? (new_order.StopPrice >= level_ptr->Price) : (new_order.StopPrice <= level_ptr->Price);
-            if (arbitrage)
-            {
-                // Convert the stop order into the market order
-                new_order.Type = OrderType::MARKET;
-                new_order.Price = 0;
-                new_order.StopPrice = 0;
-                new_order.TimeInForce = new_order.IsFOK() ? OrderTimeInForce::FOK : OrderTimeInForce::IOC;
+            // Convert the stop order into the market order
+            new_order.Type = OrderType::MARKET;
+            new_order.Price = 0;
+            new_order.StopPrice = 0;
+            new_order.TimeInForce = new_order.IsFOK() ? OrderTimeInForce::FOK : OrderTimeInForce::IOC;
 
-                // Call the corresponding handler
-                _market_handler.onUpdateOrder(new_order);
+            // Call the corresponding handler
+            _market_handler.onUpdateOrder(new_order);
 
-                // Match the market order
-                MatchMarket(order_book_ptr, &new_order);
+            // Match the market order
+            MatchMarket(order_book_ptr, &new_order);
 
-                // Call the corresponding handler
-                _market_handler.onDeleteOrder(new_order);
+            // Call the corresponding handler
+            _market_handler.onDeleteOrder(new_order);
 
-                // Automatic order matching
-                if (_matching)
-                    Match(order_book_ptr, internal);
+            // Automatic order matching
+            if (_matching)
+                Match(order_book_ptr, internal);
 
-                return ErrorCode::OK;
-            }
+            return ErrorCode::OK;
         }
     }
 
@@ -327,57 +328,58 @@ ErrorCode MarketManager::AddStopLimitOrder(const Order& order, bool internal)
     // Automatic order matching
     if (_matching)
     {
-        // Find the top or the book to match
+        // Find the price to match the stop-limit order
+        uint64_t stop_price = new_order.IsBuy() ? std::numeric_limits<uint64_t>::max() : 0;
         LevelNode* level_ptr = new_order.IsBuy() ? order_book_ptr->_best_ask : order_book_ptr->_best_bid;
         if (level_ptr != nullptr)
+            stop_price = level_ptr->Price;
+
+        // Check the arbitrage bid/ask prices
+        bool arbitrage = new_order.IsBuy() ? (new_order.StopPrice <= stop_price) : (new_order.StopPrice >= stop_price);
+        if (arbitrage)
         {
-            // Check the arbitrage bid/ask prices
-            bool arbitrage = new_order.IsBuy() ? (new_order.StopPrice >= level_ptr->Price) : (new_order.StopPrice <= level_ptr->Price);
-            if (arbitrage)
+            // Convert the stop-limit order into the limit order
+            new_order.Type = OrderType::LIMIT;
+            new_order.StopPrice = 0;
+
+            // Call the corresponding handler
+            _market_handler.onUpdateOrder(new_order);
+
+            // Match the limit order
+            MatchLimit(order_book_ptr, &new_order);
+
+            // Add a new limit order or delete remaining part in case of 'Immediate-Or-Cancel'/'Fill-Or-Kill' order
+            if ((new_order.Quantity > 0) && !new_order.IsIOC() && !new_order.IsFOK())
             {
-                // Convert the stop-limit order into the limit order
-                new_order.Type = OrderType::LIMIT;
-                new_order.StopPrice = 0;
+                // Create a new order
+                OrderNode* order_ptr = _order_pool.Create(new_order);
 
-                // Call the corresponding handler
-                _market_handler.onUpdateOrder(new_order);
-
-                // Match the limit order
-                MatchLimit(order_book_ptr, &new_order);
-
-                // Add a new limit order or delete remaining part in case of 'Immediate-Or-Cancel'/'Fill-Or-Kill' order
-                if ((new_order.Quantity > 0) && !new_order.IsIOC() && !new_order.IsFOK())
-                {
-                    // Create a new order
-                    OrderNode* order_ptr = _order_pool.Create(new_order);
-
-                    // Insert the order
-                    if (!_orders.insert(std::make_pair(order_ptr->Id, order_ptr)).second)
-                    {
-                        // Call the corresponding handler
-                        _market_handler.onDeleteOrder(*order_ptr);
-
-                        // Release the order
-                        _order_pool.Release(order_ptr);
-
-                        return ErrorCode::ORDER_DUPLICATE;
-                    }
-
-                    // Add the new limit order into the order book
-                    UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
-                }
-                else
+                // Insert the order
+                if (!_orders.insert(std::make_pair(order_ptr->Id, order_ptr)).second)
                 {
                     // Call the corresponding handler
-                    _market_handler.onDeleteOrder(new_order);
+                    _market_handler.onDeleteOrder(*order_ptr);
+
+                    // Release the order
+                    _order_pool.Release(order_ptr);
+
+                    return ErrorCode::ORDER_DUPLICATE;
                 }
 
-                // Automatic order matching
-                if (_matching)
-                    Match(order_book_ptr, internal);
-
-                return ErrorCode::OK;
+                // Add the new limit order into the order book
+                UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
             }
+            else
+            {
+                // Call the corresponding handler
+                _market_handler.onDeleteOrder(new_order);
+            }
+
+            // Automatic order matching
+            if (_matching)
+                Match(order_book_ptr, internal);
+
+            return ErrorCode::OK;
         }
     }
 
@@ -1058,42 +1060,44 @@ bool MarketManager::ActivateStopOrders(OrderBook* order_book_ptr)
     {
         stop = true;
 
-        // Try to activate buy stop orders
+        // Find the price to activate buy stop orders
+        uint64_t ask_stop_price = std::numeric_limits<uint64_t>::max();
         LevelNode* ask_level_ptr = order_book_ptr->_best_ask;
         if (ask_level_ptr != nullptr)
+            ask_stop_price = ask_level_ptr->Price;
+
+        // Try to activate buy stop orders
+        if (ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_buy_stop(), ask_stop_price))
         {
-            uint64_t ask_level_price = ask_level_ptr->Price;
-            if (ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_buy_stop(), ask_level_price))
-            {
-                result = true;
-                stop = false;
-            }
+            result = true;
+            stop = false;
         }
 
-        // Try to activate sell stop orders
+        // Find the price to activate sell stop orders
+        uint64_t bid_stop_price = 0;
         LevelNode* bid_level_ptr = order_book_ptr->_best_bid;
         if (bid_level_ptr != nullptr)
+            bid_stop_price = bid_level_ptr->Price;
+
+        // Try to activate sell stop orders
+        if (ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_sell_stop(), bid_stop_price))
         {
-            uint64_t bid_level_price = bid_level_ptr->Price;
-            if (ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_sell_stop(), bid_level_price))
-            {
-                result = true;
-                stop = false;
-            }
+            result = true;
+            stop = false;
         }
     }
 
     return result;
 }
 
-bool MarketManager::ActivateStopOrders(OrderBook* order_book_ptr, LevelNode* level_ptr, uint64_t price)
+bool MarketManager::ActivateStopOrders(OrderBook* order_book_ptr, LevelNode* level_ptr, uint64_t stop_price)
 {
     bool result = false;
 
-    while (level_ptr != nullptr)
+    if (level_ptr != nullptr)
     {
         // Check the arbitrage bid/ask prices
-        bool arbitrage = level_ptr->IsBid() ? (price <= level_ptr->Price) : (price >= level_ptr->Price);
+        bool arbitrage = level_ptr->IsBid() ? (stop_price <= level_ptr->Price) : (stop_price >= level_ptr->Price);
         if (!arbitrage)
             return result;
 
@@ -1125,6 +1129,9 @@ bool MarketManager::ActivateStopOrders(OrderBook* order_book_ptr, LevelNode* lev
 
 bool MarketManager::ActivateStopOrder(OrderBook* order_book_ptr, OrderNode* order_ptr)
 {
+    // Delete the stop order from the order book
+    order_book_ptr->DeleteStopOrder(order_ptr);
+
     // Convert the stop order into the market order
     order_ptr->Type = OrderType::MARKET;
     order_ptr->Price = 0;
@@ -1151,6 +1158,9 @@ bool MarketManager::ActivateStopOrder(OrderBook* order_book_ptr, OrderNode* orde
 
 bool MarketManager::ActivateStopLimitOrder(OrderBook* order_book_ptr, OrderNode* order_ptr)
 {
+    // Delete the stop order from the order book
+    order_book_ptr->DeleteStopOrder(order_ptr);
+
     // Convert the stop-limit order into the limit order
     order_ptr->Type = OrderType::LIMIT;
     order_ptr->StopPrice = 0;

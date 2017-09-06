@@ -224,7 +224,7 @@ private:
     void MatchOrder(OrderBook* order_book_ptr, Order* order_ptr);
 
     bool ActivateStopOrders(OrderBook* order_book_ptr);
-    bool ActivateStopOrders(OrderBook* order_book_ptr, LevelNode* level_ptr, uint64_t price);
+    bool ActivateStopOrders(OrderBook* order_book_ptr, LevelNode* level_ptr, uint64_t stop_price);
     bool ActivateStopOrder(OrderBook* order_book_ptr, OrderNode* order_ptr);
     bool ActivateStopLimitOrder(OrderBook* order_book_ptr, OrderNode* order_ptr);
 
