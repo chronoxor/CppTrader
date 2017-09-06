@@ -7,5 +7,7 @@ var searchData=
   ['getorderbook',['GetOrderBook',['../class_cpp_trader_1_1_matching_1_1_market_manager.html#a2210ef75c65068fd248000143dfce4a9',1,'CppTrader::Matching::MarketManager']]],
   ['getsellstoplevel',['GetSellStopLevel',['../class_cpp_trader_1_1_matching_1_1_order_book.html#aa2789b9ed082330c39cd191224951cec',1,'CppTrader::Matching::OrderBook']]],
   ['getsymbol',['GetSymbol',['../class_cpp_trader_1_1_matching_1_1_market_manager.html#add7db176f8b6b23edd60b074174d9260',1,'CppTrader::Matching::MarketManager']]],
+  ['gettrailingbuystoplevel',['GetTrailingBuyStopLevel',['../class_cpp_trader_1_1_matching_1_1_order_book.html#a9b2a53bdf4fd4d8e8075ea0f8cef95c4',1,'CppTrader::Matching::OrderBook']]],
+  ['gettrailingsellstoplevel',['GetTrailingSellStopLevel',['../class_cpp_trader_1_1_matching_1_1_order_book.html#aaa88be9174acd70d1e848e152a791541',1,'CppTrader::Matching::OrderBook']]],
   ['gtc',['GTC',['../namespace_cpp_trader_1_1_matching.html#a3c4a6bd3748dd98d9daff8e5c40b2b9aa87b20a4d7f9fae0a5b12c2b9c680584b',1,'CppTrader::Matching']]]
 ];

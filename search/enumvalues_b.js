@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['update',['UPDATE',['../namespace_cpp_trader_1_1_matching.html#a65e7458e06071097f75be96f4ae16f3ba15a8022d0ed9cd9c2a2e756822703eb4',1,'CppTrader::Matching']]]
+  ['trailing_5fstop',['TRAILING_STOP',['../namespace_cpp_trader_1_1_matching.html#a3f665b3bd035eb7a647258ce0ca1dd43a3b1dcc285675710642de402929da54ed',1,'CppTrader::Matching']]],
+  ['trailing_5fstop_5flimit',['TRAILING_STOP_LIMIT',['../namespace_cpp_trader_1_1_matching.html#a3f665b3bd035eb7a647258ce0ca1dd43a12d439cafb77e8fa989db8db69198fa0',1,'CppTrader::Matching']]]
 ];
