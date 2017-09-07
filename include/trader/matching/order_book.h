@@ -153,7 +153,7 @@ private:
     Levels _buy_stop;
     Levels _sell_stop;
 
-    // Stop orders level management
+    // Stop orders price level management
     LevelNode* GetNextStopLevel(LevelNode* level) noexcept;
     LevelNode* AddStopLevel(OrderNode* order_ptr);
     LevelNode* DeleteStopLevel(OrderNode* order_ptr);
@@ -169,7 +169,7 @@ private:
     Levels _trailing_buy_stop;
     Levels _trailing_sell_stop;
 
-    // Trailing stop orders level management
+    // Trailing stop orders price level management
     LevelNode* GetNextTrailingStopLevel(LevelNode* level) noexcept;
     LevelNode* AddTrailingStopLevel(OrderNode* order_ptr);
     LevelNode* DeleteTrailingStopLevel(OrderNode* order_ptr);
@@ -178,6 +178,20 @@ private:
     void AddTrailingStopOrder(OrderNode* order_ptr);
     void ReduceTrailingStopOrder(OrderNode* order_ptr, uint64_t quantity, uint64_t hidden, uint64_t visible);
     void DeleteTrailingStopOrder(OrderNode* order_ptr);
+
+    // Trailing stop price calculation
+    uint64_t CalculateTrailingStopPrice(const Order& order) const noexcept;
+
+    // Market last and trailing prices
+    uint64_t _last_bid_price;
+    uint64_t _last_ask_price;
+    uint64_t _trailing_bid_price;
+    uint64_t _trailing_ask_price;
+
+    // Update market last prices
+    uint64_t GetMarketPriceBid() const noexcept;
+    uint64_t GetMarketPriceAsk() const noexcept;
+    void UpdateLastPrice(const Order& order) noexcept;
 };
 
 } // namespace Matching

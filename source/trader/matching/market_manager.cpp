@@ -147,8 +147,10 @@ ErrorCode MarketManager::AddOrder(const Order& order)
         case OrderType::LIMIT:
             return AddLimitOrder(order, false);
         case OrderType::STOP:
+        case OrderType::TRAILING_STOP:
             return AddStopOrder(order, false);
         case OrderType::STOP_LIMIT:
+        case OrderType::TRAILING_STOP_LIMIT:
             return AddStopLimitOrder(order, false);
         default:
             return ErrorCode::ORDER_TYPE_INVALID;
@@ -240,6 +242,10 @@ ErrorCode MarketManager::AddStopOrder(const Order& order, bool internal)
 
     Order new_order(order);
 
+    // Recalculate stop price for trailing stop orders
+    if (new_order.IsTrailingStop() || new_order.IsTrailingStopLimit())
+        new_order.StopPrice = order_book_ptr->CalculateTrailingStopPrice(new_order);
+
     // Call the corresponding handler
     _market_handler.onAddOrder(new_order);
 
@@ -247,10 +253,7 @@ ErrorCode MarketManager::AddStopOrder(const Order& order, bool internal)
     if (_matching)
     {
         // Find the price to match the stop order
-        uint64_t stop_price = new_order.IsBuy() ? std::numeric_limits<uint64_t>::max() : 0;
-        LevelNode* level_ptr = new_order.IsBuy() ? order_book_ptr->_best_ask : order_book_ptr->_best_bid;
-        if (level_ptr != nullptr)
-            stop_price = level_ptr->Price;
+        uint64_t stop_price = new_order.IsBuy() ? order_book_ptr->GetMarketPriceAsk() : order_book_ptr->GetMarketPriceBid();
 
         // Check the arbitrage bid/ask prices
         bool arbitrage = new_order.IsBuy() ? (new_order.StopPrice <= stop_price) : (new_order.StopPrice >= stop_price);
@@ -298,7 +301,10 @@ ErrorCode MarketManager::AddStopOrder(const Order& order, bool internal)
         }
 
         // Add the new stop order into the order book
-        order_book_ptr->AddStopOrder(order_ptr);
+        if (order_ptr->IsTrailingStop() || order_ptr->IsTrailingStopLimit())
+            order_book_ptr->AddTrailingStopOrder(order_ptr);
+        else
+            order_book_ptr->AddStopOrder(order_ptr);
     }
     else
     {
@@ -322,6 +328,10 @@ ErrorCode MarketManager::AddStopLimitOrder(const Order& order, bool internal)
 
     Order new_order(order);
 
+    // Recalculate stop price for trailing stop orders
+    if (new_order.IsTrailingStop() || new_order.IsTrailingStopLimit())
+        new_order.StopPrice = order_book_ptr->CalculateTrailingStopPrice(new_order);
+
     // Call the corresponding handler
     _market_handler.onAddOrder(new_order);
 
@@ -329,10 +339,7 @@ ErrorCode MarketManager::AddStopLimitOrder(const Order& order, bool internal)
     if (_matching)
     {
         // Find the price to match the stop-limit order
-        uint64_t stop_price = new_order.IsBuy() ? std::numeric_limits<uint64_t>::max() : 0;
-        LevelNode* level_ptr = new_order.IsBuy() ? order_book_ptr->_best_ask : order_book_ptr->_best_bid;
-        if (level_ptr != nullptr)
-            stop_price = level_ptr->Price;
+        uint64_t stop_price = new_order.IsBuy() ? order_book_ptr->GetMarketPriceAsk() : order_book_ptr->GetMarketPriceBid();
 
         // Check the arbitrage bid/ask prices
         bool arbitrage = new_order.IsBuy() ? (new_order.StopPrice <= stop_price) : (new_order.StopPrice >= stop_price);
@@ -402,7 +409,10 @@ ErrorCode MarketManager::AddStopLimitOrder(const Order& order, bool internal)
         }
 
         // Add the new stop order into the order book
-        order_book_ptr->AddStopOrder(order_ptr);
+        if (order_ptr->IsTrailingStop() || order_ptr->IsTrailingStopLimit())
+            order_book_ptr->AddTrailingStopOrder(order_ptr);
+        else
+            order_book_ptr->AddStopOrder(order_ptr);
     }
     else
     {
@@ -840,6 +850,9 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
     // Call the corresponding handler
     _market_handler.onExecuteOrder(*order_ptr, order_ptr->Price, quantity);
 
+    // Update the corresponding market price
+    order_book_ptr->UpdateLastPrice(*order_ptr);
+
     uint64_t hidden = order_ptr->HiddenQuantity();
     uint64_t visible = order_ptr->VisibleQuantity();
 
@@ -921,6 +934,9 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quan
     // Call the corresponding handler
     _market_handler.onExecuteOrder(*order_ptr, price, quantity);
 
+    // Update the corresponding market price
+    order_book_ptr->UpdateLastPrice(*order_ptr);
+
     uint64_t hidden = order_ptr->HiddenQuantity();
     uint64_t visible = order_ptr->VisibleQuantity();
 
@@ -991,18 +1007,20 @@ void MarketManager::Match(OrderBook* order_book_ptr, bool internal)
                (order_book_ptr->_best_ask != nullptr) &&
                (order_book_ptr->_best_bid->Price >= order_book_ptr->_best_ask->Price))
         {
+            // Find the best bid/ask price level
             LevelNode* bid_level_ptr = order_book_ptr->_best_bid;
             LevelNode* ask_level_ptr = order_book_ptr->_best_ask;
 
-            uint64_t bid_level_price = bid_level_ptr->Price;
-            uint64_t ask_level_price = ask_level_ptr->Price;
+            // Find the first order to execute and the first order to reduce
+            OrderNode* bid_order_ptr = bid_level_ptr->OrderList.front();
+            OrderNode* ask_order_ptr = ask_level_ptr->OrderList.front();
 
             // Execute crossed orders
-            while (!bid_level_ptr->OrderList.empty() && !ask_level_ptr->OrderList.empty())
+            while ((bid_order_ptr != nullptr) && (ask_order_ptr != nullptr))
             {
-                // Find the order to execute and the order to reduce
-                OrderNode* bid_order_ptr = bid_level_ptr->OrderList.front();
-                OrderNode* ask_order_ptr = ask_level_ptr->OrderList.front();
+                // Find the next orders pair
+                OrderNode* next_bid_order_ptr = bid_order_ptr->next;
+                OrderNode* next_ask_order_ptr = ask_order_ptr->next;
 
                 // Special case for 'All-Or-None' orders
                 if (bid_order_ptr->IsAON() || ask_order_ptr->IsAON())
@@ -1021,7 +1039,7 @@ void MarketManager::Match(OrderBook* order_book_ptr, bool internal)
                     break;
                 }
 
-                // Find the order to execute and the order to reduce
+                // Find the best order to execute and the best order to reduce
                 OrderNode* executing_order_ptr = bid_order_ptr;
                 OrderNode* reducing_order_ptr = ask_order_ptr;
                 if (executing_order_ptr->Quantity > reducing_order_ptr->Quantity)
@@ -1036,21 +1054,31 @@ void MarketManager::Match(OrderBook* order_book_ptr, bool internal)
                 // Call the corresponding handler
                 _market_handler.onExecuteOrder(*executing_order_ptr, price, quantity);
 
+                // Update the corresponding market price
+                order_book_ptr->UpdateLastPrice(*executing_order_ptr);
+
                 // Delete the executing order from the order book
                 DeleteOrder(executing_order_ptr->Id, true);
 
                 // Call the corresponding handler
                 _market_handler.onExecuteOrder(*reducing_order_ptr, price, quantity);
 
+                // Update the corresponding market price
+                order_book_ptr->UpdateLastPrice(*reducing_order_ptr);
+
                 // Reduce the remaining order in the order book
                 ReduceOrder(reducing_order_ptr->Id, quantity, true);
+
+                // Move to the next orders pair at the same price level
+                bid_order_ptr = next_bid_order_ptr;
+                ask_order_ptr = next_ask_order_ptr;
             }
 
-            // Activate stop orders
+            // Activate stop orders only if the current price level changed
             if (!internal)
             {
-                ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_buy_stop(), ask_level_price);
-                ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_sell_stop(), bid_level_price);
+                ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_buy_stop(), order_book_ptr->GetMarketPriceAsk());
+                ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_sell_stop(), order_book_ptr->GetMarketPriceBid());
             }
         }
 
@@ -1129,17 +1157,23 @@ void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr)
             // Call the corresponding handler
             _market_handler.onExecuteOrder(*order_ptr, order_ptr->Price, order_ptr->Quantity);
 
+            // Update the corresponding market price
+            order_book_ptr->UpdateLastPrice(*order_ptr);
+
             // Reduce quantity to execute
             order_ptr->Quantity = 0;
 
             return;
         }
 
+        // Find the first order to execute
+        OrderNode* executing_order_ptr = level_ptr->OrderList.front();
+
         // Execute crossed orders
-        while (!level_ptr->OrderList.empty())
+        while (executing_order_ptr != nullptr)
         {
-            // Find the order to execute
-            OrderNode* executing_order_ptr = level_ptr->OrderList.front();
+            // Find the next order to execute
+            OrderNode* next_executing_order_ptr = executing_order_ptr->next;
 
             // Get the execution quantity
             uint64_t quantity = std::min(executing_order_ptr->Quantity, order_ptr->Quantity);
@@ -1154,16 +1188,25 @@ void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr)
             // Call the corresponding handler
             _market_handler.onExecuteOrder(*executing_order_ptr, price, quantity);
 
+            // Update the corresponding market price
+            order_book_ptr->UpdateLastPrice(*executing_order_ptr);
+
             // Reduce the executing order in the order book
             ReduceOrder(executing_order_ptr->Id, quantity, true);
 
             // Call the corresponding handler
             _market_handler.onExecuteOrder(*order_ptr, price, quantity);
 
+            // Update the corresponding market price
+            order_book_ptr->UpdateLastPrice(*order_ptr);
+
             // Reduce quantity to execute
             order_ptr->Quantity -= quantity;
             if (order_ptr->Quantity == 0)
                 return;
+
+            // Move to the next order to execute at the same price level
+            executing_order_ptr = next_executing_order_ptr;
         }
     }
 }
@@ -1177,31 +1220,27 @@ bool MarketManager::ActivateStopOrders(OrderBook* order_book_ptr)
     {
         stop = true;
 
-        // Find the price to activate buy stop orders
-        uint64_t ask_stop_price = std::numeric_limits<uint64_t>::max();
-        LevelNode* ask_level_ptr = order_book_ptr->_best_ask;
-        if (ask_level_ptr != nullptr)
-            ask_stop_price = ask_level_ptr->Price;
-
         // Try to activate buy stop orders
-        if (ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_buy_stop(), ask_stop_price))
+        if (ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_buy_stop(), order_book_ptr->GetMarketPriceAsk()) ||
+            ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_trailing_buy_stop(), order_book_ptr->GetMarketPriceAsk()))
         {
             result = true;
             stop = false;
         }
 
-        // Find the price to activate sell stop orders
-        uint64_t bid_stop_price = 0;
-        LevelNode* bid_level_ptr = order_book_ptr->_best_bid;
-        if (bid_level_ptr != nullptr)
-            bid_stop_price = bid_level_ptr->Price;
+        // Recalculate trailing buy stop orders
+        RecalculateTrailingStopPrice(order_book_ptr, order_book_ptr->_best_ask);
 
         // Try to activate sell stop orders
-        if (ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_sell_stop(), bid_stop_price))
+        if (ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_sell_stop(), order_book_ptr->GetMarketPriceBid()) ||
+            ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_trailing_sell_stop(), order_book_ptr->GetMarketPriceBid()))
         {
             result = true;
             stop = false;
         }
+
+        // Recalculate trailing sell stop orders
+        RecalculateTrailingStopPrice(order_book_ptr, order_book_ptr->_best_bid);
     }
 
     return result;
@@ -1218,26 +1257,32 @@ bool MarketManager::ActivateStopOrders(OrderBook* order_book_ptr, LevelNode* lev
         if (!arbitrage)
             return result;
 
+        // Find the stop order to activate
+        OrderNode* activating_order_ptr = level_ptr->OrderList.front();
+
         // Activate all stop orders
-        while (!level_ptr->OrderList.empty())
+        while (activating_order_ptr != nullptr)
         {
-            // Find the order to activate
-            OrderNode* order_ptr = level_ptr->OrderList.pop_front();
+            // Find the next order to activate
+            OrderNode* next_activating_order_ptr = activating_order_ptr->next;
 
             // Activate the stop order
-            switch (order_ptr->Type)
+            switch (activating_order_ptr->Type)
             {
                 case OrderType::STOP:
-                    result = ActivateStopOrder(order_book_ptr, order_ptr);
+                    result = ActivateStopOrder(order_book_ptr, activating_order_ptr);
                     break;
                 case OrderType::STOP_LIMIT:
-                    result = ActivateStopLimitOrder(order_book_ptr, order_ptr);
+                    result = ActivateStopLimitOrder(order_book_ptr, activating_order_ptr);
                     break;
                 default:
                     assert(false && "Unsupported order type!");
                     break;
 
             }
+
+            // Move to the next order to activate at the same price level
+            activating_order_ptr = next_activating_order_ptr;
         }
     }
 
@@ -1434,19 +1479,20 @@ uint64_t MarketManager::CalculateMatchingChain(OrderBook* order_book_ptr, LevelN
 
 void MarketManager::ExecuteMatchingChain(OrderBook* order_book_ptr, LevelNode* level_ptr, uint64_t price, uint64_t volume)
 {
-    LevelNode* next_level_ptr;
-
     // Execute all orders in the matching chain
     while ((volume > 0) && (level_ptr != nullptr))
     {
         // Get the next prive level to execute
-        next_level_ptr = order_book_ptr->GetNextLevel(level_ptr);
+        LevelNode* next_level_ptr = order_book_ptr->GetNextLevel(level_ptr);
+
+        // Find the first order to execute
+        OrderNode* executing_order_ptr = level_ptr->OrderList.front();
 
         // Execute all orders in the current price level
-        while ((volume > 0) && !level_ptr->OrderList.empty())
+        while ((volume > 0) && (executing_order_ptr != nullptr))
         {
-            // Find the order to execute
-            OrderNode* executing_order_ptr = level_ptr->OrderList.front();
+            // Find the next order to execute
+            OrderNode* next_executing_order_ptr = executing_order_ptr->next;
 
             uint64_t quantity;
 
@@ -1459,6 +1505,9 @@ void MarketManager::ExecuteMatchingChain(OrderBook* order_book_ptr, LevelNode* l
                 // Call the corresponding handler
                 _market_handler.onExecuteOrder(*executing_order_ptr, price, quantity);
 
+                // Update the corresponding market price
+                order_book_ptr->UpdateLastPrice(*executing_order_ptr);
+
                 // Delete the executing order from the order book
                 DeleteOrder(executing_order_ptr->Id, true);
             }
@@ -1470,16 +1519,102 @@ void MarketManager::ExecuteMatchingChain(OrderBook* order_book_ptr, LevelNode* l
                 // Call the corresponding handler
                 _market_handler.onExecuteOrder(*executing_order_ptr, price, quantity);
 
+                // Update the corresponding market price
+                order_book_ptr->UpdateLastPrice(*executing_order_ptr);
+
                 // Reduce the executing order in the order book
                 ReduceOrder(executing_order_ptr->Id, quantity, true);
             }
 
             // Reduce the execution chain
             volume -= quantity;
+
+            // Move to the next order to execute at the same price level
+            executing_order_ptr = next_executing_order_ptr;
         }
 
-        // Switch to the next price level
+        // Move to the next price level
         level_ptr = next_level_ptr;
+    }
+}
+
+void MarketManager::RecalculateTrailingStopPrice(OrderBook* order_book_ptr, LevelNode* level_ptr)
+{
+    if (level_ptr == nullptr)
+        return;
+
+    uint64_t new_trailing_price;
+
+    // Check if we should skip the recalculation because of the market price goes to the wrong direction
+    if (level_ptr->Type == LevelType::ASK)
+    {
+        uint64_t old_trailing_price = order_book_ptr->_trailing_ask_price;
+        new_trailing_price = order_book_ptr->GetMarketPriceAsk();
+        order_book_ptr->_trailing_ask_price = new_trailing_price;
+        if (new_trailing_price > old_trailing_price)
+            return;
+    }
+    if (level_ptr->Type == LevelType::BID)
+    {
+        uint64_t old_trailing_price = order_book_ptr->_trailing_bid_price;
+        new_trailing_price = order_book_ptr->GetMarketPriceBid();
+        order_book_ptr->_trailing_bid_price = new_trailing_price;
+        if (new_trailing_price < old_trailing_price)
+            return;
+    }
+
+    // Recalculate trailing stop orders
+    LevelNode* first = (level_ptr->Type == LevelType::ASK) ? order_book_ptr->_best_trailing_buy_stop : order_book_ptr->_best_trailing_sell_stop;
+    LevelNode* previous = nullptr;
+    LevelNode* current = first;
+    while (current != nullptr)
+    {
+        bool recalculated = false;
+
+        // Find the first order to recalculate
+        OrderNode* order_ptr = current->OrderList.front();
+
+        while (order_ptr != nullptr)
+        {
+            // Find the next order to recalculate
+            OrderNode* next_order_ptr = order_ptr->next;
+
+            uint64_t old_stop_price = order_ptr->StopPrice;
+            uint64_t new_stop_price = order_book_ptr->CalculateTrailingStopPrice(*order_ptr);
+
+            // Trailing distance for the order must be changed
+            if (new_stop_price != old_stop_price)
+            {
+                // Delete the order from the order book
+                order_book_ptr->DeleteTrailingStopOrder(order_ptr);
+
+                // Update the stop order price
+                order_ptr->StopPrice = new_stop_price;
+
+                // Call the corresponding handler
+                _market_handler.onUpdateOrder(*order_ptr);
+
+                // Add the new stop order into the order book
+                order_book_ptr->AddTrailingStopOrder(order_ptr);
+
+                recalculated = true;
+            }
+
+            // Move to the next order to recalculate at the same price level
+            order_ptr = next_order_ptr;
+        }
+
+        if (recalculated)
+        {
+            // Back to the previous stop price level
+            current = (previous != nullptr) ? previous : first;
+        }
+        else
+        {
+            // Move to the next stop price level
+            previous = current;
+            current = order_book_ptr->GetNextTrailingStopLevel(current);
+        }
     }
 }
 

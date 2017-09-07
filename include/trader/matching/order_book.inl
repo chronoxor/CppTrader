@@ -19,7 +19,11 @@ inline OrderBook::OrderBook(const Symbol& symbol)
       _best_buy_stop(nullptr),
       _best_sell_stop(nullptr),
       _best_trailing_buy_stop(nullptr),
-      _best_trailing_sell_stop(nullptr)
+      _best_trailing_sell_stop(nullptr),
+      _last_bid_price(0),
+      _last_ask_price(std::numeric_limits<uint64_t>::max()),
+      _trailing_bid_price(0),
+      _trailing_ask_price(std::numeric_limits<uint64_t>::max())
 {
 }
 
@@ -117,6 +121,28 @@ inline LevelNode* OrderBook::GetNextTrailingStopLevel(LevelNode* level) noexcept
         ++it;
         return it.operator->();
     }
+}
+
+inline uint64_t OrderBook::GetMarketPriceBid() const noexcept
+{
+    uint64_t last_price = _last_bid_price;
+    uint64_t best_price = (_best_bid != nullptr) ? _best_bid->Price : 0;
+    return std::max(last_price, best_price);
+}
+
+inline uint64_t OrderBook::GetMarketPriceAsk() const noexcept
+{
+    uint64_t last_price = _last_ask_price;
+    uint64_t best_price = (_best_ask != nullptr) ? _best_ask->Price : std::numeric_limits<uint64_t>::max();
+    return std::min(last_price, best_price);
+}
+
+inline void OrderBook::UpdateLastPrice(const Order& order) noexcept
+{
+    if (order.IsBuy())
+        _last_bid_price = order.Price;
+    else
+        _last_ask_price = order.Price;
 }
 
 } // namespace Matching
