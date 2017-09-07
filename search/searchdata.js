@@ -4,11 +4,11 @@ var indexSectionsWithContent =
   1: "abcfilmnorstu",
   2: "c",
   3: "efilmosuv",
-  4: "abdefghilmoprsv~",
+  4: "abdefghilmoprstv~",
   5: "abcefhilmnopqrstuv",
   6: "los",
   7: "elou",
-  8: "abdfgilmnosu",
+  8: "abdfgilmnostu",
   9: "mo",
   10: "c"
 };
