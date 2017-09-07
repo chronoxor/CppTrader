@@ -394,6 +394,77 @@ void AddStopLimitOrder(MarketManager& market, const std::string& command)
     std::cerr << "Invalid 'add stop-limit' command: " << command << std::endl;
 }
 
+void AddTrailingStopOrder(MarketManager& market, const std::string& command)
+{
+    static std::regex pattern("^add trailing stop (buy|sell) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+)$");
+    std::smatch match;
+
+    if (std::regex_search(command, match, pattern))
+    {
+        uint64_t id = std::stoi(match[2]);
+        uint32_t symbol_id = std::stoi(match[3]);
+        uint64_t stop_price = std::stoi(match[4]);
+        uint64_t quantity = std::stoi(match[5]);
+        int64_t trailing_distance = std::stoi(match[6]);
+        int64_t trailing_step = std::stoi(match[7]);
+
+        Order order;
+        if (match[1] == "buy")
+            order = Order::TrailingBuyStop(id, symbol_id, stop_price, quantity, trailing_distance, trailing_step);
+        else if (match[1] == "sell")
+            order = Order::TrailingSellStop(id, symbol_id, stop_price, quantity, trailing_distance, trailing_step);
+        else
+        {
+            std::cerr << "Invalid stop order side: " << match[1] << std::endl;
+            return;
+        }
+
+        ErrorCode result = market.AddOrder(order);
+        if (result != ErrorCode::OK)
+            std::cerr << "Failed 'add trailing stop' command: " << result << std::endl;
+
+        return;
+    }
+
+    std::cerr << "Invalid 'add trailing stop' command: " << command << std::endl;
+}
+
+void AddTrailingStopLimitOrder(MarketManager& market, const std::string& command)
+{
+    static std::regex pattern("^add trailing stop-limit (buy|sell) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+)$");
+    std::smatch match;
+
+    if (std::regex_search(command, match, pattern))
+    {
+        uint64_t id = std::stoi(match[2]);
+        uint32_t symbol_id = std::stoi(match[3]);
+        uint64_t stop_price = std::stoi(match[4]);
+        uint64_t price = std::stoi(match[5]);
+        uint64_t quantity = std::stoi(match[6]);
+        int64_t trailing_distance = std::stoi(match[7]);
+        int64_t trailing_step = std::stoi(match[8]);
+
+        Order order;
+        if (match[1] == "buy")
+            order = Order::TrailingBuyStopLimit(id, symbol_id, stop_price, price, quantity, trailing_distance, trailing_step);
+        else if (match[1] == "sell")
+            order = Order::TrailingSellStopLimit(id, symbol_id, stop_price, price, quantity, trailing_distance, trailing_step);
+        else
+        {
+            std::cerr << "Invalid stop-limit order side: " << match[1] << std::endl;
+            return;
+        }
+
+        ErrorCode result = market.AddOrder(order);
+        if (result != ErrorCode::OK)
+            std::cerr << "Failed 'add trailing stop-limit' command: " << result << std::endl;
+
+        return;
+    }
+
+    std::cerr << "Invalid 'add trailing stop-limit' command: " << command << std::endl;
+}
+
 void ReduceOrder(MarketManager& market, const std::string& command)
 {
     static std::regex pattern("^reduce order (\\d+) (\\d+)$");
@@ -500,6 +571,8 @@ int main(int argc, char** argv)
             std::cout << "add aon limit {Side} {Id} {SymbolId} {Price} {Quantity} - Add a new 'All-Or-None' limit order of {Type} (buy/sell) with {Id}, {SymbolId}, {Price} and {Quantity}" << std::endl;
             std::cout << "add stop {Side} {Id} {SymbolId} {StopPrice} {Quantity} - Add a new stop order of {Type} (buy/sell) with {Id}, {SymbolId}, {StopPrice} and {Quantity}" << std::endl;
             std::cout << "add stop-limit {Side} {Id} {SymbolId} {StopPrice} {Price} {Quantity} - Add a new stop-limit order of {Type} (buy/sell) with {Id}, {SymbolId}, {StopPrice}, {Price} and {Quantity}" << std::endl;
+            std::cout << "add trailing stop {Side} {Id} {SymbolId} {StopPrice} {Quantity} {TrailingDistance} {TrailingStep} - Add a new trailing stop order of {Type} (buy/sell) with {Id}, {SymbolId}, {StopPrice}, {Quantity}, {TrailingDistance} and {TrailingStep}" << std::endl;
+            std::cout << "add trailing stop-limit {Side} {Id} {SymbolId} {StopPrice} {Price} {Quantity} {TrailingDistance} {TrailingStep} - Add a new trailing stop-limit order of {Type} (buy/sell) with {Id}, {SymbolId}, {StopPrice}, {Price}, {Quantity}, {TrailingDistance} and {TrailingStep}" << std::endl;
             std::cout << "reduce order {Id} {Quantity} - Reduce the order with {Id} by the given {Quantity}" << std::endl;
             std::cout << "modify order {Id} {NewPrice} {NewQuantity} - Modify the order with {Id} and set {NewPrice} and {NewQuantity}" << std::endl;
             std::cout << "replace order {Id} {NewId} {NewPrice} {NewQuantity} - Replace the order with {Id} and set {NewId}, {NewPrice} and {NewQuantity}" << std::endl;
@@ -538,6 +611,10 @@ int main(int argc, char** argv)
             AddStopLimitOrder(market, line);
         else if (line.find("add stop") != std::string::npos)
             AddStopOrder(market, line);
+        else if (line.find("add trailing stop-limit") != std::string::npos)
+            AddTrailingStopLimitOrder(market, line);
+        else if (line.find("add trailing stop") != std::string::npos)
+            AddTrailingStopOrder(market, line);
         else if (line.find("reduce order") != std::string::npos)
             ReduceOrder(market, line);
         else if (line.find("modify order") != std::string::npos)

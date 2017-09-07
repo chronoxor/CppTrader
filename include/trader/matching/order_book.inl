@@ -137,12 +137,26 @@ inline uint64_t OrderBook::GetMarketPriceAsk() const noexcept
     return std::min(last_price, best_price);
 }
 
-inline void OrderBook::UpdateLastPrice(const Order& order) noexcept
+inline uint64_t OrderBook::GetMarketStopPriceBid() const noexcept
+{
+    uint64_t last_price = _last_bid_price;
+    uint64_t best_price = (_best_bid != nullptr) ? _best_bid->Price : 0;
+    return std::min(last_price, best_price);
+}
+
+inline uint64_t OrderBook::GetMarketStopPriceAsk() const noexcept
+{
+    uint64_t last_price = _last_ask_price;
+    uint64_t best_price = (_best_ask != nullptr) ? _best_ask->Price : std::numeric_limits<uint64_t>::max();
+    return std::max(last_price, best_price);
+}
+
+inline void OrderBook::UpdateLastPrice(const Order& order, uint64_t price) noexcept
 {
     if (order.IsBuy())
-        _last_bid_price = order.Price;
+        _last_bid_price = price;
     else
-        _last_ask_price = order.Price;
+        _last_ask_price = price;
 }
 
 } // namespace Matching

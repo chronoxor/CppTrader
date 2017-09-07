@@ -32,6 +32,16 @@ OrderBook::~OrderBook()
     for (auto& sell_stop : _sell_stop)
         _level_pool.Release(&sell_stop);
     _sell_stop.clear();
+
+    // Release trailing buy stop orders levels
+    for (auto& trailing_buy_stop : _trailing_buy_stop)
+        _level_pool.Release(&trailing_buy_stop);
+    _trailing_buy_stop.clear();
+
+    // Release trailing sell stop orders levels
+    for (auto& trailing_sell_stop : _trailing_sell_stop)
+        _level_pool.Release(&trailing_sell_stop);
+    _trailing_sell_stop.clear();
 }
 
 LevelNode* OrderBook::AddLevel(OrderNode* order_ptr)
@@ -450,43 +460,39 @@ void OrderBook::DeleteTrailingStopOrder(OrderNode* order_ptr)
 
 uint64_t OrderBook::CalculateTrailingStopPrice(const Order& order) const noexcept
 {
+    // Get the current market price
+    uint64_t market_price = order.IsBuy() ? GetMarketStopPriceAsk() : GetMarketStopPriceBid();
+    int64_t trailing_distance = order.TrailingDistance;
+    int64_t trailing_step = order.TrailingStep;
+
+    // Convert percentage trailing values into absolute ones
+    if (trailing_distance < 0)
+    {
+        trailing_distance = (int64_t)((-trailing_distance * market_price) / 10000);
+        trailing_step = (int64_t)((-trailing_step * market_price) / 10000);
+    }
+
     uint64_t old_price = order.StopPrice;
 
-    // Calculate the new price only for non empty order book!
-    LevelNode* level_ptr = order.IsBuy() ? _best_ask : _best_bid;
-    if (level_ptr != nullptr)
+    if (order.IsBuy())
     {
-        uint64_t market_price = level_ptr->Price;
-        int64_t trailing_distance = order.TrailingDistance;
-        int64_t trailing_step = order.TrailingStep;
+        // Calculate a new stop price
+        uint64_t new_price = (market_price < (std::numeric_limits<uint64_t>::max() - trailing_distance)) ? (market_price + trailing_distance) : std::numeric_limits<uint64_t>::max();
 
-        // Convert percentage trailing values into absolute ones
-        if (trailing_distance < 0)
-        {
-            trailing_distance = (int64_t)((-trailing_distance * market_price) / 10000);
-            trailing_step = (int64_t)((-trailing_step * market_price) / 10000);
-        }
+        // If the new price is better and we get through the trailing step
+        if (new_price < old_price)
+            if ((old_price - new_price) >= (uint64_t)trailing_step)
+                return new_price;
+    }
+    else
+    {
+        // Calculate a new stop price
+        uint64_t new_price = (market_price > (uint64_t)trailing_distance) ? (market_price - trailing_distance) : 0;
 
-        if (order.IsBuy())
-        {
-            // Calculate a new stop price
-            uint64_t new_price = (market_price < (std::numeric_limits<uint64_t>::max() - trailing_distance)) ? (market_price + trailing_distance) : std::numeric_limits<uint64_t>::max();
-
-            // If the new price is better and we get through the trailing step
-            if (new_price < old_price)
-                if ((old_price - new_price) >= (uint64_t)trailing_step)
-                    return new_price;
-        }
-        else
-        {
-            // Calculate a new stop price
-            uint64_t new_price = (market_price > (uint64_t)trailing_distance) ? (market_price - trailing_distance) : 0;
-
-            // If the new price is better and we get through the trailing step
-            if (new_price > old_price)
-                if ((new_price - old_price) >= (uint64_t)trailing_step)
-                    return new_price;
-        }
+        // If the new price is better and we get through the trailing step
+        if (new_price > old_price)
+            if ((new_price - old_price) >= (uint64_t)trailing_step)
+                return new_price;
     }
 
     return old_price;

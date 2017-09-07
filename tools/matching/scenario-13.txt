@@ -1,0 +1,22 @@
+enable matching
+add symbol 0 EURUSD
+add book 0
+
+# Fill the EURUSD order book
+# Ask:
+#
+# Bid: 30 -> 30 (best bid)
+# Bid: 20 -> 20
+# Bid: 10 -> 10
+
+add limit buy 1 0 10 10
+add limit buy 2 0 20 20
+add limit buy 3 0 30 30
+
+# Send trailing stop order with distance to the market = 10 and trailing step = 5
+add trailing stop sell 4 0 0 100 10 5
+
+# Add sell market order in order to perform a deal, create a last price.
+add market sell 5 0 10
+
+# Trailing stop order price will be adjusted to keep the provided distance to the market!

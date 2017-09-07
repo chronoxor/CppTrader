@@ -83,10 +83,9 @@ inline std::ostream& operator<<(std::ostream& stream, const Order& order)
         << "; Type=" << order.Type
         << "; Side=" << order.Side
         << "; Price=" << order.Price
+        << "; StopPrice=" << order.StopPrice
         << "; Quantity=" << order.Quantity
         << "; " << order.TimeInForce;
-    if (order.IsStop() || order.IsStopLimit())
-        stream << "; StopPrice=" << order.StopPrice;
     if (order.IsTrailingStop() || order.IsTrailingStopLimit())
     {
         stream << "; TrailingDistance=" << order.TrailingDistance;

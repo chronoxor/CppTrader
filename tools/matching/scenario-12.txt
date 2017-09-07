@@ -16,6 +16,6 @@ add limit buy 3 0 30 30
 # Send stop-limit order
 add stop-limit sell 4 0 20 30 30
 
-# Delete the best limit order in order to move the market down.
-# Stop order will be converted into the limit one with price = 30!
-delete order 3
+# Add sell market order in order to move the market down.
+# Stop-limit order will be converted into the limit one with price = 30!
+add market sell 5 0 40

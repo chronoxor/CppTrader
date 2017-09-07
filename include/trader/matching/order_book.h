@@ -191,7 +191,9 @@ private:
     // Update market last prices
     uint64_t GetMarketPriceBid() const noexcept;
     uint64_t GetMarketPriceAsk() const noexcept;
-    void UpdateLastPrice(const Order& order) noexcept;
+    uint64_t GetMarketStopPriceBid() const noexcept;
+    uint64_t GetMarketStopPriceAsk() const noexcept;
+    void UpdateLastPrice(const Order& order, uint64_t price) noexcept;
 };
 
 } // namespace Matching

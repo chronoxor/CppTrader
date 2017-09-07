@@ -67,14 +67,14 @@ std::pair<int, int> BookStopOrders(const OrderBook* order_book_ptr)
     int buy_orders = 0;
     for (auto& buy : order_book_ptr->buy_stop())
         buy_orders += (int)buy.Orders;
-	for (auto& buy : order_book_ptr->trailing_buy_stop())
-		buy_orders += (int)buy.Orders;
+    for (auto& buy : order_book_ptr->trailing_buy_stop())
+        buy_orders += (int)buy.Orders;
 
     int sell_orders = 0;
     for (auto& sell : order_book_ptr->sell_stop())
         sell_orders += (int)sell.Orders;
-	for (auto& sell : order_book_ptr->trailing_sell_stop())
-		sell_orders += (int)sell.Orders;
+    for (auto& sell : order_book_ptr->trailing_sell_stop())
+        sell_orders += (int)sell.Orders;
 
     return std::make_pair(buy_orders, sell_orders);
 }
@@ -87,14 +87,14 @@ std::pair<int, int> BookStopVolume(const OrderBook* order_book_ptr)
     int buy_volume = 0;
     for (auto& buy : order_book_ptr->buy_stop())
         buy_volume += (int)buy.TotalVolume;
-	for (auto& buy : order_book_ptr->trailing_buy_stop())
-		buy_volume += (int)buy.TotalVolume;
+    for (auto& buy : order_book_ptr->trailing_buy_stop())
+        buy_volume += (int)buy.TotalVolume;
 
     int sell_volume = 0;
     for (auto& sell : order_book_ptr->sell_stop())
         sell_volume += (int)sell.TotalVolume;
-	for (auto& sell : order_book_ptr->trailing_sell_stop())
-		sell_volume += (int)sell.TotalVolume;
+    for (auto& sell : order_book_ptr->trailing_sell_stop())
+        sell_volume += (int)sell.TotalVolume;
 
     return std::make_pair(buy_volume, sell_volume);
 }
@@ -518,7 +518,7 @@ TEST_CASE("Automatic matching - stop-limit order", "[CppTrader][Matching]")
 
     // Add stop-limit order
     market.AddOrder(Order::BuyStopLimit(6, 0, 20, 10, 10));
-	market.AddOrder(Order::SellLimit(7, 0, 20, 20));
+    market.AddOrder(Order::SellLimit(7, 0, 20, 20));
     REQUIRE(BookOrders(market.GetOrderBook(0)) == std::make_pair(0, 2));
     REQUIRE(BookVolume(market.GetOrderBook(0)) == std::make_pair(0, 30));
     REQUIRE(BookStopOrders(market.GetOrderBook(0)) == std::make_pair(1, 0));
@@ -531,7 +531,7 @@ TEST_CASE("Automatic matching - stop-limit order", "[CppTrader][Matching]")
     REQUIRE(BookStopOrders(market.GetOrderBook(0)) == std::make_pair(0, 0));
     REQUIRE(BookStopVolume(market.GetOrderBook(0)) == std::make_pair(0, 0));
 }
-/*
+
 TEST_CASE("Automatic matching - stop-limit order with an empty market", "[CppTrader][Matching]")
 {
     MarketManager market;
@@ -556,9 +556,72 @@ TEST_CASE("Automatic matching - stop-limit order with an empty market", "[CppTra
     REQUIRE(BookVolume(market.GetOrderBook(0)) == std::make_pair(10, 0));
     REQUIRE(BookStopOrders(market.GetOrderBook(0)) == std::make_pair(0, 0));
     REQUIRE(BookStopVolume(market.GetOrderBook(0)) == std::make_pair(0, 0));
-    market.DeleteOrder(1);
+    market.DeleteOrder(2);
 }
-*/
+
+TEST_CASE("Automatic matching - trailing stop order", "[CppTrader][Matching]")
+{
+    MarketManager market;
+
+    // Prepare symbol & order book
+    Symbol symbol = { 0, "test" };
+    market.AddSymbol(symbol);
+    market.AddOrderBook(symbol);
+
+    // Enable automatic matching
+    market.EnableMatching();
+
+    // Create the market with last prices
+    market.AddOrder(Order::BuyLimit(1, 0, 100, 20));
+    market.AddOrder(Order::SellLimit(2, 0, 200, 20));
+    market.AddOrder(Order::SellMarket(3, 0, 10));
+    market.AddOrder(Order::BuyMarket(4, 0, 10));
+    REQUIRE(BookOrders(market.GetOrderBook(0)) == std::make_pair(1, 1));
+    REQUIRE(BookVolume(market.GetOrderBook(0)) == std::make_pair(10, 10));
+    REQUIRE(BookStopOrders(market.GetOrderBook(0)) == std::make_pair(0, 0));
+    REQUIRE(BookStopVolume(market.GetOrderBook(0)) == std::make_pair(0, 0));
+
+    // Add some trailing stop orders
+    market.AddOrder(Order::TrailingBuyStop(5, 0, 1000, 10, 10, 5));
+    market.AddOrder(Order::TrailingSellStopLimit(6, 0, 0, 10, 10, -1000, -500));
+    REQUIRE(market.GetOrder(5)->StopPrice == 210);
+    REQUIRE(market.GetOrder(6)->StopPrice == 90);
+    REQUIRE(market.GetOrder(6)->Price == 100);
+    REQUIRE(BookOrders(market.GetOrderBook(0)) == std::make_pair(1, 1));
+    REQUIRE(BookVolume(market.GetOrderBook(0)) == std::make_pair(10, 10));
+    REQUIRE(BookStopOrders(market.GetOrderBook(0)) == std::make_pair(1, 1));
+    REQUIRE(BookStopVolume(market.GetOrderBook(0)) == std::make_pair(10, 10));
+
+    // Move the market best bid price level
+    market.ModifyOrder(1, 103, 20);
+    REQUIRE(market.GetOrder(6)->StopPrice == 90);
+    REQUIRE(market.GetOrder(6)->Price == 100);
+    market.ModifyOrder(1, 120, 20);
+    REQUIRE(market.GetOrder(6)->StopPrice == 108);
+    REQUIRE(market.GetOrder(6)->Price == 118);
+    market.ModifyOrder(1, 103, 20);
+    REQUIRE(market.GetOrder(6)->StopPrice == 108);
+    REQUIRE(market.GetOrder(6)->Price == 118);
+    market.ModifyOrder(1, 100, 20);
+    REQUIRE(market.GetOrder(6)->StopPrice == 108);
+    REQUIRE(market.GetOrder(6)->Price == 118);
+
+    // Move the market best ask price level. Trailing stop price will not move
+    // because the last bid price = 200
+    market.ModifyOrder(2, 197, 20);
+    REQUIRE(market.GetOrder(5)->StopPrice == 210);
+    market.ModifyOrder(2, 180, 20);
+    REQUIRE(market.GetOrder(5)->StopPrice == 210);
+
+    // Move the market best ask price level
+    market.ModifyOrder(2, 197, 20);
+    market.AddOrder(Order::BuyMarket(7, 0, 10));
+    REQUIRE(market.GetOrder(5)->StopPrice == 210);
+    market.ModifyOrder(2, 180, 20);
+    market.AddOrder(Order::BuyMarket(7, 0, 10));
+    REQUIRE(market.GetOrder(5)->StopPrice == 190);
+}
+
 TEST_CASE("Manual matching", "[CppTrader][Matching]")
 {
     MarketManager market;
