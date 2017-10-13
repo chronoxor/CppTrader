@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['trailing_5fbuy_5fstop',['trailing_buy_stop',['../class_cpp_trader_1_1_matching_1_1_order_book.html#a47e1dd74ca25d1874474401f7dd72860',1,'CppTrader::Matching::OrderBook']]],
-  ['trailing_5fsell_5fstop',['trailing_sell_stop',['../class_cpp_trader_1_1_matching_1_1_order_book.html#aa3fa5ccd95090c32f5e81909d5275045',1,'CppTrader::Matching::OrderBook']]],
+  ['trailing_5fbuy_5fstop',['trailing_buy_stop',['../class_cpp_trader_1_1_matching_1_1_order_book.html#a8eeee3092353ea674c81784824772df2',1,'CppTrader::Matching::OrderBook']]],
+  ['trailing_5fsell_5fstop',['trailing_sell_stop',['../class_cpp_trader_1_1_matching_1_1_order_book.html#a4e0347724698f362d8d37c54623b1aba',1,'CppTrader::Matching::OrderBook']]],
   ['trailingbuystop',['TrailingBuyStop',['../struct_cpp_trader_1_1_matching_1_1_order.html#a2c63e80b50c0867aef9d2d9e181bbf02',1,'CppTrader::Matching::Order']]],
   ['trailingbuystoplimit',['TrailingBuyStopLimit',['../struct_cpp_trader_1_1_matching_1_1_order.html#aadc2092af4aaff60e7d58e0e0b819f4d',1,'CppTrader::Matching::Order']]],
   ['trailingsellstop',['TrailingSellStop',['../struct_cpp_trader_1_1_matching_1_1_order.html#ae6be53eda23abed3380e32c6d9b4a1b7',1,'CppTrader::Matching::Order']]],
