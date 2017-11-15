@@ -22,10 +22,10 @@ namespace Matching {
     Market handler is used to handle all market events from MarketManager
     with a custom actions. Custom implementations of the market handler
     could be used to monitor the following changes in the market:
-    * Add/Remove/Modify symbols
-    * Add/Remove/Modify orders
-    * Order executions
-    * Order book updates
+    \li Add/Remove/Modify symbols
+    \li Add/Remove/Modify orders
+    \li Order executions
+    \li Order book updates
 
     Not thread-safe.
 */
