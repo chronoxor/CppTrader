@@ -132,8 +132,13 @@ struct Order
     uint64_t Price;
     //! Order stop price
     uint64_t StopPrice;
-    //! Order quantity
-    uint64_t Quantity;
+
+    //! Order initial quantity
+    uint64_t InitialQuantity;
+    //! Order executed quantity
+    uint64_t ExecutedQuantity() const noexcept { return InitialQuantity - LeavesQuantity; }
+    //! Order leaves quantity
+    uint64_t LeavesQuantity;
 
     //! Time in Force
     OrderTimeInForce TimeInForce;
@@ -142,17 +147,17 @@ struct Order
     /*!
         This property allows to prepare 'iceberg'/'hidden' orders with the
         following rules:
-        \li <b>MaxVisibleQuantity >= Quantity</b> - Regular order
+        \li <b>MaxVisibleQuantity >= LeavesQuantity</b> - Regular order
         \li <b>MaxVisibleQuantity == 0</b> - 'Hidden' order
-        \li <b>MaxVisibleQuantity < Quantity</b> - 'Iceberg' order
+        \li <b>MaxVisibleQuantity < LeavesQuantity</b> - 'Iceberg' order
 
         Supported only for limit and stop-limit orders!
     */
     uint64_t MaxVisibleQuantity;
-    //! Get the hidden order quantity
-    uint64_t HiddenQuantity() const noexcept { return (Quantity > MaxVisibleQuantity) ? (Quantity - MaxVisibleQuantity) : 0; }
-    //! Get the visible order quantity
-    uint64_t VisibleQuantity() const noexcept { return std::min(Quantity, MaxVisibleQuantity); }
+    //! Order hidden quantity
+    uint64_t HiddenQuantity() const noexcept { return (LeavesQuantity > MaxVisibleQuantity) ? (LeavesQuantity - MaxVisibleQuantity) : 0; }
+    //! Order visible quantity
+    uint64_t VisibleQuantity() const noexcept { return std::min(LeavesQuantity, MaxVisibleQuantity); }
 
     //! Market order slippage
     /*!
@@ -167,7 +172,7 @@ struct Order
     */
     uint64_t Slippage;
 
-    //! Trailing distance to market
+    //! Order trailing distance to market
     /*!
         Positive value represents absolute distance from the market.
         Negative value represents percentage distance from the market
@@ -176,7 +181,7 @@ struct Order
         Supported only for trailing stop orders!
     */
     int64_t TrailingDistance;
-    //! Trailing step
+    //! Order trailing step
     /*!
         Positive value represents absolute step from the market.
         Negative value represents percentage step from the market

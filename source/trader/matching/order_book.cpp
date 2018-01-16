@@ -120,7 +120,7 @@ LevelUpdate OrderBook::AddOrder(OrderNode* order_ptr)
     }
 
     // Update the price level volume
-    level_ptr->TotalVolume += order_ptr->Quantity;
+    level_ptr->TotalVolume += order_ptr->LeavesQuantity;
     level_ptr->HiddenVolume += order_ptr->HiddenQuantity();
     level_ptr->VisibleVolume += order_ptr->VisibleQuantity();
 
@@ -146,7 +146,7 @@ LevelUpdate OrderBook::ReduceOrder(OrderNode* order_ptr, uint64_t quantity, uint
     level_ptr->VisibleVolume -= visible;
 
     // Unlink the empty order from the orders list of the price level
-    if (order_ptr->Quantity == 0)
+    if (order_ptr->LeavesQuantity == 0)
     {
         level_ptr->OrderList.pop_current(*order_ptr);
         --level_ptr->Orders;
@@ -173,7 +173,7 @@ LevelUpdate OrderBook::DeleteOrder(OrderNode* order_ptr)
     LevelNode* level_ptr = order_ptr->Level;
 
     // Update the price level volume
-    level_ptr->TotalVolume -= order_ptr->Quantity;
+    level_ptr->TotalVolume -= order_ptr->LeavesQuantity;
     level_ptr->HiddenVolume -= order_ptr->HiddenQuantity();
     level_ptr->VisibleVolume -= order_ptr->VisibleQuantity();
 
@@ -268,7 +268,7 @@ void OrderBook::AddStopOrder(OrderNode* order_ptr)
         level_ptr = AddStopLevel(order_ptr);
 
     // Update the price level volume
-    level_ptr->TotalVolume += order_ptr->Quantity;
+    level_ptr->TotalVolume += order_ptr->LeavesQuantity;
     level_ptr->HiddenVolume += order_ptr->HiddenQuantity();
     level_ptr->VisibleVolume += order_ptr->VisibleQuantity();
 
@@ -291,7 +291,7 @@ void OrderBook::ReduceStopOrder(OrderNode* order_ptr, uint64_t quantity, uint64_
     level_ptr->VisibleVolume -= visible;
 
     // Unlink the empty order from the orders list of the price level
-    if (order_ptr->Quantity == 0)
+    if (order_ptr->LeavesQuantity == 0)
     {
         level_ptr->OrderList.pop_current(*order_ptr);
         --level_ptr->Orders;
@@ -311,7 +311,7 @@ void OrderBook::DeleteStopOrder(OrderNode* order_ptr)
     LevelNode* level_ptr = order_ptr->Level;
 
     // Update the price level volume
-    level_ptr->TotalVolume -= order_ptr->Quantity;
+    level_ptr->TotalVolume -= order_ptr->LeavesQuantity;
     level_ptr->HiddenVolume -= order_ptr->HiddenQuantity();
     level_ptr->VisibleVolume -= order_ptr->VisibleQuantity();
 
@@ -399,7 +399,7 @@ void OrderBook::AddTrailingStopOrder(OrderNode* order_ptr)
         level_ptr = AddTrailingStopLevel(order_ptr);
 
     // Update the price level volume
-    level_ptr->TotalVolume += order_ptr->Quantity;
+    level_ptr->TotalVolume += order_ptr->LeavesQuantity;
     level_ptr->HiddenVolume += order_ptr->HiddenQuantity();
     level_ptr->VisibleVolume += order_ptr->VisibleQuantity();
 
@@ -422,7 +422,7 @@ void OrderBook::ReduceTrailingStopOrder(OrderNode* order_ptr, uint64_t quantity,
     level_ptr->VisibleVolume -= visible;
 
     // Unlink the empty order from the orders list of the price level
-    if (order_ptr->Quantity == 0)
+    if (order_ptr->LeavesQuantity == 0)
     {
         level_ptr->OrderList.pop_current(*order_ptr);
         --level_ptr->Orders;
@@ -442,7 +442,7 @@ void OrderBook::DeleteTrailingStopOrder(OrderNode* order_ptr)
     LevelNode* level_ptr = order_ptr->Level;
 
     // Update the price level volume
-    level_ptr->TotalVolume -= order_ptr->Quantity;
+    level_ptr->TotalVolume -= order_ptr->LeavesQuantity;
     level_ptr->HiddenVolume -= order_ptr->HiddenQuantity();
     level_ptr->VisibleVolume -= order_ptr->VisibleQuantity();
 

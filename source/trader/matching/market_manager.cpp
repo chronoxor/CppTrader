@@ -200,7 +200,7 @@ ErrorCode MarketManager::AddLimitOrder(const Order& order, bool internal)
         MatchLimit(order_book_ptr, &new_order);
 
     // Add a new order or delete remaining part in case of 'Immediate-Or-Cancel'/'Fill-Or-Kill' order
-    if ((new_order.Quantity > 0) && !new_order.IsIOC() && !new_order.IsFOK())
+    if ((new_order.LeavesQuantity > 0) && !new_order.IsIOC() && !new_order.IsFOK())
     {
         // Create a new order
         OrderNode* order_ptr = _order_pool.Create(new_order);
@@ -283,7 +283,7 @@ ErrorCode MarketManager::AddStopOrder(const Order& order, bool internal)
     }
 
     // Add a new order
-    if (new_order.Quantity > 0)
+    if (new_order.LeavesQuantity > 0)
     {
         // Create a new order
         OrderNode* order_ptr = _order_pool.Create(new_order);
@@ -360,7 +360,7 @@ ErrorCode MarketManager::AddStopLimitOrder(const Order& order, bool internal)
             MatchLimit(order_book_ptr, &new_order);
 
             // Add a new limit order or delete remaining part in case of 'Immediate-Or-Cancel'/'Fill-Or-Kill' order
-            if ((new_order.Quantity > 0) && !new_order.IsIOC() && !new_order.IsFOK())
+            if ((new_order.LeavesQuantity > 0) && !new_order.IsIOC() && !new_order.IsFOK())
             {
                 // Create a new order
                 OrderNode* order_ptr = _order_pool.Create(new_order);
@@ -395,7 +395,7 @@ ErrorCode MarketManager::AddStopLimitOrder(const Order& order, bool internal)
     }
 
     // Add a new order
-    if (new_order.Quantity > 0)
+    if (new_order.LeavesQuantity > 0)
     {
         // Create a new order
         OrderNode* order_ptr = _order_pool.Create(new_order);
@@ -459,19 +459,19 @@ ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity, bool intern
         return ErrorCode::ORDER_BOOK_NOT_FOUND;
 
     // Calculate the minimal possible order quantity to reduce
-    quantity = std::min(quantity, order_ptr->Quantity);
+    quantity = std::min(quantity, order_ptr->LeavesQuantity);
 
     uint64_t hidden = order_ptr->HiddenQuantity();
     uint64_t visible = order_ptr->VisibleQuantity();
 
     // Reduce the order quantity
-    order_ptr->Quantity -= quantity;
+    order_ptr->LeavesQuantity -= quantity;
 
     hidden -= order_ptr->HiddenQuantity();
     visible -= order_ptr->VisibleQuantity();
 
     // Update the order or delete the empty order
-    if (order_ptr->Quantity > 0)
+    if (order_ptr->LeavesQuantity > 0)
     {
         // Call the corresponding handler
         _market_handler.onUpdateOrder(*order_ptr);
@@ -581,10 +581,11 @@ ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t n
 
     // Modify the order
     order_ptr->Price = new_price;
-    order_ptr->Quantity = new_quantity;
+    order_ptr->InitialQuantity = new_quantity;
+    order_ptr->LeavesQuantity = new_quantity;
 
     // Update the order
-    if (order_ptr->Quantity > 0)
+    if (order_ptr->LeavesQuantity > 0)
     {
         // Call the corresponding handler
         _market_handler.onUpdateOrder(*order_ptr);
@@ -594,7 +595,7 @@ ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t n
             MatchLimit(order_book_ptr, order_ptr);
 
         // Add non empty order into the order book
-        if (order_ptr->Quantity > 0)
+        if (order_ptr->LeavesQuantity > 0)
         {
             // Add the modified order into the order book
             switch (order_ptr->Type)
@@ -618,7 +619,7 @@ ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t n
     }
 
     // Delete the empty order
-    if (order_ptr->Quantity == 0)
+    if (order_ptr->LeavesQuantity == 0)
     {
         // Call the corresponding handler
         _market_handler.onDeleteOrder(*order_ptr);
@@ -698,7 +699,8 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
     // Replace the order
     order_ptr->Id = new_id;
     order_ptr->Price = new_price;
-    order_ptr->Quantity = new_quantity;
+    order_ptr->InitialQuantity = new_quantity;
+    order_ptr->LeavesQuantity = new_quantity;
 
     // Call the corresponding handler
     _market_handler.onAddOrder(*order_ptr);
@@ -707,7 +709,7 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
     if (_matching)
         MatchLimit(order_book_ptr, order_ptr);
 
-    if (order_ptr->Quantity > 0)
+    if (order_ptr->LeavesQuantity > 0)
     {
         // Insert the order
         if (!_orders.insert(std::make_pair(order_ptr->Id, order_ptr)).second)
@@ -849,7 +851,7 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
         return ErrorCode::ORDER_BOOK_NOT_FOUND;
 
     // Calculate the minimal possible order quantity to execute
-    quantity = std::min(quantity, order_ptr->Quantity);
+    quantity = std::min(quantity, order_ptr->LeavesQuantity);
 
     // Call the corresponding handler
     _market_handler.onExecuteOrder(*order_ptr, order_ptr->Price, quantity);
@@ -861,7 +863,7 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
     uint64_t visible = order_ptr->VisibleQuantity();
 
     // Reduce the order quantity
-    order_ptr->Quantity -= quantity;
+    order_ptr->LeavesQuantity -= quantity;
 
     hidden -= order_ptr->HiddenQuantity();
     visible -= order_ptr->VisibleQuantity();
@@ -886,7 +888,7 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
     }
 
     // Update the order or delete the empty order
-    if (order_ptr->Quantity > 0)
+    if (order_ptr->LeavesQuantity > 0)
     {
         // Call the corresponding handler
         _market_handler.onUpdateOrder(*order_ptr);
@@ -933,7 +935,7 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quan
         return ErrorCode::ORDER_BOOK_NOT_FOUND;
 
     // Calculate the minimal possible order quantity to execute
-    quantity = std::min(quantity, order_ptr->Quantity);
+    quantity = std::min(quantity, order_ptr->LeavesQuantity);
 
     // Call the corresponding handler
     _market_handler.onExecuteOrder(*order_ptr, price, quantity);
@@ -945,7 +947,7 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quan
     uint64_t visible = order_ptr->VisibleQuantity();
 
     // Reduce the order quantity
-    order_ptr->Quantity -= quantity;
+    order_ptr->LeavesQuantity -= quantity;
 
     hidden -= order_ptr->HiddenQuantity();
     visible -= order_ptr->VisibleQuantity();
@@ -970,7 +972,7 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quan
     }
 
     // Update the order or delete the empty order
-    if (order_ptr->Quantity > 0)
+    if (order_ptr->LeavesQuantity > 0)
     {
         // Call the corresponding handler
         _market_handler.onUpdateOrder(*order_ptr);
@@ -1046,11 +1048,11 @@ void MarketManager::Match(OrderBook* order_book_ptr, bool internal)
                 // Find the best order to execute and the best order to reduce
                 OrderNode* executing_order_ptr = bid_order_ptr;
                 OrderNode* reducing_order_ptr = ask_order_ptr;
-                if (executing_order_ptr->Quantity > reducing_order_ptr->Quantity)
+                if (executing_order_ptr->LeavesQuantity > reducing_order_ptr->LeavesQuantity)
                     std::swap(executing_order_ptr, reducing_order_ptr);
 
                 // Get the execution quantity
-                uint64_t quantity = executing_order_ptr->Quantity;
+                uint64_t quantity = executing_order_ptr->LeavesQuantity;
 
                 // Get the execution price
                 uint64_t price = executing_order_ptr->Price;
@@ -1149,7 +1151,7 @@ void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr)
         if (order_ptr->IsFOK() || order_ptr->IsAON())
         {
             // Calculate the matching chain
-            uint64_t chain = CalculateMatchingChain(order_book_ptr, level_ptr, order_ptr->Price, order_ptr->Quantity);
+            uint64_t chain = CalculateMatchingChain(order_book_ptr, level_ptr, order_ptr->Price, order_ptr->LeavesQuantity);
 
             // Matching is not avaliable
             if (chain == 0)
@@ -1159,13 +1161,13 @@ void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr)
             ExecuteMatchingChain(order_book_ptr, level_ptr, order_ptr->Price, chain);
 
             // Call the corresponding handler
-            _market_handler.onExecuteOrder(*order_ptr, order_ptr->Price, order_ptr->Quantity);
+            _market_handler.onExecuteOrder(*order_ptr, order_ptr->Price, order_ptr->LeavesQuantity);
 
             // Update the corresponding market price
             order_book_ptr->UpdateLastPrice(*order_ptr, order_ptr->Price);
 
             // Reduce quantity to execute
-            order_ptr->Quantity = 0;
+            order_ptr->LeavesQuantity = 0;
 
             return;
         }
@@ -1180,10 +1182,10 @@ void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr)
             OrderNode* next_executing_order_ptr = executing_order_ptr->next;
 
             // Get the execution quantity
-            uint64_t quantity = std::min(executing_order_ptr->Quantity, order_ptr->Quantity);
+            uint64_t quantity = std::min(executing_order_ptr->LeavesQuantity, order_ptr->LeavesQuantity);
 
             // Special case for 'All-Or-None' orders
-            if (executing_order_ptr->IsAON() && (executing_order_ptr->Quantity > order_ptr->Quantity))
+            if (executing_order_ptr->IsAON() && (executing_order_ptr->LeavesQuantity > order_ptr->LeavesQuantity))
                 return;
 
             // Get the execution price
@@ -1205,8 +1207,8 @@ void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr)
             order_book_ptr->UpdateLastPrice(*order_ptr, price);
 
             // Reduce quantity to execute
-            order_ptr->Quantity -= quantity;
-            if (order_ptr->Quantity == 0)
+            order_ptr->LeavesQuantity -= quantity;
+            if (order_ptr->LeavesQuantity == 0)
                 return;
 
             // Move to the next order to execute at the same price level
@@ -1338,7 +1340,7 @@ bool MarketManager::ActivateStopLimitOrder(OrderBook* order_book_ptr, OrderNode*
     MatchLimit(order_book_ptr, order_ptr);
 
     // Add a new limit order or delete remaining part in case of 'Immediate-Or-Cancel'/'Fill-Or-Kill' order
-    if ((order_ptr->Quantity > 0) && !order_ptr->IsIOC() && !order_ptr->IsFOK())
+    if ((order_ptr->LeavesQuantity > 0) && !order_ptr->IsIOC() && !order_ptr->IsFOK())
     {
         // Add the new limit order into the order book
         UpdateLevel(*order_book_ptr, order_book_ptr->AddOrder(order_ptr));
@@ -1375,7 +1377,7 @@ uint64_t MarketManager::CalculateMatchingChain(OrderBook* order_book_ptr, LevelN
         while (order_ptr != nullptr)
         {
             uint64_t need = volume - available;
-            uint64_t quantity = order_ptr->IsAON() ? order_ptr->Quantity : std::min(order_ptr->Quantity, need);
+            uint64_t quantity = order_ptr->IsAON() ? order_ptr->LeavesQuantity : std::min(order_ptr->LeavesQuantity, need);
             available += quantity;
 
             // Matching is possible, return the chain size
@@ -1409,16 +1411,16 @@ uint64_t MarketManager::CalculateMatchingChain(OrderBook* order_book_ptr, LevelN
     LevelNode* shortest_level_ptr = ask_level_ptr;
     OrderNode* longest_order_ptr = bid_level_ptr->OrderList.front();
     OrderNode* shortest_order_ptr = ask_level_ptr->OrderList.front();
-    uint64_t required = longest_order_ptr->Quantity;
+    uint64_t required = longest_order_ptr->LeavesQuantity;
     uint64_t available = 0;
 
     // Find the initial longest order chain
     if (longest_order_ptr->IsAON() && shortest_order_ptr->IsAON())
     {
         // Choose the longest 'All-Or-None' order
-        if (shortest_order_ptr->Quantity > longest_order_ptr->Quantity)
+        if (shortest_order_ptr->LeavesQuantity > longest_order_ptr->LeavesQuantity)
         {
-            required = shortest_order_ptr->Quantity;
+            required = shortest_order_ptr->LeavesQuantity;
             available = 0;
             std::swap(longest_level_ptr, shortest_level_ptr);
             std::swap(longest_order_ptr, shortest_order_ptr);
@@ -1426,7 +1428,7 @@ uint64_t MarketManager::CalculateMatchingChain(OrderBook* order_book_ptr, LevelN
     }
     else if (shortest_order_ptr->IsAON())
     {
-        required = shortest_order_ptr->Quantity;
+        required = shortest_order_ptr->LeavesQuantity;
         available = 0;
         std::swap(longest_level_ptr, shortest_level_ptr);
         std::swap(longest_order_ptr, shortest_order_ptr);
@@ -1439,7 +1441,7 @@ uint64_t MarketManager::CalculateMatchingChain(OrderBook* order_book_ptr, LevelN
         while ((longest_order_ptr != nullptr) && (shortest_order_ptr != nullptr))
         {
             uint64_t need = required - available;
-            uint64_t quantity = shortest_order_ptr->IsAON() ? shortest_order_ptr->Quantity : std::min(shortest_order_ptr->Quantity, need);
+            uint64_t quantity = shortest_order_ptr->IsAON() ? shortest_order_ptr->LeavesQuantity : std::min(shortest_order_ptr->LeavesQuantity, need);
             available += quantity;
 
             // Matching is possible, return the chain size
@@ -1504,7 +1506,7 @@ void MarketManager::ExecuteMatchingChain(OrderBook* order_book_ptr, LevelNode* l
             if (executing_order_ptr->IsAON())
             {
                 // Get the execution quantity
-                quantity = executing_order_ptr->Quantity;
+                quantity = executing_order_ptr->LeavesQuantity;
 
                 // Call the corresponding handler
                 _market_handler.onExecuteOrder(*executing_order_ptr, price, quantity);
@@ -1518,7 +1520,7 @@ void MarketManager::ExecuteMatchingChain(OrderBook* order_book_ptr, LevelNode* l
             else
             {
                 // Get the execution quantity
-                quantity = std::min(executing_order_ptr->Quantity, volume);
+                quantity = std::min(executing_order_ptr->LeavesQuantity, volume);
 
                 // Call the corresponding handler
                 _market_handler.onExecuteOrder(*executing_order_ptr, price, quantity);
