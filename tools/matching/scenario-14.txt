@@ -1,0 +1,16 @@
+enable matching
+add symbol 0 EURUSD
+add book 0
+
+# Add buy limit order (Id = 1, SymbolId = 0) with price = 10 and quantity = 100
+add limit buy 1 0 10 100
+
+# Match part of the oder with an opposite market order (Id = 1, SymbolId = 0) with quantity = 20
+add market sell 2 0 20
+
+# Mitigate limit order
+mitigate order 1 10 150
+mitigate order 1 10 50
+mitigate order 1 10 10
+
+# Order will be canceled!

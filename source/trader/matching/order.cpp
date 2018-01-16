@@ -19,8 +19,8 @@ ErrorCode Order::Validate() const noexcept
         return ErrorCode::ORDER_ID_INVALID;
 
     // Validate order quantity
-    assert((InitialQuantity >= LeavesQuantity) && "Order initial quantity must be greater than or equal to order leaves quantity!");
-    if (InitialQuantity < LeavesQuantity)
+    assert((Quantity >= LeavesQuantity) && "Order quantity must be greater than or equal to order leaves quantity!");
+    if (Quantity < LeavesQuantity)
         return ErrorCode::ORDER_QUANTITY_INVALID;
     assert((LeavesQuantity > 0) && "Order leaves quantity must be greater than zero!");
     if (LeavesQuantity == 0)

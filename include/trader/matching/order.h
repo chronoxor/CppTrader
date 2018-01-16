@@ -133,10 +133,10 @@ struct Order
     //! Order stop price
     uint64_t StopPrice;
 
-    //! Order initial quantity
-    uint64_t InitialQuantity;
+    //! Order quantity
+    uint64_t Quantity;
     //! Order executed quantity
-    uint64_t ExecutedQuantity() const noexcept { return InitialQuantity - LeavesQuantity; }
+    uint64_t ExecutedQuantity;
     //! Order leaves quantity
     uint64_t LeavesQuantity;
 

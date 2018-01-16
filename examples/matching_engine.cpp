@@ -506,6 +506,27 @@ void ModifyOrder(MarketManager& market, const std::string& command)
     std::cerr << "Invalid 'modify order' command: " << command << std::endl;
 }
 
+void MitigateOrder(MarketManager& market, const std::string& command)
+{
+    static std::regex pattern("^mitigate order (\\d+) (\\d+) (\\d+)$");
+    std::smatch match;
+
+    if (std::regex_search(command, match, pattern))
+    {
+        uint64_t id = std::stoi(match[1]);
+        uint64_t new_price = std::stoi(match[2]);
+        uint64_t new_quantity = std::stoi(match[3]);
+
+        ErrorCode result = market.MitigateOrder(id, new_price, new_quantity);
+        if (result != ErrorCode::OK)
+            std::cerr << "Failed 'mitigate order' command: " << result << std::endl;
+
+        return;
+    }
+
+    std::cerr << "Invalid 'mitigate order' command: " << command << std::endl;
+}
+
 void ReplaceOrder(MarketManager& market, const std::string& command)
 {
     static std::regex pattern("^replace order (\\d+) (\\d+) (\\d+) (\\d+)$");
@@ -575,6 +596,7 @@ int main(int argc, char** argv)
             std::cout << "add trailing stop-limit {Side} {Id} {SymbolId} {StopPrice} {Price} {Quantity} {TrailingDistance} {TrailingStep} - Add a new trailing stop-limit order of {Type} (buy/sell) with {Id}, {SymbolId}, {StopPrice}, {Price}, {Quantity}, {TrailingDistance} and {TrailingStep}" << std::endl;
             std::cout << "reduce order {Id} {Quantity} - Reduce the order with {Id} by the given {Quantity}" << std::endl;
             std::cout << "modify order {Id} {NewPrice} {NewQuantity} - Modify the order with {Id} and set {NewPrice} and {NewQuantity}" << std::endl;
+            std::cout << "mitigate order {Id} {NewPrice} {NewQuantity} - Mitigate the order with {Id} and set {NewPrice} and {NewQuantity}" << std::endl;
             std::cout << "replace order {Id} {NewId} {NewPrice} {NewQuantity} - Replace the order with {Id} and set {NewId}, {NewPrice} and {NewQuantity}" << std::endl;
             std::cout << "delete order {Id} - Delete the order with {Id}" << std::endl;
             std::cout << "exit/quit - Exit the program" << std::endl;
@@ -619,6 +641,8 @@ int main(int argc, char** argv)
             ReduceOrder(market, line);
         else if (line.find("modify order") != std::string::npos)
             ModifyOrder(market, line);
+        else if (line.find("mitigate order") != std::string::npos)
+            MitigateOrder(market, line);
         else if (line.find("replace order") != std::string::npos)
             ReplaceOrder(market, line);
         else if (line.find("delete order") != std::string::npos)

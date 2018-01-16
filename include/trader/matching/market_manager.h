@@ -121,12 +121,50 @@ public:
     ErrorCode ReduceOrder(uint64_t id, uint64_t quantity);
     //! Modify the order
     /*!
+        Order new quantity will be calculated in a following way:
+        \code{.cpp}
+        oder.Quantity = new_quantity;
+        oder.LeavesQuantity = new_quantity;
+        \endcode
+
         \param id - Order Id
         \param new_price - Order price to modify
         \param new_quantity - Order quantity to modify
         \return Error code
     */
     ErrorCode ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity);
+    //! Mitigate the order
+    /*!
+        The in-flight mitigation functionality prevents an order from being filled
+        for a quantity greater than the quantity requested by the user. It protects
+        from the risk of a resting order being filled between the time an order
+        modification is submitted and the time the order modification is processed
+        and applied to the order.
+
+        Order new quantity will be calculated in a following way:
+        \code{.cpp}
+        if (new_quantity > oder.ExecutedQuantity)
+        {
+            oder.Quantity = new_quantity;
+            oder.LeavesQuantity = new_quantity - oder.ExecutedQuantity;
+
+            // Order will be modified...
+        }
+        else
+        {
+            oder.Quantity = new_quantity;
+            oder.LeavesQuantity = 0;
+
+            // Order will be canceled...
+        }
+        \endcode
+
+        \param id - Order Id
+        \param new_price - Order price to mitigate
+        \param new_quantity - Order quantity to mitigate
+        \return Error code
+    */
+    ErrorCode MitigateOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity);
     //! Replace the order with a similar order but different Id, price and quantity
     /*!
         \param id - Order Id
@@ -211,7 +249,7 @@ private:
     ErrorCode AddStopOrder(const Order& order, bool internal);
     ErrorCode AddStopLimitOrder(const Order& order, bool internal);
     ErrorCode ReduceOrder(uint64_t id, uint64_t quantity, bool internal);
-    ErrorCode ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity, bool internal);
+    ErrorCode ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity, bool mitigate, bool internal);
     ErrorCode ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_price, uint64_t new_quantity, bool internal);
     ErrorCode DeleteOrder(uint64_t id, bool internal);
 

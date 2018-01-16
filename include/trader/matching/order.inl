@@ -67,7 +67,8 @@ inline Order::Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side
       Side(side),
       Price(price),
       StopPrice(stop_price),
-      InitialQuantity(quantity),
+      Quantity(quantity),
+      ExecutedQuantity(0),
       LeavesQuantity(quantity),
       TimeInForce(tif),
       MaxVisibleQuantity(max_visible_quantity),
@@ -85,8 +86,8 @@ inline std::ostream& operator<<(std::ostream& stream, const Order& order)
         << "; Side=" << order.Side
         << "; Price=" << order.Price
         << "; StopPrice=" << order.StopPrice
-        << "; InitialQuantity=" << order.InitialQuantity
-        << "; ExecutedQuantity=" << order.ExecutedQuantity()
+        << "; Quantity=" << order.Quantity
+        << "; ExecutedQuantity=" << order.ExecutedQuantity
         << "; LeavesQuantity=" << order.LeavesQuantity
         << "; " << order.TimeInForce;
     if (order.IsTrailingStop() || order.IsTrailingStopLimit())

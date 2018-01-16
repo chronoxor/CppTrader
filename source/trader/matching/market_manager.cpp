@@ -464,7 +464,7 @@ ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity, bool intern
     uint64_t hidden = order_ptr->HiddenQuantity();
     uint64_t visible = order_ptr->VisibleQuantity();
 
-    // Reduce the order quantity
+    // Reduce the order leaves quantity
     order_ptr->LeavesQuantity -= quantity;
 
     hidden -= order_ptr->HiddenQuantity();
@@ -535,10 +535,15 @@ ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity, bool intern
 
 ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity)
 {
-    return ModifyOrder(id, new_price, new_quantity, false);
+    return ModifyOrder(id, new_price, new_quantity, false, false);
 }
 
-ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity, bool internal)
+ErrorCode MarketManager::MitigateOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity)
+{
+    return ModifyOrder(id, new_price, new_quantity, true, false);
+}
+
+ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity, bool mitigate, bool internal)
 {
     // Validate parameters
     assert((id > 0) && "Order Id must be greater than zero!");
@@ -581,8 +586,18 @@ ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t n
 
     // Modify the order
     order_ptr->Price = new_price;
-    order_ptr->InitialQuantity = new_quantity;
+    order_ptr->Quantity = new_quantity;
     order_ptr->LeavesQuantity = new_quantity;
+
+    // In-Flight Mitigation (IFM)
+    if (mitigate)
+    {
+        // This calculation has the goal of preventing orders from being overfilled
+        if (new_quantity > order_ptr->ExecutedQuantity)
+            order_ptr->LeavesQuantity = new_quantity - order_ptr->ExecutedQuantity;
+        else
+            order_ptr->LeavesQuantity = 0;
+    }
 
     // Update the order
     if (order_ptr->LeavesQuantity > 0)
@@ -699,7 +714,8 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
     // Replace the order
     order_ptr->Id = new_id;
     order_ptr->Price = new_price;
-    order_ptr->InitialQuantity = new_quantity;
+    order_ptr->Quantity = new_quantity;
+    order_ptr->ExecutedQuantity = 0;
     order_ptr->LeavesQuantity = new_quantity;
 
     // Call the corresponding handler
@@ -862,7 +878,10 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
     uint64_t hidden = order_ptr->HiddenQuantity();
     uint64_t visible = order_ptr->VisibleQuantity();
 
-    // Reduce the order quantity
+    // Increase the order executed quantity
+    order_ptr->ExecutedQuantity += quantity;
+
+    // Reduce the order leaves quantity
     order_ptr->LeavesQuantity -= quantity;
 
     hidden -= order_ptr->HiddenQuantity();
@@ -946,7 +965,10 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quan
     uint64_t hidden = order_ptr->HiddenQuantity();
     uint64_t visible = order_ptr->VisibleQuantity();
 
-    // Reduce the order quantity
+    // Increase the order executed quantity
+    order_ptr->ExecutedQuantity += quantity;
+
+    // Reduce the order leaves quantity
     order_ptr->LeavesQuantity -= quantity;
 
     hidden -= order_ptr->HiddenQuantity();
@@ -1063,6 +1085,9 @@ void MarketManager::Match(OrderBook* order_book_ptr, bool internal)
                 // Update the corresponding market price
                 order_book_ptr->UpdateLastPrice(*executing_order_ptr, price);
 
+                // Increase the order executed quantity
+                executing_order_ptr->ExecutedQuantity += quantity;
+
                 // Delete the executing order from the order book
                 DeleteOrder(executing_order_ptr->Id, true);
 
@@ -1071,6 +1096,9 @@ void MarketManager::Match(OrderBook* order_book_ptr, bool internal)
 
                 // Update the corresponding market price
                 order_book_ptr->UpdateLastPrice(*reducing_order_ptr, price);
+
+                // Increase the order executed quantity
+                reducing_order_ptr->ExecutedQuantity += quantity;
 
                 // Reduce the remaining order in the order book
                 ReduceOrder(reducing_order_ptr->Id, quantity, true);
@@ -1166,7 +1194,10 @@ void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr)
             // Update the corresponding market price
             order_book_ptr->UpdateLastPrice(*order_ptr, order_ptr->Price);
 
-            // Reduce quantity to execute
+            // Increase the order executed quantity
+            order_ptr->ExecutedQuantity += order_ptr->LeavesQuantity;
+
+            // Reduce the order leaves quantity
             order_ptr->LeavesQuantity = 0;
 
             return;
@@ -1197,6 +1228,9 @@ void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr)
             // Update the corresponding market price
             order_book_ptr->UpdateLastPrice(*executing_order_ptr, price);
 
+            // Increase the order executed quantity
+            executing_order_ptr->ExecutedQuantity += quantity;
+
             // Reduce the executing order in the order book
             ReduceOrder(executing_order_ptr->Id, quantity, true);
 
@@ -1206,7 +1240,10 @@ void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr)
             // Update the corresponding market price
             order_book_ptr->UpdateLastPrice(*order_ptr, price);
 
-            // Reduce quantity to execute
+            // Increase the order executed quantity
+            order_ptr->ExecutedQuantity += quantity;
+
+            // Reduce the order leaves quantity
             order_ptr->LeavesQuantity -= quantity;
             if (order_ptr->LeavesQuantity == 0)
                 return;
@@ -1514,6 +1551,9 @@ void MarketManager::ExecuteMatchingChain(OrderBook* order_book_ptr, LevelNode* l
                 // Update the corresponding market price
                 order_book_ptr->UpdateLastPrice(*executing_order_ptr, price);
 
+                // Increase the order executed quantity
+                executing_order_ptr->ExecutedQuantity += quantity;
+
                 // Delete the executing order from the order book
                 DeleteOrder(executing_order_ptr->Id, true);
             }
@@ -1527,6 +1567,9 @@ void MarketManager::ExecuteMatchingChain(OrderBook* order_book_ptr, LevelNode* l
 
                 // Update the corresponding market price
                 order_book_ptr->UpdateLastPrice(*executing_order_ptr, price);
+
+                // Increase the order executed quantity
+                executing_order_ptr->ExecutedQuantity += quantity;
 
                 // Reduce the executing order in the order book
                 ReduceOrder(executing_order_ptr->Id, quantity, true);
