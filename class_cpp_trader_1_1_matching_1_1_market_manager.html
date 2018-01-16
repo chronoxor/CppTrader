@@ -172,6 +172,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a86f10e2b8f9d913e3a9c3b640cf169dd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86e">ErrorCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a86f10e2b8f9d913e3a9c3b640cf169dd">ModifyOrder</a> (uint64_t id, uint64_t new_price, uint64_t new_quantity)</td></tr>
 <tr class="memdesc:a86f10e2b8f9d913e3a9c3b640cf169dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Modify the order.  <a href="#a86f10e2b8f9d913e3a9c3b640cf169dd">More...</a><br/></td></tr>
 <tr class="separator:a86f10e2b8f9d913e3a9c3b640cf169dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24a4ae0561e03e2f82ef6ae217814678"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86e">ErrorCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a24a4ae0561e03e2f82ef6ae217814678">MitigateOrder</a> (uint64_t id, uint64_t new_price, uint64_t new_quantity)</td></tr>
+<tr class="memdesc:a24a4ae0561e03e2f82ef6ae217814678"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mitigate the order.  <a href="#a24a4ae0561e03e2f82ef6ae217814678">More...</a><br/></td></tr>
+<tr class="separator:a24a4ae0561e03e2f82ef6ae217814678"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a937554e308537e4d05180ebf54b05966"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86e">ErrorCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a937554e308537e4d05180ebf54b05966">ReplaceOrder</a> (uint64_t id, uint64_t new_id, uint64_t new_price, uint64_t new_quantity)</td></tr>
 <tr class="memdesc:a937554e308537e4d05180ebf54b05966"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace the order with a similar order but different Id, price and quantity.  <a href="#a937554e308537e4d05180ebf54b05966">More...</a><br/></td></tr>
 <tr class="separator:a937554e308537e4d05180ebf54b05966"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -481,9 +484,9 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Error code </dd></dl>
-<dl><dt><b>Examples: </b></dt><dd><a class="el" href="matching_engine_8cpp-example.html#a30">matching_engine.cpp</a>.</dd>
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="matching_engine_8cpp-example.html#a31">matching_engine.cpp</a>.</dd>
 </dl>
-<p>Definition at line <a class="el" href="market__manager_8cpp_source.html#l00772">772</a> of file <a class="el" href="market__manager_8cpp_source.html">market_manager.cpp</a>.</p>
+<p>Definition at line <a class="el" href="market__manager_8cpp_source.html#l00788">788</a> of file <a class="el" href="market__manager_8cpp_source.html">market_manager.cpp</a>.</p>
 
 </div>
 </div>
@@ -565,9 +568,9 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Disable automatic matching. </p>
-<dl><dt><b>Examples: </b></dt><dd><a class="el" href="matching_engine_8cpp-example.html#a32">matching_engine.cpp</a>.</dd>
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="matching_engine_8cpp-example.html#a33">matching_engine.cpp</a>.</dd>
 </dl>
-<p>Definition at line <a class="el" href="market__manager_8h_source.html#l00174">174</a> of file <a class="el" href="market__manager_8h_source.html">market_manager.h</a>.</p>
+<p>Definition at line <a class="el" href="market__manager_8h_source.html#l00212">212</a> of file <a class="el" href="market__manager_8h_source.html">market_manager.h</a>.</p>
 
 </div>
 </div>
@@ -593,9 +596,9 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Enable automatic matching. </p>
-<dl><dt><b>Examples: </b></dt><dd><a class="el" href="matching_engine_8cpp-example.html#a31">matching_engine.cpp</a>.</dd>
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="matching_engine_8cpp-example.html#a32">matching_engine.cpp</a>.</dd>
 </dl>
-<p>Definition at line <a class="el" href="market__manager_8h_source.html#l00172">172</a> of file <a class="el" href="market__manager_8h_source.html">market_manager.h</a>.</p>
+<p>Definition at line <a class="el" href="market__manager_8h_source.html#l00210">210</a> of file <a class="el" href="market__manager_8h_source.html">market_manager.h</a>.</p>
 
 </div>
 </div>
@@ -633,7 +636,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Error code </dd></dl>
 
-<p>Definition at line <a class="el" href="market__manager_8cpp_source.html#l00831">831</a> of file <a class="el" href="market__manager_8cpp_source.html">market_manager.cpp</a>.</p>
+<p>Definition at line <a class="el" href="market__manager_8cpp_source.html#l00847">847</a> of file <a class="el" href="market__manager_8cpp_source.html">market_manager.cpp</a>.</p>
 
 </div>
 </div>
@@ -678,7 +681,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Error code </dd></dl>
 
-<p>Definition at line <a class="el" href="market__manager_8cpp_source.html#l00915">915</a> of file <a class="el" href="market__manager_8cpp_source.html">market_manager.cpp</a>.</p>
+<p>Definition at line <a class="el" href="market__manager_8cpp_source.html#l00934">934</a> of file <a class="el" href="market__manager_8cpp_source.html">market_manager.cpp</a>.</p>
 
 </div>
 </div>
@@ -810,7 +813,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Is automatic matching enabled? </p>
 
-<p>Definition at line <a class="el" href="market__manager_8h_source.html#l00170">170</a> of file <a class="el" href="market__manager_8h_source.html">market_manager.h</a>.</p>
+<p>Definition at line <a class="el" href="market__manager_8h_source.html#l00208">208</a> of file <a class="el" href="market__manager_8h_source.html">market_manager.h</a>.</p>
 
 </div>
 </div>
@@ -830,7 +833,69 @@ Public Member Functions</h2></td></tr>
 <p>Match crossed orders in all order books. </p>
 <p>Method will match all crossed orders in each order book. Buy orders will be matched with sell orders at arbitrage price starting from the top of the book. Matched orders will be executed with deleted form the order book. After the matching operation each order book will have the best bid price guarantied less than the best ask price! </p>
 
-<p>Definition at line <a class="el" href="market__manager_8cpp_source.html#l00999">999</a> of file <a class="el" href="market__manager_8cpp_source.html">market_manager.cpp</a>.</p>
+<p>Definition at line <a class="el" href="market__manager_8cpp_source.html#l01021">1021</a> of file <a class="el" href="market__manager_8cpp_source.html">market_manager.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a24a4ae0561e03e2f82ef6ae217814678"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86e">ErrorCode</a> CppTrader::Matching::MarketManager::MitigateOrder </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>new_price</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>new_quantity</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Mitigate the order. </p>
+<p>The in-flight mitigation functionality prevents an order from being filled for a quantity greater than the quantity requested by the user. It protects from the risk of a resting order being filled between the time an order modification is submitted and the time the order modification is processed and applied to the order.</p>
+<p><a class="el" href="struct_cpp_trader_1_1_matching_1_1_order.html" title="Order. ">Order</a> new quantity will be calculated in a following way: </p>
+<div class="fragment"><div class="line"><span class="keywordflow">if</span> (new_quantity &gt; oder.ExecutedQuantity)</div>
+<div class="line">{</div>
+<div class="line">    oder.Quantity = new_quantity;</div>
+<div class="line">    oder.LeavesQuantity = new_quantity - oder.ExecutedQuantity;</div>
+<div class="line"></div>
+<div class="line">    <span class="comment">// Order will be modified...</span></div>
+<div class="line">}</div>
+<div class="line"><span class="keywordflow">else</span></div>
+<div class="line">{</div>
+<div class="line">    oder.Quantity = new_quantity;</div>
+<div class="line">    oder.LeavesQuantity = 0;</div>
+<div class="line"></div>
+<div class="line">    <span class="comment">// Order will be canceled...</span></div>
+<div class="line">}</div>
+</div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>- <a class="el" href="struct_cpp_trader_1_1_matching_1_1_order.html" title="Order. ">Order</a> Id </td></tr>
+    <tr><td class="paramname">new_price</td><td>- <a class="el" href="struct_cpp_trader_1_1_matching_1_1_order.html" title="Order. ">Order</a> price to mitigate </td></tr>
+    <tr><td class="paramname">new_quantity</td><td>- <a class="el" href="struct_cpp_trader_1_1_matching_1_1_order.html" title="Order. ">Order</a> quantity to mitigate </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Error code </dd></dl>
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="matching_engine_8cpp-example.html#a29">matching_engine.cpp</a>.</dd>
+</dl>
+<p>Definition at line <a class="el" href="market__manager_8cpp_source.html#l00541">541</a> of file <a class="el" href="market__manager_8cpp_source.html">market_manager.cpp</a>.</p>
 
 </div>
 </div>
@@ -865,7 +930,10 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Modify the order. </p>
-<dl class="params"><dt>Parameters</dt><dd>
+<p><a class="el" href="struct_cpp_trader_1_1_matching_1_1_order.html" title="Order. ">Order</a> new quantity will be calculated in a following way: </p>
+<div class="fragment"><div class="line">oder.Quantity = new_quantity;</div>
+<div class="line">oder.LeavesQuantity = new_quantity;</div>
+</div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">id</td><td>- <a class="el" href="struct_cpp_trader_1_1_matching_1_1_order.html" title="Order. ">Order</a> Id </td></tr>
     <tr><td class="paramname">new_price</td><td>- <a class="el" href="struct_cpp_trader_1_1_matching_1_1_order.html" title="Order. ">Order</a> price to modify </td></tr>
@@ -1068,9 +1136,9 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Error code </dd></dl>
-<dl><dt><b>Examples: </b></dt><dd><a class="el" href="matching_engine_8cpp-example.html#a29">matching_engine.cpp</a>.</dd>
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="matching_engine_8cpp-example.html#a30">matching_engine.cpp</a>.</dd>
 </dl>
-<p>Definition at line <a class="el" href="market__manager_8cpp_source.html#l00641">641</a> of file <a class="el" href="market__manager_8cpp_source.html">market_manager.cpp</a>.</p>
+<p>Definition at line <a class="el" href="market__manager_8cpp_source.html#l00656">656</a> of file <a class="el" href="market__manager_8cpp_source.html">market_manager.cpp</a>.</p>
 
 </div>
 </div>
@@ -1108,7 +1176,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Error code </dd></dl>
 
-<p>Definition at line <a class="el" href="market__manager_8cpp_source.html#l00761">761</a> of file <a class="el" href="market__manager_8cpp_source.html">market_manager.cpp</a>.</p>
+<p>Definition at line <a class="el" href="market__manager_8cpp_source.html#l00777">777</a> of file <a class="el" href="market__manager_8cpp_source.html">market_manager.cpp</a>.</p>
 
 </div>
 </div>

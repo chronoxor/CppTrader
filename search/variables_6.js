@@ -3,7 +3,6 @@ var searchData=
   ['id',['Id',['../struct_cpp_trader_1_1_matching_1_1_order.html#ab1bdcd3d6bd3dce6d54d0c3bbdcaeeac',1,'CppTrader::Matching::Order::Id()'],['../struct_cpp_trader_1_1_matching_1_1_symbol.html#a14e7de4fd22c7faddcfc4ab6358dbb8c',1,'CppTrader::Matching::Symbol::Id()']]],
   ['imbalancedirection',['ImbalanceDirection',['../struct_cpp_trader_1_1_i_t_c_h_1_1_n_o_i_i_message.html#abd2f113d3c13aef73f558c908f514574',1,'CppTrader::ITCH::NOIIMessage']]],
   ['imbalanceshares',['ImbalanceShares',['../struct_cpp_trader_1_1_i_t_c_h_1_1_n_o_i_i_message.html#ad48413044be8f1f4cbaa4af1ed47efa4',1,'CppTrader::ITCH::NOIIMessage']]],
-  ['initialquantity',['InitialQuantity',['../struct_cpp_trader_1_1_matching_1_1_order.html#a801cceeb5a6e8468834b3ff6d75b137a',1,'CppTrader::Matching::Order']]],
   ['interestflag',['InterestFlag',['../struct_cpp_trader_1_1_i_t_c_h_1_1_r_p_i_i_message.html#ab67a18bfa991dc119f16f97108c63405',1,'CppTrader::ITCH::RPIIMessage']]],
   ['inverseindicator',['InverseIndicator',['../struct_cpp_trader_1_1_i_t_c_h_1_1_stock_directory_message.html#a704558a8ecb10a5e48195e74dd76ba13',1,'CppTrader::ITCH::StockDirectoryMessage']]],
   ['ipoflag',['IPOFlag',['../struct_cpp_trader_1_1_i_t_c_h_1_1_stock_directory_message.html#ae4c498af294ff3bdb325cde087ce6be8',1,'CppTrader::ITCH::StockDirectoryMessage']]],

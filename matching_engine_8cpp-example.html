@@ -583,6 +583,27 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line">    std::cerr &lt;&lt; <span class="stringliteral">&quot;Invalid &#39;modify order&#39; command: &quot;</span> &lt;&lt; command &lt;&lt; std::endl;</div>
 <div class="line">}</div>
 <div class="line"></div>
+<div class="line"><span class="keywordtype">void</span> MitigateOrder(<a class="code" href="class_cpp_trader_1_1_matching_1_1_market_manager.html">MarketManager</a>&amp; market, <span class="keyword">const</span> std::string&amp; command)</div>
+<div class="line">{</div>
+<div class="line">    <span class="keyword">static</span> std::regex pattern(<span class="stringliteral">&quot;^mitigate order (\\d+) (\\d+) (\\d+)$&quot;</span>);</div>
+<div class="line">    std::smatch match;</div>
+<div class="line"></div>
+<div class="line">    <span class="keywordflow">if</span> (std::regex_search(command, match, pattern))</div>
+<div class="line">    {</div>
+<div class="line">        uint64_t <span class="keywordtype">id</span> = std::stoi(match[1]);</div>
+<div class="line">        uint64_t new_price = std::stoi(match[2]);</div>
+<div class="line">        uint64_t new_quantity = std::stoi(match[3]);</div>
+<div class="line"></div>
+<div class="line">        <a class="code" href="namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86e">ErrorCode</a> result = market.<a name="a29"></a><a class="code" href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a24a4ae0561e03e2f82ef6ae217814678">MitigateOrder</a>(<span class="keywordtype">id</span>, new_price, new_quantity);</div>
+<div class="line">        <span class="keywordflow">if</span> (result != <a class="code" href="namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86eae0aa021e21dddbd6d8cecec71e9cf564">ErrorCode::OK</a>)</div>
+<div class="line">            std::cerr &lt;&lt; <span class="stringliteral">&quot;Failed &#39;mitigate order&#39; command: &quot;</span> &lt;&lt; result &lt;&lt; std::endl;</div>
+<div class="line"></div>
+<div class="line">        <span class="keywordflow">return</span>;</div>
+<div class="line">    }</div>
+<div class="line"></div>
+<div class="line">    std::cerr &lt;&lt; <span class="stringliteral">&quot;Invalid &#39;mitigate order&#39; command: &quot;</span> &lt;&lt; command &lt;&lt; std::endl;</div>
+<div class="line">}</div>
+<div class="line"></div>
 <div class="line"><span class="keywordtype">void</span> ReplaceOrder(<a class="code" href="class_cpp_trader_1_1_matching_1_1_market_manager.html">MarketManager</a>&amp; market, <span class="keyword">const</span> std::string&amp; command)</div>
 <div class="line">{</div>
 <div class="line">    <span class="keyword">static</span> std::regex pattern(<span class="stringliteral">&quot;^replace order (\\d+) (\\d+) (\\d+) (\\d+)$&quot;</span>);</div>
@@ -595,7 +616,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line">        uint64_t new_price = std::stoi(match[3]);</div>
 <div class="line">        uint64_t new_quantity = std::stoi(match[4]);</div>
 <div class="line"></div>
-<div class="line">        <a class="code" href="namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86e">ErrorCode</a> result = market.<a name="a29"></a><a class="code" href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a937554e308537e4d05180ebf54b05966">ReplaceOrder</a>(<span class="keywordtype">id</span>, new_id, new_price, new_quantity);</div>
+<div class="line">        <a class="code" href="namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86e">ErrorCode</a> result = market.<a name="a30"></a><a class="code" href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a937554e308537e4d05180ebf54b05966">ReplaceOrder</a>(<span class="keywordtype">id</span>, new_id, new_price, new_quantity);</div>
 <div class="line">        <span class="keywordflow">if</span> (result != <a class="code" href="namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86eae0aa021e21dddbd6d8cecec71e9cf564">ErrorCode::OK</a>)</div>
 <div class="line">            std::cerr &lt;&lt; <span class="stringliteral">&quot;Failed &#39;replace order&#39; command: &quot;</span> &lt;&lt; result &lt;&lt; std::endl;</div>
 <div class="line"></div>
@@ -614,7 +635,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line">    {</div>
 <div class="line">        uint64_t <span class="keywordtype">id</span> = std::stoi(match[1]);</div>
 <div class="line"></div>
-<div class="line">        <a class="code" href="namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86e">ErrorCode</a> result = market.<a name="a30"></a><a class="code" href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a4bd22c0b638edcc5b543210b8d2dcb83">DeleteOrder</a>(<span class="keywordtype">id</span>);</div>
+<div class="line">        <a class="code" href="namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86e">ErrorCode</a> result = market.<a name="a31"></a><a class="code" href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a4bd22c0b638edcc5b543210b8d2dcb83">DeleteOrder</a>(<span class="keywordtype">id</span>);</div>
 <div class="line">        <span class="keywordflow">if</span> (result != <a class="code" href="namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86eae0aa021e21dddbd6d8cecec71e9cf564">ErrorCode::OK</a>)</div>
 <div class="line">            std::cerr &lt;&lt; <span class="stringliteral">&quot;Failed &#39;delete order&#39; command: &quot;</span> &lt;&lt; result &lt;&lt; std::endl;</div>
 <div class="line"></div>
@@ -652,6 +673,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line">            std::cout &lt;&lt; <span class="stringliteral">&quot;add trailing stop-limit {Side} {Id} {SymbolId} {StopPrice} {Price} {Quantity} {TrailingDistance} {TrailingStep} - Add a new trailing stop-limit order of {Type} (buy/sell) with {Id}, {SymbolId}, {StopPrice}, {Price}, {Quantity}, {TrailingDistance} and {TrailingStep}&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line">            std::cout &lt;&lt; <span class="stringliteral">&quot;reduce order {Id} {Quantity} - Reduce the order with {Id} by the given {Quantity}&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line">            std::cout &lt;&lt; <span class="stringliteral">&quot;modify order {Id} {NewPrice} {NewQuantity} - Modify the order with {Id} and set {NewPrice} and {NewQuantity}&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line">            std::cout &lt;&lt; <span class="stringliteral">&quot;mitigate order {Id} {NewPrice} {NewQuantity} - Mitigate the order with {Id} and set {NewPrice} and {NewQuantity}&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line">            std::cout &lt;&lt; <span class="stringliteral">&quot;replace order {Id} {NewId} {NewPrice} {NewQuantity} - Replace the order with {Id} and set {NewId}, {NewPrice} and {NewQuantity}&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line">            std::cout &lt;&lt; <span class="stringliteral">&quot;delete order {Id} - Delete the order with {Id}&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line">            std::cout &lt;&lt; <span class="stringliteral">&quot;exit/quit - Exit the program&quot;</span> &lt;&lt; std::endl;</div>
@@ -661,9 +683,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line">        <span class="keywordflow">else</span> <span class="keywordflow">if</span> ((line.find(<span class="stringliteral">&quot;#&quot;</span>) == 0) || (line == <span class="stringliteral">&quot;&quot;</span>))</div>
 <div class="line">            <span class="keywordflow">continue</span>;</div>
 <div class="line">        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (line == <span class="stringliteral">&quot;enable matching&quot;</span>)</div>
-<div class="line">            market.<a name="a31"></a><a class="code" href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a4bd7f531ee55fdd76974d75115e18687">EnableMatching</a>();</div>
+<div class="line">            market.<a name="a32"></a><a class="code" href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a4bd7f531ee55fdd76974d75115e18687">EnableMatching</a>();</div>
 <div class="line">        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (line == <span class="stringliteral">&quot;disable matching&quot;</span>)</div>
-<div class="line">            market.<a name="a32"></a><a class="code" href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a06930138a5a90d2f8f79ddeb3941d286">DisableMatching</a>();</div>
+<div class="line">            market.<a name="a33"></a><a class="code" href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a06930138a5a90d2f8f79ddeb3941d286">DisableMatching</a>();</div>
 <div class="line">        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (line.find(<span class="stringliteral">&quot;add symbol&quot;</span>) != std::string::npos)</div>
 <div class="line">            AddSymbol(market, line);</div>
 <div class="line">        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (line.find(<span class="stringliteral">&quot;delete symbol&quot;</span>) != std::string::npos)</div>
@@ -696,6 +718,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line">            ReduceOrder(market, line);</div>
 <div class="line">        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (line.find(<span class="stringliteral">&quot;modify order&quot;</span>) != std::string::npos)</div>
 <div class="line">            ModifyOrder(market, line);</div>
+<div class="line">        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (line.find(<span class="stringliteral">&quot;mitigate order&quot;</span>) != std::string::npos)</div>
+<div class="line">            MitigateOrder(market, line);</div>
 <div class="line">        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (line.find(<span class="stringliteral">&quot;replace order&quot;</span>) != std::string::npos)</div>
 <div class="line">            ReplaceOrder(market, line);</div>
 <div class="line">        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (line.find(<span class="stringliteral">&quot;delete order&quot;</span>) != std::string::npos)</div>
