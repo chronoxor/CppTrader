@@ -53,7 +53,7 @@ install:
   - if "%type%"=="Cygwin" appveyor DownloadFile "http://cygwin.com/setup-x86_64.exe" -FileName "C:\cygwin64\setup-x86_64.exe"
   - if "%type%"=="Cygwin" C:\cygwin64\setup-x86_64.exe --quiet-mode --no-shortcuts --upgrade-also --root "C:\cygwin64" --local-package-dir "C:\cache\cygwin" --packages cmake,automake,make,gcc-core,gcc-g++,doxygen,graphviz
   # MinGW
-  - if "%type%"=="MinGW" if not exist "C:\mingw.7z" appveyor-retry appveyor DownloadFile "http://downloads.sourceforge.net/mingw-w64/x86_64-6.3.0-release-posix-seh-rt_v5-rev1.7z" -FileName "C:\mingw.7z"
+  - if "%type%"=="MinGW" if not exist "C:\mingw.7z" appveyor-retry appveyor DownloadFile "http://downloads.sourceforge.net/mingw-w64/x86_64-7.2.0-release-posix-seh-rt_v5-rev0.7z" -FileName "C:\mingw.7z"
   - if "%type%"=="MinGW" 7z x -y -oC:\ "C:\mingw.7z" > nul
   - if "%type%"=="MinGW" set PATH=C:\mingw64\bin;%PATH:C:\Program Files\Git\usr\bin;=%
   - if "%type%"=="MinGW" set INCLUDE=C:\mingw64\x86_64-w64-mingw32\include;%INCLUDE%
@@ -61,7 +61,6 @@ install:
   - if "%type%"=="VisualStudio" set PATH=C:\Program Files\MiKTeX 2.9\miktex\bin\x64;C:\Program Files\gs\gs9.22\bin;%PATH%
   - if "%type%"=="VisualStudio" set INCLUDE=C:\Program Files (x86)\Windows Kits\10\Include\10.0.15063.0\um;%INCLUDE%
   - if "%type%"=="VisualStudio" set LIB=C:\Program Files (x86)\Windows Kits\10\Lib\10.0.15063.0\um\x64;%LIB%
-  #- if "%type%"=="VisualStudio" copy "C:\Program Files\gs\gs9.22\bin\gswin64c.exe" "C:\Program Files\gs\gs9.22\bin\gswin32c.exe"
   # git
   - '%command% "cmake --version"'
   - '%command% "git config --global user.name "AppVeyor""'
