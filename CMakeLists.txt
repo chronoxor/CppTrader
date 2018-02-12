@@ -25,9 +25,6 @@ include(SetCompilerFeatures)
 include(SetCompilerWarnings)
 include(SetPlatformFeatures)
 
-# Modules
-add_subdirectory("modules")
-
 # External packages
 find_package(Threads REQUIRED)
 if(UNIX)
@@ -40,6 +37,9 @@ if(WIN32)
   find_package(DbgHelp)
   find_package(Userenv)
 endif()
+
+# Modules
+add_subdirectory("modules")
 
 # Link libraries
 list(APPEND LINKLIBS Threads::Threads)
