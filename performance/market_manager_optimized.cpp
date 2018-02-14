@@ -9,7 +9,7 @@
 #include "system/stream.h"
 #include "time/timestamp.h"
 
-#include <cpp-optparse/OptionParser.h>
+#include <OptionParser.h>
 
 #include <algorithm>
 #include <vector>

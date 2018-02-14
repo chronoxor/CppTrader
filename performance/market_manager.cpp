@@ -10,7 +10,7 @@
 #include "system/stream.h"
 #include "time/timestamp.h"
 
-#include <cpp-optparse/OptionParser.h>
+#include <OptionParser.h>
 
 using namespace CppCommon;
 using namespace CppTrader::ITCH;
