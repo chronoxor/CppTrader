@@ -6,6 +6,10 @@
 	path = cmake
 	url = https://github.com/chronoxor/CppCMakeScripts.git
 	branch = master
+[submodule "modules/Catch2"]
+	path = modules/Catch2
+	url = https://github.com/catchorg/Catch2.git
+	branch = master
 [submodule "modules/CppBenchmark"]
 	path = modules/CppBenchmark
 	url = https://github.com/chronoxor/CppBenchmark.git
