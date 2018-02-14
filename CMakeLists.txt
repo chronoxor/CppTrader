@@ -100,7 +100,7 @@ if(NOT CPPTRADER_MODULE)
   # Tests
   file(GLOB TESTS_SOURCE_FILES "tests/*.cpp")
   set_source_files_properties(${TESTS_SOURCE_FILES} PROPERTIES COMPILE_FLAGS "${PEDANTIC_COMPILE_FLAGS}")
-  add_executable(cpptrader-tests ${CATCH2} ${TESTS_SOURCE_FILES})
+  add_executable(cpptrader-tests ${Catch2} ${TESTS_SOURCE_FILES})
   target_link_libraries(cpptrader-tests ${LINKLIBS})
   set_target_properties(cpptrader-tests PROPERTIES FOLDER tests)
   list(APPEND INSTALL_TARGETS cpptrader-tests)
