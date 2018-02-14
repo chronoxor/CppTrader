@@ -2,7 +2,7 @@
 // Created by Ivan Shynkarenka on 24.07.2017
 //
 
-#include "catch.hpp"
+#include "test.h"
 
 #include "trader/providers/nasdaq/itch_handler.h"
 

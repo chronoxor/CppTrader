@@ -2,7 +2,7 @@
 // Created by Ivan Shynkarenka on 15.08.2017
 //
 
-#include "catch.hpp"
+#include "test.h"
 
 #include "trader/matching/market_manager.h"
 
