@@ -44,7 +44,6 @@ matrix:
 # Using Trusty environment
 sudo: required
 dist: trusty
-group: edge
 
 # Branches to build
 branches:
