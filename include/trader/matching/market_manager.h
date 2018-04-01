@@ -48,11 +48,11 @@ public:
     MarketManager();
     MarketManager(MarketHandler& market_handler);
     MarketManager(const MarketManager&) = delete;
-    MarketManager(MarketManager&&) = default;
+    MarketManager(MarketManager&&) noexcept = default;
     ~MarketManager();
 
     MarketManager& operator=(const MarketManager&) = delete;
-    MarketManager& operator=(MarketManager&&) = default;
+    MarketManager& operator=(MarketManager&&) noexcept = default;
 
     //! Get the symbols container
     const Symbols& symbols() const noexcept { return _symbols; }
