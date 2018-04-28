@@ -80,7 +80,7 @@ private:
 class MyITCHHandler : public ITCHHandler
 {
 public:
-    MyITCHHandler(MarketManager& market)
+    explicit MyITCHHandler(MarketManager& market)
         : _market(market),
           _messages(0),
           _errors(0)

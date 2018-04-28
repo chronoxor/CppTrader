@@ -18,7 +18,7 @@ inline std::ostream& operator<<(std::ostream& stream, OrderSide side)
         case OrderSide::SELL:
             return stream << "SELL";
         default:
-            return stream << "<\?\?\?>";
+            return stream << "<unknown>";
     }
 }
 
@@ -39,7 +39,7 @@ inline std::ostream& operator<<(std::ostream& stream, OrderType type)
         case OrderType::TRAILING_STOP_LIMIT:
             return stream << "TRAILING-STOP-LIMIT";
         default:
-            return stream << "<\?\?\?>";
+            return stream << "<unknown>";
     }
 }
 
@@ -56,7 +56,7 @@ inline std::ostream& operator<<(std::ostream& stream, OrderTimeInForce tif)
         case OrderTimeInForce::AON:
             return stream << "AON";
         default:
-            return stream << "<\?\?\?>";
+            return stream << "<unknown>";
     }
 }
 

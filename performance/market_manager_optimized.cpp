@@ -46,8 +46,8 @@ struct Level
 class LevelPool
 {
 public:
-    LevelPool();
-    LevelPool(size_t reserve) { _allocated.reserve(reserve); }
+    LevelPool() = default;
+    explicit LevelPool(size_t reserve) { _allocated.reserve(reserve); }
 
     Level& operator[](size_t index) { return _allocated[index]; }
 
@@ -58,7 +58,7 @@ public:
         if (_free.empty())
         {
             size_t index = _allocated.size();
-            _allocated.push_back(Level());
+            _allocated.emplace_back();
             return index;
         }
         else
@@ -375,17 +375,17 @@ private:
 class MarketManagerOptimized
 {
 public:
-    MarketManagerOptimized(MarketHandler& market_handler) : _market_handler(market_handler)
+    explicit MarketManagerOptimized(MarketHandler& market_handler) : _market_handler(market_handler)
     {
         _symbols.resize(10000);
         _order_books.resize(10000);
         _orders.resize(300000000);
     }
     MarketManagerOptimized(const MarketManagerOptimized&) = delete;
-    MarketManagerOptimized(MarketManagerOptimized&&) = default;
+    MarketManagerOptimized(MarketManagerOptimized&&) noexcept = default;
 
     MarketManagerOptimized& operator=(const MarketManagerOptimized&) = delete;
-    MarketManagerOptimized& operator=(MarketManagerOptimized&&) = default;
+    MarketManagerOptimized& operator=(MarketManagerOptimized&&) noexcept = default;
 
     const Symbol* GetSymbol(uint16_t id) const noexcept { return &_symbols[id]; }
     const OrderBook* GetOrderBook(uint16_t id) const noexcept { return &_order_books[id]; }
@@ -666,7 +666,7 @@ private:
 class MyITCHHandler : public ITCHHandler
 {
 public:
-    MyITCHHandler(MarketManagerOptimized& market)
+    explicit MyITCHHandler(MarketManagerOptimized& market)
         : _market(market),
           _messages(0),
           _errors(0)

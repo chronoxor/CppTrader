@@ -36,7 +36,7 @@ inline std::ostream& operator<<(std::ostream& stream, ErrorCode error)
         case ErrorCode::ORDER_QUANTITY_INVALID:
             return stream << "ORDER_QUANTITY_INVALID";
         default:
-            return stream << "<\?\?\?>";
+            return stream << "<unknown>";
     }
 }
 

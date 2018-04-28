@@ -22,7 +22,7 @@ inline std::ostream& operator<<(std::ostream& stream, UpdateType type)
         case UpdateType::DELETE:
             return stream << "DELETE";
         default:
-            return stream << "<\?\?\?>";
+            return stream << "<unknown>";
     }
 }
 

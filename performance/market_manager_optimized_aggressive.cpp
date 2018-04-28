@@ -26,8 +26,8 @@ struct Level
 class LevelPool
 {
 public:
-    LevelPool();
-    LevelPool(size_t reserve) { _allocated.reserve(reserve); }
+    LevelPool() = default;
+    explicit LevelPool(size_t reserve) { _allocated.reserve(reserve); }
 
     Level& operator[](size_t index) { return _allocated[index]; }
 
@@ -38,7 +38,7 @@ public:
         if (_free.empty())
         {
             size_t index = _allocated.size();
-            _allocated.push_back(Level());
+            _allocated.emplace_back();
             return index;
         }
         else
@@ -363,7 +363,7 @@ private:
 class MyITCHHandler : public ITCHHandler
 {
 public:
-    MyITCHHandler(MarketManagerOptimized& market)
+    explicit MyITCHHandler(MarketManagerOptimized& market)
         : _market(market),
           _messages(0),
           _errors(0)

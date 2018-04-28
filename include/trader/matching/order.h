@@ -50,7 +50,7 @@ std::ostream& operator<<(std::ostream& stream, OrderSide side);
     \li <b>Limit order</b> - A limit order is an order to buy or sell a stock at a specific
         price or better. A buy limit order can only be executed at the limit price or lower,
         and a sell limit order can only be executed at the limit price or higher. A limit
-        order is not guaranteed to execute. A limit order can only be filled if the stock’s
+        order is not guaranteed to execute. A limit order can only be filled if the stock's
         market price reaches the limit price. While limit orders do not guarantee execution,
         they help ensure that an investor does not pay more than a predetermined price for a
         stock.

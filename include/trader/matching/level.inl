@@ -18,7 +18,7 @@ inline std::ostream& operator<<(std::ostream& stream, LevelType type)
         case LevelType::ASK:
             return stream << "ASK";
         default:
-            return stream << "<\?\?\?>";
+            return stream << "<unknown>";
     }
 }
 
