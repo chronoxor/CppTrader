@@ -8,7 +8,7 @@
 
 C++ Trader is a set of components for building a Trading Platform.
 
-[CppTrader API reference](http://chronoxor.github.io/CppTrader/index.html)
+[CppTrader API reference](https://chronoxor.github.io/CppTrader/index.html)
 
 # Contents
   * [Features](#features)
@@ -39,15 +39,15 @@ C++ Trader is a set of components for building a Trading Platform.
 * Linux
 * OSX
 * Windows 7 / Windows 10
-* [CMake](http://www.cmake.org)
+* [CMake](https://www.cmake.org)
 * [GIT](https://git-scm.com)
 * [GCC](https://gcc.gnu.org)
 
 Optional:
-* [Clang](http://clang.llvm.org)
+* [Clang](https://clang.llvm.org)
 * [Clion](https://www.jetbrains.com/clion)
 * [Cygwin](https://cygwin.com)
-* [MinGW](http://mingw-w64.org/doku.php)
+* [MinGW](https://mingw-w64.org/doku.php)
 * [Visual Studio](https://www.visualstudio.com)
 
 # How to build?
@@ -114,7 +114,7 @@ Process configuaraion: release
 Benchmark measures the performance of the [NASDAQ ITCH handler](https://github.com/chronoxor/CppTrader/blob/master/include/trader/providers/nasdaq/itch_handler.h).
 It shows how fast it can parse and handle ITCH messages from the input stream.
 
-Sample ITCH file could be downloaded from ftp://emi.nasdaq.com/ITCH
+Sample ITCH file could be downloaded from [ftp://emi.nasdaq.com/ITCH](ftp://emi.nasdaq.com/ITCH)
 
 * [cpptrader-performance-itch_handler](https://github.com/chronoxor/CppTrader/blob/master/performance/itch_handler.cpp) < 01302017.NASDAQ_ITCH50
 ```
@@ -134,7 +134,7 @@ Benchmark measures the performance of the [Market manager](https://github.com/ch
 It shows how fast it can handle orders operations (add, reduce, modify, delete,
 execute) and build an order book.
 
-Sample ITCH file could be downloaded from ftp://emi.nasdaq.com/ITCH
+Sample ITCH file could be downloaded from [ftp://emi.nasdaq.com/ITCH](ftp://emi.nasdaq.com/ITCH)
 
 * [cpptrader-performance-market_manager](https://github.com/chronoxor/CppTrader/blob/master/performance/market_manager.cpp) < 01302017.NASDAQ_ITCH50
 ```
@@ -180,7 +180,7 @@ market prices, but has a penalty for orders with far from market prices!
 * Price levels are taken from the pool, which is implemented using a
 pre-allocated array with O(1) for create and delete each price level.
 
-Sample ITCH file could be downloaded from ftp://emi.nasdaq.com/ITCH
+Sample ITCH file could be downloaded from [ftp://emi.nasdaq.com/ITCH](ftp://emi.nasdaq.com/ITCH)
 
 * [cpptrader-performance-market_manager_optimized](https://github.com/chronoxor/CppTrader/blob/master/performance/market_manager_optimized.cpp) < 01302017.NASDAQ_ITCH50
 ```
@@ -223,7 +223,7 @@ bids and negative values for asks.
 * Market handler is not used. No way to receive notifications from the Market
 manager.
 
-Sample ITCH file could be downloaded from ftp://emi.nasdaq.com/ITCH
+Sample ITCH file could be downloaded from [ftp://emi.nasdaq.com/ITCH](ftp://emi.nasdaq.com/ITCH)
 
 * [cpptrader-performance-market_manager_optimized_aggressive](https://github.com/chronoxor/CppTrader/blob/master/performance/market_manager_optimized_aggressive.cpp) < 01302017.NASDAQ_ITCH50
 ```
