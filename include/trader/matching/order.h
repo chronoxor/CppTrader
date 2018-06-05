@@ -90,7 +90,7 @@ std::ostream& operator<<(std::ostream& stream, OrderType type);
 //! Order Time in Force
 /*!
     Possible values:
-    \li <b>Good-Til-Cancelled (GTC)</b> - A GTC order is an order to buy or sell a stock that
+    \li <b>Good-Till-Cancelled (GTC)</b> - A GTC order is an order to buy or sell a stock that
         lasts until the order is completed or cancelled.
     \li <b>Immediate-Or-Cancel (IOC)</b> - An IOC order is an order to buy or sell a stock that
         must be executed immediately. Any portion of the order that cannot be filled immediately
@@ -104,7 +104,7 @@ std::ostream& operator<<(std::ostream& stream, OrderType type);
 */
 enum class OrderTimeInForce : uint8_t
 {
-    GTC,    //!< Good-Til-Cancelled
+    GTC,    //!< Good-Till-Cancelled
     IOC,    //!< Immediate-Or-Cancel
     FOK,    //!< Fill-Or-Kill
     AON     //!< All-Or-None
@@ -225,7 +225,7 @@ struct Order
     //! Is the order with sell side?
     bool IsSell() const noexcept { return Side == OrderSide::SELL; }
 
-    //! Is the 'Good-Til-Cancelled' order?
+    //! Is the 'Good-Till-Cancelled' order?
     bool IsGTC() const noexcept { return TimeInForce == OrderTimeInForce::GTC; }
     //! Is the 'Immediate-Or-Cancel' order?
     bool IsIOC() const noexcept { return TimeInForce == OrderTimeInForce::IOC; }
