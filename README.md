@@ -125,7 +125,7 @@ Errors: 0
 Processing time: 6.831 s
 Total ITCH messages: 283238832
 ITCH message latency: 24 ns
-ITCH message throughput: 41460256 messages per second
+ITCH message throughput: 41460256 msg/s
 ```
 
 ## Market manager
@@ -145,10 +145,10 @@ Errors: 0
 Processing time: 1:27.616 m
 Total ITCH messages: 283238832
 ITCH message latency: 309 ns
-ITCH message throughput: 3232727 messages per second
+ITCH message throughput: 3232727 msg/s
 Total market updates: 631217516
 Market update latency: 138 ns
-Market update throughput: 7204359 updates per second
+Market update throughput: 7204359 upd/s
 
 Market statistics:
 Max symbols: 8371
@@ -191,10 +191,10 @@ Errors: 0
 Processing time: 34.150 s
 Total ITCH messages: 283238832
 ITCH message latency: 120 ns
-ITCH message throughput: 8293747 messages per second
+ITCH message throughput: 8293747 msg/s
 Total market updates: 631217516
 Market update latency: 54 ns
-Market update throughput: 18483195 updates per second
+Market update throughput: 18483195 upd/s
 
 Market statistics:
 Max symbols: 8371
@@ -233,5 +233,5 @@ Errors: 0
 Processing time: 29.047 s
 Total ITCH messages: 283238832
 ITCH messages latency: 102 ns
-ITCH messages throughput: 9751044 messages per second
+ITCH messages throughput: 9751044 msg/s
 ```
