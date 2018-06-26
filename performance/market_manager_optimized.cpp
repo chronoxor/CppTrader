@@ -26,7 +26,7 @@ struct Symbol
     Symbol() noexcept : Id(0)
     { std::memset(Name, 0, sizeof(Name)); }
     Symbol(uint16_t id, const char name[8]) noexcept : Id(id)
-    { std::strncpy(Name, name, sizeof(Name)); }
+    { std::memcpy(Name, name, sizeof(Name)); }
 };
 
 enum class LevelType : uint8_t

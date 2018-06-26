@@ -12,7 +12,7 @@ namespace Matching {
 inline Symbol::Symbol(uint32_t id, const char name[8]) noexcept
     : Id(id)
 {
-    std::strncpy(Name, name, sizeof(Name));
+    std::memcpy(Name, name, sizeof(Name));
 }
 
 inline std::ostream& operator<<(std::ostream& stream, const Symbol& symbol)
