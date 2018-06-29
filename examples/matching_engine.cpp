@@ -57,9 +57,12 @@ void AddSymbol(MarketManager& market, const std::string& command)
     if (std::regex_search(command, match, pattern))
     {
         uint32_t id = std::stoi(match[1]);
-        std::string name = match[2];
 
-        Symbol symbol(id, name.c_str());
+        char name[8];
+        std::string sname = match[2];
+        std::memcpy(name, sname.data(), std::min(sname.size(), sizeof(name)));
+
+        Symbol symbol(id, name);
 
         ErrorCode result = market.AddSymbol(symbol);
         if (result != ErrorCode::OK)
@@ -99,7 +102,10 @@ void AddOrderBook(MarketManager& market, const std::string& command)
     {
         uint32_t id = std::stoi(match[1]);
 
-        Symbol symbol(id, "");
+        char name[8];
+        std::memset(name, 0, sizeof(name));
+
+        Symbol symbol(id, name);
 
         ErrorCode result = market.AddOrderBook(symbol);
         if (result != ErrorCode::OK)

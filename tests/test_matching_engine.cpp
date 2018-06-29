@@ -106,7 +106,8 @@ TEST_CASE("Automatic matching - market order", "[CppTrader][Matching]")
     MarketManager market;
 
     // Prepare symbol & order book
-    Symbol symbol = { 0, "test" };
+    const char name[8] = "test";
+    Symbol symbol = { 0, name };
     market.AddSymbol(symbol);
     market.AddOrderBook(symbol);
 
@@ -166,7 +167,8 @@ TEST_CASE("Automatic matching - limit order", "[CppTrader][Matching]")
     MarketManager market;
 
     // Prepare symbol & order book
-    Symbol symbol = { 0, "test" };
+    const char name[8] = "test";
+    Symbol symbol = { 0, name };
     market.AddSymbol(symbol);
     market.AddOrderBook(symbol);
 
@@ -231,7 +233,8 @@ TEST_CASE("Automatic matching - 'Immediate-Or-Cancel' limit order", "[CppTrader]
     MarketManager market;
 
     // Prepare symbol & order book
-    Symbol symbol = { 0, "test" };
+    const char name[8] = "test";
+    Symbol symbol = { 0, name };
     market.AddSymbol(symbol);
     market.AddOrderBook(symbol);
 
@@ -256,7 +259,8 @@ TEST_CASE("Automatic matching - 'Fill-Or-Kill' limit order (filled)", "[CppTrade
     MarketManager market;
 
     // Prepare symbol & order book
-    Symbol symbol = { 0, "test" };
+    const char name[8] = "test";
+    Symbol symbol = { 0, name };
     market.AddSymbol(symbol);
     market.AddOrderBook(symbol);
 
@@ -281,7 +285,8 @@ TEST_CASE("Automatic matching - 'Fill-Or-Kill' limit order (killed)", "[CppTrade
     MarketManager market;
 
     // Prepare symbol & order book
-    Symbol symbol = { 0, "test" };
+    const char name[8] = "test";
+    Symbol symbol = { 0, name };
     market.AddSymbol(symbol);
     market.AddOrderBook(symbol);
 
@@ -306,7 +311,8 @@ TEST_CASE("Automatic matching - 'All-Or-None' limit order several levels full ma
     MarketManager market;
 
     // Prepare symbol & order book
-    Symbol symbol = { 0, "test" };
+    const char name[8] = "test";
+    Symbol symbol = { 0, name };
     market.AddSymbol(symbol);
     market.AddOrderBook(symbol);
 
@@ -332,7 +338,8 @@ TEST_CASE("Automatic matching - 'All-Or-None' limit order several levels partial
     MarketManager market;
 
     // Prepare symbol & order book
-    Symbol symbol = { 0, "test" };
+    const char name[8] = "test";
+    Symbol symbol = { 0, name };
     market.AddSymbol(symbol);
     market.AddOrderBook(symbol);
 
@@ -363,7 +370,8 @@ TEST_CASE("Automatic matching - 'All-Or-None' limit order complex matching", "[C
     MarketManager market;
 
     // Prepare symbol & order book
-    Symbol symbol = { 0, "test" };
+    const char name[8] = "test";
+    Symbol symbol = { 0, name };
     market.AddSymbol(symbol);
     market.AddOrderBook(symbol);
 
@@ -391,7 +399,8 @@ TEST_CASE("Automatic matching - 'Hidden' limit order", "[CppTrader][Matching]")
     MarketManager market;
 
     // Prepare symbol & order book
-    Symbol symbol = { 0, "test" };
+    const char name[8] = "test";
+    Symbol symbol = { 0, name };
     market.AddSymbol(symbol);
     market.AddOrderBook(symbol);
 
@@ -418,7 +427,8 @@ TEST_CASE("Automatic matching - stop order", "[CppTrader][Matching]")
     MarketManager market;
 
     // Prepare symbol & order book
-    Symbol symbol = { 0, "test" };
+    const char name[8] = "test";
+    Symbol symbol = { 0, name };
     market.AddSymbol(symbol);
     market.AddOrderBook(symbol);
 
@@ -463,7 +473,8 @@ TEST_CASE("Automatic matching - stop order with an empty market", "[CppTrader][M
     MarketManager market;
 
     // Prepare symbol & order book
-    Symbol symbol = { 0, "test" };
+    const char name[8] = "test";
+    Symbol symbol = { 0, name };
     market.AddSymbol(symbol);
     market.AddOrderBook(symbol);
 
@@ -488,7 +499,8 @@ TEST_CASE("Automatic matching - stop-limit order", "[CppTrader][Matching]")
     MarketManager market;
 
     // Prepare symbol & order book
-    Symbol symbol = { 0, "test" };
+    const char name[8] = "test";
+    Symbol symbol = { 0, name };
     market.AddSymbol(symbol);
     market.AddOrderBook(symbol);
 
@@ -537,7 +549,8 @@ TEST_CASE("Automatic matching - stop-limit order with an empty market", "[CppTra
     MarketManager market;
 
     // Prepare symbol & order book
-    Symbol symbol = { 0, "test" };
+    const char name[8] = "test";
+    Symbol symbol = { 0, name };
     market.AddSymbol(symbol);
     market.AddOrderBook(symbol);
 
@@ -564,7 +577,8 @@ TEST_CASE("Automatic matching - trailing stop order", "[CppTrader][Matching]")
     MarketManager market;
 
     // Prepare symbol & order book
-    Symbol symbol = { 0, "test" };
+    const char name[8] = "test";
+    Symbol symbol = { 0, name };
     market.AddSymbol(symbol);
     market.AddOrderBook(symbol);
 
@@ -627,7 +641,8 @@ TEST_CASE("In-Flight Mitigation", "[CppTrader][Matching]")
     MarketManager market;
 
     // Prepare symbol & order book
-    Symbol symbol = { 0, "test" };
+    const char name[8] = "test";
+    Symbol symbol = { 0, name };
     market.AddSymbol(symbol);
     market.AddOrderBook(symbol);
 
@@ -668,7 +683,8 @@ TEST_CASE("Manual matching", "[CppTrader][Matching]")
     MarketManager market;
 
     // Prepare symbol & order book
-    Symbol symbol = { 0, "test" };
+    const char name[8] = "test";
+    Symbol symbol = { 0, name };
     market.AddSymbol(symbol);
     market.AddOrderBook(symbol);
 
