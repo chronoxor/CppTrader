@@ -81,7 +81,8 @@ public:
     //! Get the order book trailing sell stop orders container
     const Levels& trailing_sell_stop() const noexcept { return _trailing_sell_stop; }
 
-    friend std::ostream& operator<<(std::ostream& stream, const OrderBook& order_book);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const OrderBook& order_book);
 
     //! Get the order book bid price level with the given price
     /*!

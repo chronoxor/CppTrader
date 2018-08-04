@@ -31,7 +31,8 @@ enum class ErrorCode : uint8_t
     ORDER_PARAMETER_INVALID,
     ORDER_QUANTITY_INVALID
 };
-std::ostream& operator<<(std::ostream& stream, ErrorCode error);
+template <class TOutputStream>
+TOutputStream& operator<<(TOutputStream& stream, ErrorCode error);
 
 } // namespace Matching
 } // namespace CppTrader

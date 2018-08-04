@@ -15,11 +15,13 @@ inline Symbol::Symbol(uint32_t id, const char name[8]) noexcept
     std::memcpy(Name, name, sizeof(Name));
 }
 
-inline std::ostream& operator<<(std::ostream& stream, const Symbol& symbol)
+template <class TOutputStream>
+inline TOutputStream& operator<<(TOutputStream& stream, const Symbol& symbol)
 {
-    return stream << "Symbol(Id=" << symbol.Id
+    stream << "Symbol(Id=" << symbol.Id
         << "; Name=" << CppCommon::WriteString(symbol.Name)
         << ")";
+    return stream;
 }
 
 } // namespace Matching

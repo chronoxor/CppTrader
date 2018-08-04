@@ -24,7 +24,8 @@ enum class UpdateType : uint8_t
     UPDATE,
     DELETE
 };
-std::ostream& operator<<(std::ostream& stream, UpdateType type);
+template <class TOutputStream>
+TOutputStream& operator<<(TOutputStream& stream, UpdateType type);
 
 } // namespace Matching
 } // namespace CppTrader

@@ -27,9 +27,10 @@ inline OrderBook::OrderBook(const Symbol& symbol)
 {
 }
 
-inline std::ostream& operator<<(std::ostream& stream, const OrderBook& order_book)
+template <class TOutputStream>
+inline TOutputStream& operator<<(TOutputStream& stream, const OrderBook& order_book)
 {
-    return stream << "OrderBook(Symbol=" << order_book._symbol
+    stream << "OrderBook(Symbol=" << order_book._symbol
         << "; Bids=" << order_book._bids.size()
         << "; Asks=" << order_book._asks.size()
         << "; BuyStop=" << order_book._buy_stop.size()
@@ -37,6 +38,7 @@ inline std::ostream& operator<<(std::ostream& stream, const OrderBook& order_boo
         << "; TrailingBuyStop=" << order_book._trailing_buy_stop.size()
         << "; TrailingSellStop=" << order_book._trailing_sell_stop.size()
         << ")";
+    return stream;
 }
 
 inline const LevelNode* OrderBook::GetBid(uint64_t price) const noexcept

@@ -23,7 +23,8 @@ enum class LevelType : uint8_t
     BID,
     ASK
 };
-std::ostream& operator<<(std::ostream& stream, LevelType type);
+template <class TOutputStream>
+TOutputStream& operator<<(TOutputStream& stream, LevelType type);
 
 //! Price level
 struct Level
@@ -63,7 +64,8 @@ struct Level
     friend bool operator>=(const Level& level1, const Level& level2) noexcept
     { return level1.Price >= level2.Price; }
 
-    friend std::ostream& operator<<(std::ostream& stream, const Level& level);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const Level& level);
 
     //! Is the bid price level?
     bool IsBid() const noexcept { return Type == LevelType::BID; }
@@ -120,7 +122,8 @@ struct LevelUpdate
     LevelUpdate& operator=(const LevelUpdate&) noexcept = default;
     LevelUpdate& operator=(LevelUpdate&&) noexcept = default;
 
-    friend std::ostream& operator<<(std::ostream& stream, const LevelUpdate& update);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const LevelUpdate& update);
 };
 
 } // namespace Matching

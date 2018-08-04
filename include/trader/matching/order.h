@@ -35,7 +35,8 @@ enum class OrderSide : uint8_t
     BUY,
     SELL
 };
-std::ostream& operator<<(std::ostream& stream, OrderSide side);
+template <class TOutputStream>
+TOutputStream& operator<<(TOutputStream& stream, OrderSide side);
 
 //! Order type
 /*!
@@ -85,7 +86,8 @@ enum class OrderType : uint8_t
     TRAILING_STOP,
     TRAILING_STOP_LIMIT
 };
-std::ostream& operator<<(std::ostream& stream, OrderType type);
+template <class TOutputStream>
+TOutputStream& operator<<(TOutputStream& stream, OrderType type);
 
 //! Order Time in Force
 /*!
@@ -109,7 +111,8 @@ enum class OrderTimeInForce : uint8_t
     FOK,    //!< Fill-Or-Kill
     AON     //!< All-Or-None
 };
-std::ostream& operator<<(std::ostream& stream, OrderTimeInForce tif);
+template <class TOutputStream>
+TOutputStream& operator<<(TOutputStream& stream, OrderTimeInForce tif);
 
 //! Order
 /*!
@@ -205,7 +208,8 @@ struct Order
     Order& operator=(const Order&) noexcept = default;
     Order& operator=(Order&&) noexcept = default;
 
-    friend std::ostream& operator<<(std::ostream& stream, const Order& order);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const Order& order);
 
     //! Is the market order?
     bool IsMarket() const noexcept { return Type == OrderType::MARKET; }

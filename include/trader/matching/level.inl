@@ -9,17 +9,19 @@
 namespace CppTrader {
 namespace Matching {
 
-inline std::ostream& operator<<(std::ostream& stream, LevelType type)
+template <class TOutputStream>
+inline TOutputStream& operator<<(TOutputStream& stream, LevelType type)
 {
     switch (type)
     {
         case LevelType::BID:
-            return stream << "BID";
+            stream << "BID";
         case LevelType::ASK:
-            return stream << "ASK";
+            stream << "ASK";
         default:
-            return stream << "<unknown>";
+            stream << "<unknown>";
     }
+    return stream;
 }
 
 inline Level::Level(LevelType type, uint64_t price) noexcept
@@ -32,15 +34,17 @@ inline Level::Level(LevelType type, uint64_t price) noexcept
 {
 }
 
-inline std::ostream& operator<<(std::ostream& stream, const Level& level)
+template <class TOutputStream>
+inline TOutputStream& operator<<(TOutputStream& stream, const Level& level)
 {
-    return stream << "Level(Type=" << level.Type
+    stream << "Level(Type=" << level.Type
         << "; Price=" << level.Price
         << "; TotalVolume=" << level.TotalVolume
         << "; HiddenVolume=" << level.HiddenVolume
         << "; VisibleVolume=" << level.VisibleVolume
         << "; Orders=" << level.Orders
         << ")";
+    return stream;
 }
 
 inline LevelNode::LevelNode(LevelType type, uint64_t price) noexcept
@@ -66,12 +70,14 @@ inline LevelUpdate::LevelUpdate(UpdateType type, const Level& update, bool top) 
 {
 }
 
-inline std::ostream& operator<<(std::ostream& stream, const LevelUpdate& update)
+template <class TOutputStream>
+inline TOutputStream& operator<<(TOutputStream& stream, const LevelUpdate& update)
 {
-    return stream << "LevelUpdate(Type=" << update.Type
+    stream << "LevelUpdate(Type=" << update.Type
         << "; Update=" << update.Update
         << "; Top=" << update.Top
         << ")";
+    return stream;
 }
 
 } // namespace Matching

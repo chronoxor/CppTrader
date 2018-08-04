@@ -9,21 +9,23 @@
 namespace CppTrader {
 namespace Matching {
 
-inline std::ostream& operator<<(std::ostream& stream, UpdateType type)
+template <class TOutputStream>
+inline TOutputStream& operator<<(TOutputStream& stream, UpdateType type)
 {
     switch (type)
     {
         case UpdateType::NONE:
-            return stream << "NONE";
+            stream << "NONE";
         case UpdateType::ADD:
-            return stream << "ADD";
+            stream << "ADD";
         case UpdateType::UPDATE:
-            return stream << "UPDATE";
+            stream << "UPDATE";
         case UpdateType::DELETE:
-            return stream << "DELETE";
+            stream << "DELETE";
         default:
-            return stream << "<unknown>";
+            stream << "<unknown>";
     }
+    return stream;
 }
 
 } // namespace Matching

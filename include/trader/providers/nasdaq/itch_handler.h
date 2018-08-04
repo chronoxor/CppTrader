@@ -31,7 +31,8 @@ struct SystemEventMessage
     uint64_t Timestamp;
     char EventCode;
 
-    friend std::ostream& operator<<(std::ostream& stream, const SystemEventMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const SystemEventMessage& message);
 };
 
 //! Stock Directory Message
@@ -56,7 +57,8 @@ struct StockDirectoryMessage
     uint32_t ETPLeverageFactor;
     char InverseIndicator;
 
-    friend std::ostream& operator<<(std::ostream& stream, const StockDirectoryMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const StockDirectoryMessage& message);
 };
 
 //! Stock Trading Action Message
@@ -71,7 +73,8 @@ struct StockTradingActionMessage
     char Reserved;
     char Reason;
 
-    friend std::ostream& operator<<(std::ostream& stream, const StockTradingActionMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const StockTradingActionMessage& message);
 };
 
 //! Reg SHO Short Sale Price Test Restricted Indicator Message
@@ -84,7 +87,8 @@ struct RegSHOMessage
     char Stock[8];
     char RegSHOAction;
 
-    friend std::ostream& operator<<(std::ostream& stream, const RegSHOMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const RegSHOMessage& message);
 };
 
 //! Market Participant Position Message
@@ -100,7 +104,8 @@ struct MarketParticipantPositionMessage
     char MarketMakerMode;
     char MarketParticipantState;
 
-    friend std::ostream& operator<<(std::ostream& stream, const MarketParticipantPositionMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const MarketParticipantPositionMessage& message);
 };
 
 //! MWCB Decline Level Message
@@ -114,7 +119,8 @@ struct MWCBDeclineMessage
     uint64_t Level2;
     uint64_t Level3;
 
-    friend std::ostream& operator<<(std::ostream& stream, const MWCBDeclineMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const MWCBDeclineMessage& message);
 };
 
 //! MWCB Status Message
@@ -126,7 +132,8 @@ struct MWCBStatusMessage
     uint64_t Timestamp;
     char BreachedLevel;
 
-    friend std::ostream& operator<<(std::ostream& stream, const MWCBStatusMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const MWCBStatusMessage& message);
 };
 
 //! IPO Quoting Period Update Message
@@ -141,7 +148,8 @@ struct IPOQuotingMessage
     char IPOReleaseQualifier;
     uint32_t IPOPrice;
 
-    friend std::ostream& operator<<(std::ostream& stream, const IPOQuotingMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const IPOQuotingMessage& message);
 };
 
 //! Add Order Message
@@ -157,7 +165,8 @@ struct AddOrderMessage
     char Stock[8];
     uint32_t Price;
 
-    friend std::ostream& operator<<(std::ostream& stream, const AddOrderMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const AddOrderMessage& message);
 };
 
 //! Add Order with MPID Attribution Message
@@ -174,7 +183,8 @@ struct AddOrderMPIDMessage
     uint32_t Price;
     char Attribution;
 
-    friend std::ostream& operator<<(std::ostream& stream, const AddOrderMPIDMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const AddOrderMPIDMessage& message);
 };
 
 //! Order Executed Message
@@ -188,7 +198,8 @@ struct OrderExecutedMessage
     uint32_t ExecutedShares;
     uint64_t MatchNumber;
 
-    friend std::ostream& operator<<(std::ostream& stream, const OrderExecutedMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const OrderExecutedMessage& message);
 };
 
 //! Order Executed With Price Message
@@ -204,7 +215,8 @@ struct OrderExecutedWithPriceMessage
     char Printable;
     uint32_t ExecutionPrice;
 
-    friend std::ostream& operator<<(std::ostream& stream, const OrderExecutedWithPriceMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const OrderExecutedWithPriceMessage& message);
 };
 
 //! Order Cancel Message
@@ -217,7 +229,8 @@ struct OrderCancelMessage
     uint64_t OrderReferenceNumber;
     uint32_t CanceledShares;
 
-    friend std::ostream& operator<<(std::ostream& stream, const OrderCancelMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const OrderCancelMessage& message);
 };
 
 //! Order Delete Message
@@ -229,7 +242,8 @@ struct OrderDeleteMessage
     uint64_t Timestamp;
     uint64_t OrderReferenceNumber;
 
-    friend std::ostream& operator<<(std::ostream& stream, const OrderDeleteMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const OrderDeleteMessage& message);
 };
 
 //! Order Replace Message
@@ -244,7 +258,8 @@ struct OrderReplaceMessage
     uint32_t Shares;
     uint32_t Price;
 
-    friend std::ostream& operator<<(std::ostream& stream, const OrderReplaceMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const OrderReplaceMessage& message);
 };
 
 //! Trade Message
@@ -261,7 +276,8 @@ struct TradeMessage
     uint32_t Price;
     uint64_t MatchNumber;
 
-    friend std::ostream& operator<<(std::ostream& stream, const TradeMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const TradeMessage& message);
 };
 
 //! Cross Trade Message
@@ -277,7 +293,8 @@ struct CrossTradeMessage
     uint64_t MatchNumber;
     char CrossType;
 
-    friend std::ostream& operator<<(std::ostream& stream, const CrossTradeMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const CrossTradeMessage& message);
 };
 
 //! Broken Trade Message
@@ -289,7 +306,8 @@ struct BrokenTradeMessage
     uint64_t Timestamp;
     uint64_t MatchNumber;
 
-    friend std::ostream& operator<<(std::ostream& stream, const BrokenTradeMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const BrokenTradeMessage& message);
 };
 
 //! Net Order Imbalance Indicator (NOII) Message
@@ -309,7 +327,8 @@ struct NOIIMessage
     char CrossType;
     char PriceVariationIndicator;
 
-    friend std::ostream& operator<<(std::ostream& stream, const NOIIMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const NOIIMessage& message);
 };
 
 //! Retail Price Improvement Indicator (RPII) Messsage
@@ -322,7 +341,8 @@ struct RPIIMessage
     char Stock[8];
     char InterestFlag;
 
-    friend std::ostream& operator<<(std::ostream& stream, const RPIIMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const RPIIMessage& message);
 };
 
 //! Unknown message
@@ -330,7 +350,8 @@ struct UnknownMessage
 {
     char Type;
 
-    friend std::ostream& operator<<(std::ostream& stream, const UnknownMessage& message);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const UnknownMessage& message);
 };
 
 //! NASDAQ ITCH handler class

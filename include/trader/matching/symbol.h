@@ -34,7 +34,8 @@ struct Symbol
     Symbol& operator=(const Symbol&) noexcept = default;
     Symbol& operator=(Symbol&&) noexcept = default;
 
-    friend std::ostream& operator<<(std::ostream& stream, const Symbol& symbol);
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const Symbol& symbol);
 };
 
 } // namespace Matching

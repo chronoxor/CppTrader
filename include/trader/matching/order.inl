@@ -9,55 +9,61 @@
 namespace CppTrader {
 namespace Matching {
 
-inline std::ostream& operator<<(std::ostream& stream, OrderSide side)
+template <class TOutputStream>
+inline TOutputStream& operator<<(TOutputStream& stream, OrderSide side)
 {
     switch (side)
     {
         case OrderSide::BUY:
-            return stream << "BUY";
+            stream << "BUY";
         case OrderSide::SELL:
-            return stream << "SELL";
+            stream << "SELL";
         default:
-            return stream << "<unknown>";
+            stream << "<unknown>";
     }
+    return stream;
 }
 
-inline std::ostream& operator<<(std::ostream& stream, OrderType type)
+template <class TOutputStream>
+inline TOutputStream& operator<<(TOutputStream& stream, OrderType type)
 {
     switch (type)
     {
         case OrderType::MARKET:
-            return stream << "MARKET";
+            stream << "MARKET";
         case OrderType::LIMIT:
-            return stream << "LIMIT";
+            stream << "LIMIT";
         case OrderType::STOP:
-            return stream << "STOP";
+            stream << "STOP";
         case OrderType::STOP_LIMIT:
-            return stream << "STOP-LIMIT";
+            stream << "STOP-LIMIT";
         case OrderType::TRAILING_STOP:
-            return stream << "TRAILING-STOP";
+            stream << "TRAILING-STOP";
         case OrderType::TRAILING_STOP_LIMIT:
-            return stream << "TRAILING-STOP-LIMIT";
+            stream << "TRAILING-STOP-LIMIT";
         default:
-            return stream << "<unknown>";
+            stream << "<unknown>";
     }
+    return stream;
 }
 
-inline std::ostream& operator<<(std::ostream& stream, OrderTimeInForce tif)
+template <class TOutputStream>
+inline TOutputStream& operator<<(TOutputStream& stream, OrderTimeInForce tif)
 {
     switch (tif)
     {
         case OrderTimeInForce::GTC:
-            return stream << "GTC";
+            stream << "GTC";
         case OrderTimeInForce::IOC:
-            return stream << "IOC";
+            stream << "IOC";
         case OrderTimeInForce::FOK:
-            return stream << "FOK";
+            stream << "FOK";
         case OrderTimeInForce::AON:
-            return stream << "AON";
+            stream << "AON";
         default:
-            return stream << "<unknown>";
+            stream << "<unknown>";
     }
+    return stream;
 }
 
 inline Order::Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t stop_price, uint64_t quantity, OrderTimeInForce tif, uint64_t max_visible_quantity, uint64_t slippage, int64_t trailing_distance, int64_t trailing_step) noexcept
@@ -78,7 +84,8 @@ inline Order::Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side
 {
 }
 
-inline std::ostream& operator<<(std::ostream& stream, const Order& order)
+template <class TOutputStream>
+inline TOutputStream& operator<<(TOutputStream& stream, const Order& order)
 {
     stream << "Order(Id=" << order.Id
         << "; SymbolId=" << order.SymbolId
@@ -99,7 +106,8 @@ inline std::ostream& operator<<(std::ostream& stream, const Order& order)
         stream << "; MaxVisibleQuantity=" << order.MaxVisibleQuantity;
     if (order.IsSlippage())
         stream << "; Slippage=" << order.Slippage;
-    return stream << ")";
+    stream << ")";
+    return stream;
 }
 
 inline Order Order::Market(uint64_t id, uint32_t symbol, OrderSide side, uint64_t quantity, uint64_t slippage) noexcept
