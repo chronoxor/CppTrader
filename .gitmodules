@@ -10,6 +10,10 @@
 	path = modules/Catch2
 	url = https://github.com/catchorg/Catch2.git
 	branch = master
+[submodule "modules/cpp-optparse"]
+	path = modules/cpp-optparse
+	url = https://github.com/weisslj/cpp-optparse.git
+	branch = master
 [submodule "modules/CppBenchmark"]
 	path = modules/CppBenchmark
 	url = https://github.com/chronoxor/CppBenchmark.git
@@ -17,8 +21,4 @@
 [submodule "modules/CppCommon"]
 	path = modules/CppCommon
 	url = https://github.com/chronoxor/CppCommon.git
-	branch = master
-[submodule "modules/cpp-optparse"]
-	path = modules/cpp-optparse
-	url = https://github.com/weisslj/cpp-optparse.git
 	branch = master
