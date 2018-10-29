@@ -8,7 +8,7 @@
 
 C++ Trader is a set of components for building high performance Trading Platform:
 * Ultra fast matching engine
-* Order book processing
+* Order book processor
 * NASDAQ ITCH handler
 
 [CppTrader API reference](https://chronoxor.github.io/CppTrader/index.html)
