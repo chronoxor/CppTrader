@@ -127,7 +127,7 @@ ITCH message throughput: 41460256 msg/s
 
 ## Market manager
 
-Benchmark measures the performance of the [Market manager](https://github.com/chronoxor/CppTrader/blob/master/include/trader/market_manager.h).
+Benchmark measures the performance of the [Market manager](https://github.com/chronoxor/CppTrader/blob/master/include/trader/matching/market_manager.h ).
 It shows how fast it can handle orders operations (add, reduce, modify, delete,
 execute) and build an order book.
 
