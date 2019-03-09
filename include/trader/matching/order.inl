@@ -16,10 +16,13 @@ inline TOutputStream& operator<<(TOutputStream& stream, OrderSide side)
     {
         case OrderSide::BUY:
             stream << "BUY";
+            break;
         case OrderSide::SELL:
             stream << "SELL";
+            break;
         default:
             stream << "<unknown>";
+            break;
     }
     return stream;
 }
@@ -31,18 +34,25 @@ inline TOutputStream& operator<<(TOutputStream& stream, OrderType type)
     {
         case OrderType::MARKET:
             stream << "MARKET";
+            break;
         case OrderType::LIMIT:
             stream << "LIMIT";
+            break;
         case OrderType::STOP:
             stream << "STOP";
+            break;
         case OrderType::STOP_LIMIT:
             stream << "STOP-LIMIT";
+            break;
         case OrderType::TRAILING_STOP:
             stream << "TRAILING-STOP";
+            break;
         case OrderType::TRAILING_STOP_LIMIT:
             stream << "TRAILING-STOP-LIMIT";
+            break;
         default:
             stream << "<unknown>";
+            break;
     }
     return stream;
 }
@@ -54,14 +64,19 @@ inline TOutputStream& operator<<(TOutputStream& stream, OrderTimeInForce tif)
     {
         case OrderTimeInForce::GTC:
             stream << "GTC";
+            break;
         case OrderTimeInForce::IOC:
             stream << "IOC";
+            break;
         case OrderTimeInForce::FOK:
             stream << "FOK";
+            break;
         case OrderTimeInForce::AON:
             stream << "AON";
+            break;
         default:
             stream << "<unknown>";
+            break;
     }
     return stream;
 }
