@@ -15,12 +15,16 @@ inline TOutputStream& operator<<(TOutputStream& stream, OrderSide side)
     switch (side)
     {
         case OrderSide::BUY:
-            return stream << "BUY";
+            stream << "BUY";
+            break;
         case OrderSide::SELL:
-            return stream << "SELL";
+            stream << "SELL";
+            break;
         default:
-            return stream << "<unknown>";
+            stream << "<unknown>";
+            break;
     }
+    return stream;
 }
 
 template <class TOutputStream>
@@ -29,20 +33,28 @@ inline TOutputStream& operator<<(TOutputStream& stream, OrderType type)
     switch (type)
     {
         case OrderType::MARKET:
-            return stream << "MARKET";
+            stream << "MARKET";
+            break;
         case OrderType::LIMIT:
-            return stream << "LIMIT";
+            stream << "LIMIT";
+            break;
         case OrderType::STOP:
-            return stream << "STOP";
+            stream << "STOP";
+            break;
         case OrderType::STOP_LIMIT:
-            return stream << "STOP-LIMIT";
+            stream << "STOP-LIMIT";
+            break;
         case OrderType::TRAILING_STOP:
-            return stream << "TRAILING-STOP";
+            stream << "TRAILING-STOP";
+            break;
         case OrderType::TRAILING_STOP_LIMIT:
-            return stream << "TRAILING-STOP-LIMIT";
+            stream << "TRAILING-STOP-LIMIT";
+            break;
         default:
-            return stream << "<unknown>";
+            stream << "<unknown>";
+            break;
     }
+    return stream;
 }
 
 template <class TOutputStream>
@@ -51,16 +63,22 @@ inline TOutputStream& operator<<(TOutputStream& stream, OrderTimeInForce tif)
     switch (tif)
     {
         case OrderTimeInForce::GTC:
-            return stream << "GTC";
+            stream << "GTC";
+            break;
         case OrderTimeInForce::IOC:
-            return stream << "IOC";
+            stream << "IOC";
+            break;
         case OrderTimeInForce::FOK:
-            return stream << "FOK";
+            stream << "FOK";
+            break;
         case OrderTimeInForce::AON:
-            return stream << "AON";
+            stream << "AON";
+            break;
         default:
-            return stream << "<unknown>";
+            stream << "<unknown>";
+            break;
     }
+    return stream;
 }
 
 inline Order::Order(uint64_t id, uint32_t symbol, OrderType type, OrderSide side, uint64_t price, uint64_t stop_price, uint64_t quantity, OrderTimeInForce tif, uint64_t max_visible_quantity, uint64_t slippage, int64_t trailing_distance, int64_t trailing_step) noexcept

@@ -15,12 +15,16 @@ inline TOutputStream& operator<<(TOutputStream& stream, LevelType type)
     switch (type)
     {
         case LevelType::BID:
-            return stream << "BID";
+            stream << "BID";
+            break;
         case LevelType::ASK:
-            return stream << "ASK";
+            stream << "ASK";
+            break;
         default:
-            return stream << "<unknown>";
+            stream << "<unknown>";
+            break;
     }
+    return stream;
 }
 
 inline Level::Level(LevelType type, uint64_t price) noexcept

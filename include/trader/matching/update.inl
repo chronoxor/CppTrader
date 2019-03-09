@@ -15,16 +15,22 @@ inline TOutputStream& operator<<(TOutputStream& stream, UpdateType type)
     switch (type)
     {
         case UpdateType::NONE:
-            return stream << "NONE";
+            stream << "NONE";
+            break;
         case UpdateType::ADD:
-            return stream << "ADD";
+            stream << "ADD";
+            break;
         case UpdateType::UPDATE:
-            return stream << "UPDATE";
+            stream << "UPDATE";
+            break;
         case UpdateType::DELETE:
-            return stream << "DELETE";
+            stream << "DELETE";
+            break;
         default:
-            return stream << "<unknown>";
+            stream << "<unknown>";
+            break;
     }
+    return stream;
 }
 
 } // namespace Matching
