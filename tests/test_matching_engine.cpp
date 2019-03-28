@@ -17,11 +17,11 @@ std::pair<int, int> BookOrders(const OrderBook* order_book_ptr)
         return std::make_pair(0, 0);
 
     int bid_orders = 0;
-    for (auto& bid : order_book_ptr->bids())
+    for (const auto& bid : order_book_ptr->bids())
         bid_orders += (int)bid.Orders;
 
     int ask_orders = 0;
-    for (auto& ask : order_book_ptr->asks())
+    for (const auto& ask : order_book_ptr->asks())
         ask_orders += (int)ask.Orders;
 
     return std::make_pair(bid_orders, ask_orders);
@@ -33,11 +33,11 @@ std::pair<int, int> BookVolume(const OrderBook* order_book_ptr)
         return std::make_pair(0, 0);
 
     int bid_volume = 0;
-    for (auto& bid : order_book_ptr->bids())
+    for (const auto& bid : order_book_ptr->bids())
         bid_volume += (int)bid.TotalVolume;
 
     int ask_volume = 0;
-    for (auto& ask : order_book_ptr->asks())
+    for (const auto& ask : order_book_ptr->asks())
         ask_volume += (int)ask.TotalVolume;
 
     return std::make_pair(bid_volume, ask_volume);
@@ -49,11 +49,11 @@ std::pair<int, int> BookVisibleVolume(const OrderBook* order_book_ptr)
         return std::make_pair(0, 0);
 
     int bid_volume = 0;
-    for (auto& bid : order_book_ptr->bids())
+    for (const auto& bid : order_book_ptr->bids())
         bid_volume += (int)bid.VisibleVolume;
 
     int ask_volume = 0;
-    for (auto& ask : order_book_ptr->asks())
+    for (const auto& ask : order_book_ptr->asks())
         ask_volume += (int)ask.VisibleVolume;
 
     return std::make_pair(bid_volume, ask_volume);
@@ -65,15 +65,15 @@ std::pair<int, int> BookStopOrders(const OrderBook* order_book_ptr)
         return std::make_pair(0, 0);
 
     int buy_orders = 0;
-    for (auto& buy : order_book_ptr->buy_stop())
+    for (const auto& buy : order_book_ptr->buy_stop())
         buy_orders += (int)buy.Orders;
-    for (auto& buy : order_book_ptr->trailing_buy_stop())
+    for (const auto& buy : order_book_ptr->trailing_buy_stop())
         buy_orders += (int)buy.Orders;
 
     int sell_orders = 0;
-    for (auto& sell : order_book_ptr->sell_stop())
+    for (const auto& sell : order_book_ptr->sell_stop())
         sell_orders += (int)sell.Orders;
-    for (auto& sell : order_book_ptr->trailing_sell_stop())
+    for (const auto& sell : order_book_ptr->trailing_sell_stop())
         sell_orders += (int)sell.Orders;
 
     return std::make_pair(buy_orders, sell_orders);
@@ -85,15 +85,15 @@ std::pair<int, int> BookStopVolume(const OrderBook* order_book_ptr)
         return std::make_pair(0, 0);
 
     int buy_volume = 0;
-    for (auto& buy : order_book_ptr->buy_stop())
+    for (const auto& buy : order_book_ptr->buy_stop())
         buy_volume += (int)buy.TotalVolume;
-    for (auto& buy : order_book_ptr->trailing_buy_stop())
+    for (const auto& buy : order_book_ptr->trailing_buy_stop())
         buy_volume += (int)buy.TotalVolume;
 
     int sell_volume = 0;
-    for (auto& sell : order_book_ptr->sell_stop())
+    for (const auto& sell : order_book_ptr->sell_stop())
         sell_volume += (int)sell.TotalVolume;
-    for (auto& sell : order_book_ptr->trailing_sell_stop())
+    for (const auto& sell : order_book_ptr->trailing_sell_stop())
         sell_volume += (int)sell.TotalVolume;
 
     return std::make_pair(buy_volume, sell_volume);
