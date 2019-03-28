@@ -84,9 +84,9 @@ public:
     OrderBook(OrderBook&&) noexcept = default;
     ~OrderBook()
     {
-        for (auto bid : _bids)
+        for (const auto& bid : _bids)
             _levels.free(bid.Level);
-        for (auto ask : _asks)
+        for (const auto& ask : _asks)
             _levels.free(ask.Level);
     }
 
