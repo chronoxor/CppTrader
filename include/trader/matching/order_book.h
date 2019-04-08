@@ -35,11 +35,11 @@ public:
 
     OrderBook(MarketManager& manager, const Symbol& symbol);
     OrderBook(const OrderBook&) = delete;
-    OrderBook(OrderBook&&) noexcept = default;
+    OrderBook(OrderBook&&) = delete;
     ~OrderBook();
 
     OrderBook& operator=(const OrderBook&) = delete;
-    OrderBook& operator=(OrderBook&&) noexcept = default;
+    OrderBook& operator=(OrderBook&&) = delete;
 
     //! Check if the order book is not empty
     explicit operator bool() const noexcept { return !empty(); }
