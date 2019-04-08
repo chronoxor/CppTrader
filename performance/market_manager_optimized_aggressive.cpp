@@ -81,7 +81,7 @@ public:
 
     OrderBook() = default;
     OrderBook(const OrderBook&) = delete;
-    OrderBook(OrderBook&&) = delete;
+    OrderBook(OrderBook&&) noexcept = default;
     ~OrderBook()
     {
         for (const auto& bid : _bids)
@@ -91,7 +91,7 @@ public:
     }
 
     OrderBook& operator=(const OrderBook&) = delete;
-    OrderBook& operator=(OrderBook&&) = delete;
+    OrderBook& operator=(OrderBook&&) noexcept = default;
 
     explicit operator bool() const noexcept { return !empty(); }
 
