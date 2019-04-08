@@ -33,11 +33,11 @@ public:
 
     OrderBook(const Symbol& symbol);
     OrderBook(const OrderBook&) = delete;
-    OrderBook(OrderBook&&) = delete;
+    OrderBook(OrderBook&&) noexcept = default;
     ~OrderBook();
 
     OrderBook& operator=(const OrderBook&) = delete;
-    OrderBook& operator=(OrderBook&&) = delete;
+    OrderBook& operator=(OrderBook&&) noexcept = default;
 
     //! Check if the order book is not empty
     explicit operator bool() const noexcept { return !empty(); }
