@@ -23,14 +23,14 @@ matrix:
             - uuid-dev
     - os: linux
       compiler: clang
-      env: OS=linux COMPILER=clang CLANG_VERSION=7
+      env: OS=linux COMPILER=clang CLANG_VERSION=8
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-7
+            - llvm-toolchain-xenial-8
           packages:
-            - clang-7
+            - clang-8
             - libstdc++-8-dev
             - cmake
             - doxygen
@@ -42,6 +42,7 @@ matrix:
     - os: osx
       compiler: clang
       env: OS=osx COMPILER=clang
+      osx_image: xcode10.2
 
 # OS environment
 sudo: required
