@@ -81,7 +81,7 @@ public:
 
     OrderBook() = default;
     OrderBook(const OrderBook&) = delete;
-    OrderBook(OrderBook&&) noexcept = default;
+    OrderBook(OrderBook&&) = delete;
     ~OrderBook()
     {
         for (const auto& bid : _bids)
@@ -91,7 +91,7 @@ public:
     }
 
     OrderBook& operator=(const OrderBook&) = delete;
-    OrderBook& operator=(OrderBook&&) noexcept = default;
+    OrderBook& operator=(OrderBook&&) = delete;
 
     explicit operator bool() const noexcept { return !empty(); }
 
@@ -211,10 +211,10 @@ public:
         _orders.resize(300000000);
     }
     MarketManagerOptimized(const MarketManagerOptimized&) = delete;
-    MarketManagerOptimized(MarketManagerOptimized&&) = default;
+    MarketManagerOptimized(MarketManagerOptimized&&) = delete;
 
     MarketManagerOptimized& operator=(const MarketManagerOptimized&) = delete;
-    MarketManagerOptimized& operator=(MarketManagerOptimized&&) = default;
+    MarketManagerOptimized& operator=(MarketManagerOptimized&&) = delete;
 
     const OrderBook* GetOrderBook(uint16_t id) const noexcept { return &_order_books[id]; }
     const Order* GetOrder(uint64_t id) const noexcept { return &_orders[id]; }

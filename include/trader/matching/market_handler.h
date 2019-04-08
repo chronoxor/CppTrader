@@ -36,11 +36,11 @@ class MarketHandler
 public:
     MarketHandler() = default;
     MarketHandler(const MarketHandler&) = delete;
-    MarketHandler(MarketHandler&&) noexcept = default;
+    MarketHandler(MarketHandler&&) = delete;
     virtual ~MarketHandler() = default;
 
     MarketHandler& operator=(const MarketHandler&) = delete;
-    MarketHandler& operator=(MarketHandler&&) noexcept = default;
+    MarketHandler& operator=(MarketHandler&&) = delete;
 
 protected:
     // Symbol handlers
