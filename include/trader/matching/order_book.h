@@ -17,6 +17,8 @@
 namespace CppTrader {
 namespace Matching {
 
+class MarketManager;
+
 //! Order book
 /*!
     Order book is used to keep buy and sell orders in a price level order.
