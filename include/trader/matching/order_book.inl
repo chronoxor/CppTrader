@@ -9,24 +9,6 @@
 namespace CppTrader {
 namespace Matching {
 
-inline OrderBook::OrderBook(const Symbol& symbol)
-    : _symbol(symbol),
-      _auxiliary_memory_manager(),
-      _level_memory_manager(_auxiliary_memory_manager, 1024),
-      _level_pool(_level_memory_manager),
-      _best_bid(nullptr),
-      _best_ask(nullptr),
-      _best_buy_stop(nullptr),
-      _best_sell_stop(nullptr),
-      _best_trailing_buy_stop(nullptr),
-      _best_trailing_sell_stop(nullptr),
-      _last_bid_price(0),
-      _last_ask_price(std::numeric_limits<uint64_t>::max()),
-      _trailing_bid_price(0),
-      _trailing_ask_price(std::numeric_limits<uint64_t>::max())
-{
-}
-
 template <class TOutputStream>
 inline TOutputStream& operator<<(TOutputStream& stream, const OrderBook& order_book)
 {

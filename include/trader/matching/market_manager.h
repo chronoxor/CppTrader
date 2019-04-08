@@ -37,6 +37,8 @@ namespace Matching {
 */
 class MarketManager
 {
+    friend class OrderBook;
+
 public:
     //! Symbols container
     typedef std::vector<Symbol*> Symbols;
@@ -228,6 +230,10 @@ private:
 
     // Auxiliary memory manager
     CppCommon::DefaultMemoryManager _auxiliary_memory_manager;
+
+    // Bid/Ask price levels
+    CppCommon::PoolMemoryManager<CppCommon::DefaultMemoryManager> _level_memory_manager;
+    CppCommon::PoolAllocator<LevelNode, CppCommon::DefaultMemoryManager> _level_pool;
 
     // Symbols
     CppCommon::PoolMemoryManager<CppCommon::DefaultMemoryManager> _symbol_memory_manager;

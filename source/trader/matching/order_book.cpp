@@ -6,41 +6,58 @@
     \copyright MIT License
 */
 
+#include "trader/matching/market_manager.h"
 #include "trader/matching/order_book.h"
 
 namespace CppTrader {
 namespace Matching {
 
+OrderBook::OrderBook(MarketManager& manager, const Symbol& symbol)
+    : _manager(manager),
+      _symbol(symbol),
+      _best_bid(nullptr),
+      _best_ask(nullptr),
+      _best_buy_stop(nullptr),
+      _best_sell_stop(nullptr),
+      _best_trailing_buy_stop(nullptr),
+      _best_trailing_sell_stop(nullptr),
+      _last_bid_price(0),
+      _last_ask_price(std::numeric_limits<uint64_t>::max()),
+      _trailing_bid_price(0),
+      _trailing_ask_price(std::numeric_limits<uint64_t>::max())
+{
+}
+
 OrderBook::~OrderBook()
 {
     // Release bid price levels
     for (auto& bid : _bids)
-        _level_pool.Release(&bid);
+        _manager._level_pool.Release(&bid);
     _bids.clear();
 
     // Release ask price levels
     for (auto& ask : _asks)
-        _level_pool.Release(&ask);
+        _manager._level_pool.Release(&ask);
     _asks.clear();
 
     // Release buy stop orders levels
     for (auto& buy_stop : _buy_stop)
-        _level_pool.Release(&buy_stop);
+        _manager._level_pool.Release(&buy_stop);
     _buy_stop.clear();
 
     // Release sell stop orders levels
     for (auto& sell_stop : _sell_stop)
-        _level_pool.Release(&sell_stop);
+        _manager._level_pool.Release(&sell_stop);
     _sell_stop.clear();
 
     // Release trailing buy stop orders levels
     for (auto& trailing_buy_stop : _trailing_buy_stop)
-        _level_pool.Release(&trailing_buy_stop);
+        _manager._level_pool.Release(&trailing_buy_stop);
     _trailing_buy_stop.clear();
 
     // Release trailing sell stop orders levels
     for (auto& trailing_sell_stop : _trailing_sell_stop)
-        _level_pool.Release(&trailing_sell_stop);
+        _manager._level_pool.Release(&trailing_sell_stop);
     _trailing_sell_stop.clear();
 }
 
@@ -51,7 +68,7 @@ LevelNode* OrderBook::AddLevel(OrderNode* order_ptr)
     if (order_ptr->IsBuy())
     {
         // Create a new price level
-        level_ptr = _level_pool.Create(LevelType::BID, order_ptr->Price);
+        level_ptr = _manager._level_pool.Create(LevelType::BID, order_ptr->Price);
 
         // Insert the price level into the bid collection
         _bids.insert(*level_ptr);
@@ -63,7 +80,7 @@ LevelNode* OrderBook::AddLevel(OrderNode* order_ptr)
     else
     {
         // Create a new price level
-        level_ptr = _level_pool.Create(LevelType::ASK, order_ptr->Price);
+        level_ptr = _manager._level_pool.Create(LevelType::ASK, order_ptr->Price);
 
         // Insert the price level into the ask collection
         _asks.insert(*level_ptr);
@@ -101,7 +118,7 @@ LevelNode* OrderBook::DeleteLevel(OrderNode* order_ptr)
     }
 
     // Release the price level
-    _level_pool.Release(level_ptr);
+	_manager._level_pool.Release(level_ptr);
 
     return nullptr;
 }
@@ -203,7 +220,7 @@ LevelNode* OrderBook::AddStopLevel(OrderNode* order_ptr)
     if (order_ptr->IsBuy())
     {
         // Create a new price level
-        level_ptr = _level_pool.Create(LevelType::ASK, order_ptr->StopPrice);
+        level_ptr = _manager._level_pool.Create(LevelType::ASK, order_ptr->StopPrice);
 
         // Insert the price level into the buy stop orders collection
         _buy_stop.insert(*level_ptr);
@@ -215,7 +232,7 @@ LevelNode* OrderBook::AddStopLevel(OrderNode* order_ptr)
     else
     {
         // Create a new price level
-        level_ptr = _level_pool.Create(LevelType::BID, order_ptr->StopPrice);
+        level_ptr = _manager._level_pool.Create(LevelType::BID, order_ptr->StopPrice);
 
         // Insert the price level into the sell stop orders collection
         _sell_stop.insert(*level_ptr);
@@ -253,7 +270,7 @@ LevelNode* OrderBook::DeleteStopLevel(OrderNode* order_ptr)
     }
 
     // Release the price level
-    _level_pool.Release(level_ptr);
+	_manager._level_pool.Release(level_ptr);
 
     return nullptr;
 }
@@ -334,7 +351,7 @@ LevelNode* OrderBook::AddTrailingStopLevel(OrderNode* order_ptr)
     if (order_ptr->IsBuy())
     {
         // Create a new price level
-        level_ptr = _level_pool.Create(LevelType::ASK, order_ptr->StopPrice);
+        level_ptr = _manager._level_pool.Create(LevelType::ASK, order_ptr->StopPrice);
 
         // Insert the price level into the trailing buy stop orders collection
         _trailing_buy_stop.insert(*level_ptr);
@@ -346,7 +363,7 @@ LevelNode* OrderBook::AddTrailingStopLevel(OrderNode* order_ptr)
     else
     {
         // Create a new price level
-        level_ptr = _level_pool.Create(LevelType::BID, order_ptr->StopPrice);
+        level_ptr = _manager._level_pool.Create(LevelType::BID, order_ptr->StopPrice);
 
         // Insert the price level into the trailing sell stop orders collection
         _trailing_sell_stop.insert(*level_ptr);
@@ -384,7 +401,7 @@ LevelNode* OrderBook::DeleteTrailingStopLevel(OrderNode* order_ptr)
     }
 
     // Release the price level
-    _level_pool.Release(level_ptr);
+	_manager._level_pool.Release(level_ptr);
 
     return nullptr;
 }

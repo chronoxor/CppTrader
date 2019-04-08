@@ -93,7 +93,7 @@ ErrorCode MarketManager::AddOrderBook(const Symbol& symbol)
         _order_books.resize(symbol.Id + 1, nullptr);
 
     // Create a new order book
-    OrderBook* order_book_ptr = _order_book_pool.Create(*symbol_ptr);
+    OrderBook* order_book_ptr = _order_book_pool.Create(*this, *symbol_ptr);
 
     // Insert the order book
     assert((_order_books[symbol.Id] == nullptr) && "Duplicate order book detected!");

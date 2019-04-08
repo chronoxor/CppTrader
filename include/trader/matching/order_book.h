@@ -31,7 +31,7 @@ public:
     //! Price level container
     typedef CppCommon::BinTreeAVL<LevelNode, std::less<LevelNode>> Levels;
 
-    OrderBook(const Symbol& symbol);
+    OrderBook(MarketManager& manager, const Symbol& symbol);
     OrderBook(const OrderBook&) = delete;
     OrderBook(OrderBook&&) noexcept = default;
     ~OrderBook();
@@ -124,15 +124,13 @@ public:
     const LevelNode* GetTrailingSellStopLevel(uint64_t price) const noexcept;
 
 private:
+    // Market manager
+    MarketManager& _manager;
+
     // Order book symbol
     Symbol _symbol;
 
-    // Auxiliary memory manager
-    CppCommon::DefaultMemoryManager _auxiliary_memory_manager;
-
     // Bid/Ask price levels
-    CppCommon::PoolMemoryManager<CppCommon::DefaultMemoryManager> _level_memory_manager;
-    CppCommon::PoolAllocator<LevelNode, CppCommon::DefaultMemoryManager> _level_pool;
     LevelNode* _best_bid;
     LevelNode* _best_ask;
     Levels _bids;

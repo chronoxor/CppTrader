@@ -17,6 +17,8 @@ inline MarketManager::MarketManager()
 inline MarketManager::MarketManager(MarketHandler& market_handler)
     : _market_handler(market_handler),
       _auxiliary_memory_manager(),
+      _level_memory_manager(_auxiliary_memory_manager),
+      _level_pool(_level_memory_manager),
       _symbol_memory_manager(_auxiliary_memory_manager),
       _symbol_pool(_symbol_memory_manager),
       _order_book_memory_manager(_auxiliary_memory_manager),
