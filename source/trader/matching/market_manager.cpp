@@ -1235,7 +1235,7 @@ void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr)
             ReduceOrder(executing_order_ptr->Id, quantity, true);
 
             // Call the corresponding handler
-            _market_handler.onExecuteOrder(*order_ptr, price, quantity);
+            //_market_handler.onExecuteOrder(*order_ptr, price, quantity);
 
             // Update the corresponding market price
             order_book_ptr->UpdateLastPrice(*order_ptr, price);
