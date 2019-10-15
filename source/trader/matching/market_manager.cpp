@@ -180,6 +180,9 @@ ErrorCode MarketManager::AddMarketOrder(const Order& order, bool internal)
     if (_matching)
         Match(order_book_ptr, internal);
 
+    // Reset matching price
+    order_book_ptr->ResetMatchingPrice();
+
     return ErrorCode::OK;
 }
 
@@ -230,6 +233,9 @@ ErrorCode MarketManager::AddLimitOrder(const Order& order, bool internal)
     if (_matching)
         Match(order_book_ptr, internal);
 
+    // Reset matching price
+    order_book_ptr->ResetMatchingPrice();
+
     return ErrorCode::OK;
 }
 
@@ -278,6 +284,9 @@ ErrorCode MarketManager::AddStopOrder(const Order& order, bool internal)
             if (_matching)
                 Match(order_book_ptr, internal);
 
+            // Reset matching price
+            order_book_ptr->ResetMatchingPrice();
+
             return ErrorCode::OK;
         }
     }
@@ -315,6 +324,9 @@ ErrorCode MarketManager::AddStopOrder(const Order& order, bool internal)
     // Automatic order matching
     if (_matching)
         Match(order_book_ptr, internal);
+
+    // Reset matching price
+    order_book_ptr->ResetMatchingPrice();
 
     return ErrorCode::OK;
 }
@@ -390,6 +402,9 @@ ErrorCode MarketManager::AddStopLimitOrder(const Order& order, bool internal)
             if (_matching)
                 Match(order_book_ptr, internal);
 
+            // Reset matching price
+            order_book_ptr->ResetMatchingPrice();
+
             return ErrorCode::OK;
         }
     }
@@ -427,6 +442,9 @@ ErrorCode MarketManager::AddStopLimitOrder(const Order& order, bool internal)
     // Automatic order matching
     if (_matching)
         Match(order_book_ptr, internal);
+
+    // Reset matching price
+    order_book_ptr->ResetMatchingPrice();
 
     return ErrorCode::OK;
 }
@@ -529,6 +547,9 @@ ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity, bool intern
     // Automatic order matching
     if (_matching)
         Match(order_book_ptr, internal);
+
+    // Reset matching price
+    order_book_ptr->ResetMatchingPrice();
 
     return ErrorCode::OK;
 }
@@ -649,6 +670,9 @@ ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t n
     // Automatic order matching
     if (_matching)
         Match(order_book_ptr, internal);
+
+    // Reset matching price
+    order_book_ptr->ResetMatchingPrice();
 
     return ErrorCode::OK;
 }
@@ -771,6 +795,9 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
     if (_matching)
         Match(order_book_ptr, internal);
 
+    // Reset matching price
+    order_book_ptr->ResetMatchingPrice();
+
     return ErrorCode::OK;
 }
 
@@ -841,6 +868,9 @@ ErrorCode MarketManager::DeleteOrder(uint64_t id, bool internal)
     if (_matching)
         Match(order_book_ptr, internal);
 
+    // Reset matching price
+    order_book_ptr->ResetMatchingPrice();
+
     return ErrorCode::OK;
 }
 
@@ -874,6 +904,7 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
 
     // Update the corresponding market price
     order_book_ptr->UpdateLastPrice(*order_ptr, order_ptr->Price);
+    order_book_ptr->UpdateMatchingPrice(*order_ptr, order_ptr->Price);
 
     uint64_t hidden = order_ptr->HiddenQuantity();
     uint64_t visible = order_ptr->VisibleQuantity();
@@ -927,6 +958,9 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
     // Automatic order matching
     if (_matching)
         Match(order_book_ptr, false);
+
+    // Reset matching price
+    order_book_ptr->ResetMatchingPrice();
 
     return ErrorCode::OK;
 }
@@ -961,6 +995,7 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quan
 
     // Update the corresponding market price
     order_book_ptr->UpdateLastPrice(*order_ptr, price);
+    order_book_ptr->UpdateMatchingPrice(*order_ptr, price);
 
     uint64_t hidden = order_ptr->HiddenQuantity();
     uint64_t visible = order_ptr->VisibleQuantity();
@@ -1014,6 +1049,9 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quan
     // Automatic order matching
     if (_matching)
         Match(order_book_ptr, false);
+
+    // Reset matching price
+    order_book_ptr->ResetMatchingPrice();
 
     return ErrorCode::OK;
 }
@@ -1084,6 +1122,7 @@ void MarketManager::Match(OrderBook* order_book_ptr, bool internal)
 
                 // Update the corresponding market price
                 order_book_ptr->UpdateLastPrice(*executing_order_ptr, price);
+                order_book_ptr->UpdateMatchingPrice(*executing_order_ptr, price);
 
                 // Increase the order executed quantity
                 executing_order_ptr->ExecutedQuantity += quantity;
@@ -1096,6 +1135,7 @@ void MarketManager::Match(OrderBook* order_book_ptr, bool internal)
 
                 // Update the corresponding market price
                 order_book_ptr->UpdateLastPrice(*reducing_order_ptr, price);
+                order_book_ptr->UpdateMatchingPrice(*reducing_order_ptr, price);
 
                 // Increase the order executed quantity
                 reducing_order_ptr->ExecutedQuantity += quantity;
@@ -1193,6 +1233,7 @@ void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr)
 
             // Update the corresponding market price
             order_book_ptr->UpdateLastPrice(*order_ptr, order_ptr->Price);
+            order_book_ptr->UpdateMatchingPrice(*order_ptr, order_ptr->Price);
 
             // Increase the order executed quantity
             order_ptr->ExecutedQuantity += order_ptr->LeavesQuantity;
@@ -1227,6 +1268,7 @@ void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr)
 
             // Update the corresponding market price
             order_book_ptr->UpdateLastPrice(*executing_order_ptr, price);
+            order_book_ptr->UpdateMatchingPrice(*executing_order_ptr, price);
 
             // Increase the order executed quantity
             executing_order_ptr->ExecutedQuantity += quantity;
@@ -1239,6 +1281,7 @@ void MarketManager::MatchOrder(OrderBook* order_book_ptr, Order* order_ptr)
 
             // Update the corresponding market price
             order_book_ptr->UpdateLastPrice(*order_ptr, price);
+            order_book_ptr->UpdateMatchingPrice(*order_ptr, price);
 
             // Increase the order executed quantity
             order_ptr->ExecutedQuantity += quantity;
@@ -1313,9 +1356,11 @@ bool MarketManager::ActivateStopOrders(OrderBook* order_book_ptr, LevelNode* lev
             switch (activating_order_ptr->Type)
             {
                 case OrderType::STOP:
+                case OrderType::TRAILING_STOP:
                     result = ActivateStopOrder(order_book_ptr, activating_order_ptr);
                     break;
                 case OrderType::STOP_LIMIT:
+                case OrderType::TRAILING_STOP_LIMIT:
                     result = ActivateStopLimitOrder(order_book_ptr, activating_order_ptr);
                     break;
                 default:
@@ -1550,6 +1595,7 @@ void MarketManager::ExecuteMatchingChain(OrderBook* order_book_ptr, LevelNode* l
 
                 // Update the corresponding market price
                 order_book_ptr->UpdateLastPrice(*executing_order_ptr, price);
+                order_book_ptr->UpdateMatchingPrice(*executing_order_ptr, price);
 
                 // Increase the order executed quantity
                 executing_order_ptr->ExecutedQuantity += quantity;
@@ -1567,6 +1613,7 @@ void MarketManager::ExecuteMatchingChain(OrderBook* order_book_ptr, LevelNode* l
 
                 // Update the corresponding market price
                 order_book_ptr->UpdateLastPrice(*executing_order_ptr, price);
+                order_book_ptr->UpdateMatchingPrice(*executing_order_ptr, price);
 
                 // Increase the order executed quantity
                 executing_order_ptr->ExecutedQuantity += quantity;
@@ -1598,7 +1645,7 @@ void MarketManager::RecalculateTrailingStopPrice(OrderBook* order_book_ptr, Leve
     if (level_ptr->Type == LevelType::ASK)
     {
         uint64_t old_trailing_price = order_book_ptr->_trailing_ask_price;
-        new_trailing_price = order_book_ptr->GetMarketStopPriceAsk();
+        new_trailing_price = order_book_ptr->GetMarketTrailingStopPriceAsk();
         order_book_ptr->_trailing_ask_price = new_trailing_price;
         if (new_trailing_price >= old_trailing_price)
             return;
@@ -1606,7 +1653,7 @@ void MarketManager::RecalculateTrailingStopPrice(OrderBook* order_book_ptr, Leve
     if (level_ptr->Type == LevelType::BID)
     {
         uint64_t old_trailing_price = order_book_ptr->_trailing_bid_price;
-        new_trailing_price = order_book_ptr->GetMarketStopPriceBid();
+        new_trailing_price = order_book_ptr->GetMarketTrailingStopPriceBid();
         order_book_ptr->_trailing_bid_price = new_trailing_price;
         if (new_trailing_price <= old_trailing_price)
             return;

@@ -109,26 +109,26 @@ inline LevelNode* OrderBook::GetNextTrailingStopLevel(LevelNode* level) noexcept
 
 inline uint64_t OrderBook::GetMarketPriceBid() const noexcept
 {
-    uint64_t last_price = _last_bid_price;
+    uint64_t matching_price = _matching_bid_price;
     uint64_t best_price = (_best_bid != nullptr) ? _best_bid->Price : 0;
-    return std::max(last_price, best_price);
+    return std::max(matching_price, best_price);
 }
 
 inline uint64_t OrderBook::GetMarketPriceAsk() const noexcept
 {
-    uint64_t last_price = _last_ask_price;
+    uint64_t matching_price = _matching_ask_price;
     uint64_t best_price = (_best_ask != nullptr) ? _best_ask->Price : std::numeric_limits<uint64_t>::max();
-    return std::min(last_price, best_price);
+    return std::min(matching_price, best_price);
 }
 
-inline uint64_t OrderBook::GetMarketStopPriceBid() const noexcept
+inline uint64_t OrderBook::GetMarketTrailingStopPriceBid() const noexcept
 {
     uint64_t last_price = _last_bid_price;
     uint64_t best_price = (_best_bid != nullptr) ? _best_bid->Price : 0;
     return std::min(last_price, best_price);
 }
 
-inline uint64_t OrderBook::GetMarketStopPriceAsk() const noexcept
+inline uint64_t OrderBook::GetMarketTrailingStopPriceAsk() const noexcept
 {
     uint64_t last_price = _last_ask_price;
     uint64_t best_price = (_best_ask != nullptr) ? _best_ask->Price : std::numeric_limits<uint64_t>::max();
@@ -141,6 +141,20 @@ inline void OrderBook::UpdateLastPrice(const Order& order, uint64_t price) noexc
         _last_bid_price = price;
     else
         _last_ask_price = price;
+}
+
+inline void OrderBook::UpdateMatchingPrice(const Order& order, uint64_t price) noexcept
+{
+    if (order.IsBuy())
+        _matching_bid_price = price;
+    else
+        _matching_ask_price = price;
+}
+
+inline void OrderBook::ResetMatchingPrice() noexcept
+{
+    _matching_bid_price = 0;
+    _matching_ask_price = std::numeric_limits<uint64_t>::max();
 }
 
 } // namespace Matching

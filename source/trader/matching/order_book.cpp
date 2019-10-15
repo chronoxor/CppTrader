@@ -23,6 +23,8 @@ OrderBook::OrderBook(MarketManager& manager, const Symbol& symbol)
       _best_trailing_sell_stop(nullptr),
       _last_bid_price(0),
       _last_ask_price(std::numeric_limits<uint64_t>::max()),
+      _matching_bid_price(0),
+      _matching_ask_price(std::numeric_limits<uint64_t>::max()),
       _trailing_bid_price(0),
       _trailing_ask_price(std::numeric_limits<uint64_t>::max())
 {
@@ -118,7 +120,7 @@ LevelNode* OrderBook::DeleteLevel(OrderNode* order_ptr)
     }
 
     // Release the price level
-	_manager._level_pool.Release(level_ptr);
+    _manager._level_pool.Release(level_ptr);
 
     return nullptr;
 }
@@ -270,7 +272,7 @@ LevelNode* OrderBook::DeleteStopLevel(OrderNode* order_ptr)
     }
 
     // Release the price level
-	_manager._level_pool.Release(level_ptr);
+    _manager._level_pool.Release(level_ptr);
 
     return nullptr;
 }
@@ -401,7 +403,7 @@ LevelNode* OrderBook::DeleteTrailingStopLevel(OrderNode* order_ptr)
     }
 
     // Release the price level
-	_manager._level_pool.Release(level_ptr);
+    _manager._level_pool.Release(level_ptr);
 
     return nullptr;
 }
@@ -478,7 +480,7 @@ void OrderBook::DeleteTrailingStopOrder(OrderNode* order_ptr)
 uint64_t OrderBook::CalculateTrailingStopPrice(const Order& order) const noexcept
 {
     // Get the current market price
-    uint64_t market_price = order.IsBuy() ? GetMarketStopPriceAsk() : GetMarketStopPriceBid();
+    uint64_t market_price = order.IsBuy() ? GetMarketTrailingStopPriceAsk() : GetMarketTrailingStopPriceBid();
     int64_t trailing_distance = order.TrailingDistance;
     int64_t trailing_step = order.TrailingStep;
 

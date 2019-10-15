@@ -452,18 +452,18 @@ TEST_CASE("Automatic matching - stop order", "[CppTrader][Matching]")
     REQUIRE(BookStopVolume(market.GetOrderBook(0)) == std::make_pair(0, 0));
 
     // Add stop order
-    market.AddOrder(Order::SellLimit(5, 0, 40, 40));
+    market.AddOrder(Order::SellLimit(5, 0, 30, 30));
     market.AddOrder(Order::BuyStop(6, 0, 40, 40));
     market.AddOrder(Order::SellLimit(7, 0, 60, 60));
     REQUIRE(BookOrders(market.GetOrderBook(0)) == std::make_pair(0, 2));
-    REQUIRE(BookVolume(market.GetOrderBook(0)) == std::make_pair(0, 100));
+    REQUIRE(BookVolume(market.GetOrderBook(0)) == std::make_pair(0, 90));
     REQUIRE(BookStopOrders(market.GetOrderBook(0)) == std::make_pair(1, 0));
     REQUIRE(BookStopVolume(market.GetOrderBook(0)) == std::make_pair(40, 0));
 
     // Automatic matching with limit order
     market.AddOrder(Order::BuyLimit(8, 0, 40, 40));
-    REQUIRE(BookOrders(market.GetOrderBook(0)) == std::make_pair(0, 1));
-    REQUIRE(BookVolume(market.GetOrderBook(0)) == std::make_pair(0, 20));
+    REQUIRE(BookOrders(market.GetOrderBook(0)) == std::make_pair(1, 1));
+    REQUIRE(BookVolume(market.GetOrderBook(0)) == std::make_pair(10, 20));
     REQUIRE(BookStopOrders(market.GetOrderBook(0)) == std::make_pair(0, 0));
     REQUIRE(BookStopVolume(market.GetOrderBook(0)) == std::make_pair(0, 0));
 }
@@ -605,18 +605,12 @@ TEST_CASE("Automatic matching - trailing stop order", "[CppTrader][Matching]")
     REQUIRE(BookVolume(market.GetOrderBook(0)) == std::make_pair(10, 10));
     REQUIRE(BookStopOrders(market.GetOrderBook(0)) == std::make_pair(1, 1));
     REQUIRE(BookStopVolume(market.GetOrderBook(0)) == std::make_pair(10, 10));
-
+    
     // Move the market best bid price level
     market.ModifyOrder(1, 103, 20);
     REQUIRE(market.GetOrder(6)->StopPrice == 90);
     REQUIRE(market.GetOrder(6)->Price == 100);
     market.ModifyOrder(1, 120, 20);
-    REQUIRE(market.GetOrder(6)->StopPrice == 108);
-    REQUIRE(market.GetOrder(6)->Price == 118);
-    market.ModifyOrder(1, 103, 20);
-    REQUIRE(market.GetOrder(6)->StopPrice == 108);
-    REQUIRE(market.GetOrder(6)->Price == 118);
-    market.ModifyOrder(1, 100, 20);
     REQUIRE(market.GetOrder(6)->StopPrice == 108);
     REQUIRE(market.GetOrder(6)->Price == 118);
 

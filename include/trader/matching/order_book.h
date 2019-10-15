@@ -186,15 +186,19 @@ private:
     // Market last and trailing prices
     uint64_t _last_bid_price;
     uint64_t _last_ask_price;
+    uint64_t _matching_bid_price;
+    uint64_t _matching_ask_price;
     uint64_t _trailing_bid_price;
     uint64_t _trailing_ask_price;
 
     // Update market last prices
     uint64_t GetMarketPriceBid() const noexcept;
     uint64_t GetMarketPriceAsk() const noexcept;
-    uint64_t GetMarketStopPriceBid() const noexcept;
-    uint64_t GetMarketStopPriceAsk() const noexcept;
+    uint64_t GetMarketTrailingStopPriceBid() const noexcept;
+    uint64_t GetMarketTrailingStopPriceAsk() const noexcept;
     void UpdateLastPrice(const Order& order, uint64_t price) noexcept;
+    void UpdateMatchingPrice(const Order& order, uint64_t price) noexcept;
+    void ResetMatchingPrice() noexcept;
 };
 
 } // namespace Matching
