@@ -1296,7 +1296,7 @@ bool MarketManager::ActivateStopOrders(OrderBook* order_book_ptr, LevelNode* lev
     if (level_ptr != nullptr)
     {
         // Check the arbitrage bid/ask prices
-        bool arbitrage = level_ptr->IsBid() ? (stop_price <= level_ptr->Price) : (stop_price >= level_ptr->Price);
+        bool arbitrage = level_ptr->IsBid() ? (stop_price >= level_ptr->Price) : (stop_price <= level_ptr->Price);
         if (!arbitrage)
             return result;
 
