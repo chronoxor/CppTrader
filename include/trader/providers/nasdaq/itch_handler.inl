@@ -313,6 +313,22 @@ inline TOutputStream& operator<<(TOutputStream& stream, const RPIIMessage& messa
 }
 
 template <class TOutputStream>
+inline TOutputStream& operator<<(TOutputStream& stream, const LULDAuctionCollarMessage& message)
+{
+    stream << "LULDAuctionCollarMessage(Type=" << CppCommon::WriteChar(message.Type)
+        << "; StockLocate=" << message.StockLocate
+        << "; TrackingNumber=" << message.TrackingNumber
+        << "; Timestamp=" << message.Timestamp
+        << "; Stock=" << CppCommon::WriteString(message.Stock)
+        << "; AuctionCollarReferencePrice=" << message.AuctionCollarReferencePrice
+        << "; UpperAuctionCollarPrice=" << message.UpperAuctionCollarPrice
+        << "; LowerAuctionCollarPrice=" << message.LowerAuctionCollarPrice
+        << "; AuctionCollarExtension=" << message.AuctionCollarExtension
+        << ")";
+    return stream;
+}
+
+template <class TOutputStream>
 inline TOutputStream& operator<<(TOutputStream& stream, const UnknownMessage& message)
 {
     stream << "UnknownMessage(Type=" << CppCommon::WriteChar(message.Type) << ")";

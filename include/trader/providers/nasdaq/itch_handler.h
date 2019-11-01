@@ -331,7 +331,7 @@ struct NOIIMessage
     friend TOutputStream& operator<<(TOutputStream& stream, const NOIIMessage& message);
 };
 
-//! Retail Price Improvement Indicator (RPII) Messsage
+//! Retail Price Improvement Indicator (RPII) Message
 struct RPIIMessage
 {
     char Type;
@@ -343,6 +343,23 @@ struct RPIIMessage
 
     template <class TOutputStream>
     friend TOutputStream& operator<<(TOutputStream& stream, const RPIIMessage& message);
+};
+
+//! Limit Up – Limit Down (LULD) Auction Collar Message
+struct LULDAuctionCollarMessage
+{
+    char Type;
+    uint16_t StockLocate;
+    uint16_t TrackingNumber;
+    uint64_t Timestamp;
+    char Stock[8];
+    uint32_t AuctionCollarReferencePrice;
+    uint32_t UpperAuctionCollarPrice;
+    uint32_t LowerAuctionCollarPrice;
+    uint32_t AuctionCollarExtension;
+
+    template <class TOutputStream>
+    friend TOutputStream& operator<<(TOutputStream& stream, const LULDAuctionCollarMessage& message);
 };
 
 //! Unknown message
@@ -418,6 +435,7 @@ protected:
     virtual bool onMessage(const BrokenTradeMessage& message) { return true; }
     virtual bool onMessage(const NOIIMessage& message) { return true; }
     virtual bool onMessage(const RPIIMessage& message) { return true; }
+    virtual bool onMessage(const LULDAuctionCollarMessage& message) { return true; }
     virtual bool onMessage(const UnknownMessage& message) { return true; }
 
 private:
@@ -444,6 +462,7 @@ private:
     bool ProcessBrokenTradeMessage(void* buffer, size_t size);
     bool ProcessNOIIMessage(void* buffer, size_t size);
     bool ProcessRPIIMessage(void* buffer, size_t size);
+    bool ProcessLULDAuctionCollarMessage(void* buffer, size_t size);
     bool ProcessUnknownMessage(void* buffer, size_t size);
 
     template <size_t N>

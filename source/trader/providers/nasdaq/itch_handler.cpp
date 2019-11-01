@@ -149,6 +149,8 @@ bool ITCHHandler::ProcessMessage(void* buffer, size_t size)
             return ProcessNOIIMessage(data, size);
         case 'N':
             return ProcessRPIIMessage(data, size);
+        case 'J':
+            return ProcessLULDAuctionCollarMessage(data, size);
         default:
             return ProcessUnknownMessage(data, size);
     }
@@ -579,6 +581,28 @@ bool ITCHHandler::ProcessRPIIMessage(void* buffer, size_t size)
     data += ReadTimestamp(data, message.Timestamp);
     data += ReadString(data, message.Stock);
     message.InterestFlag = *data++;
+
+    return onMessage(message);
+}
+
+bool ITCHHandler::ProcessLULDAuctionCollarMessage(void* buffer, size_t size)
+{
+    assert((size == 35) && "Invalid size of the ITCH message type 'J'");
+    if (size != 35)
+        return false;
+
+    uint8_t* data = (uint8_t*)buffer;
+
+    LULDAuctionCollarMessage message;
+    message.Type = *data++;
+    data += CppCommon::Endian::ReadBigEndian(data, message.StockLocate);
+    data += CppCommon::Endian::ReadBigEndian(data, message.TrackingNumber);
+    data += ReadTimestamp(data, message.Timestamp);
+    data += ReadString(data, message.Stock);
+    data += CppCommon::Endian::ReadBigEndian(data, message.AuctionCollarReferencePrice);
+    data += CppCommon::Endian::ReadBigEndian(data, message.UpperAuctionCollarPrice);
+    data += CppCommon::Endian::ReadBigEndian(data, message.LowerAuctionCollarPrice);
+    data += CppCommon::Endian::ReadBigEndian(data, message.AuctionCollarExtension);
 
     return onMessage(message);
 }
