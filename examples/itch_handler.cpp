@@ -37,6 +37,7 @@ protected:
     bool onMessage(const BrokenTradeMessage& message) override { return OutputMessage(message); }
     bool onMessage(const NOIIMessage& message) override { return OutputMessage(message); }
     bool onMessage(const RPIIMessage& message) override { return OutputMessage(message); }
+    bool onMessage(const LULDAuctionCollarMessage& message) override { return OutputMessage(message); }
     bool onMessage(const UnknownMessage& message) override { return OutputMessage(message); }
 
 private:
