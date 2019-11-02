@@ -10,5 +10,7 @@ var searchData=
   ['ask',['ASK',['../namespace_cpp_trader_1_1_matching.html#a08cb139d374fe621043cc84ad62790aca9fb730caf1b2d638a1dcf747f0d4207d',1,'CppTrader::Matching']]],
   ['asks',['asks',['../class_cpp_trader_1_1_matching_1_1_order_book.html#a5dc10173d986f48d519c5da0e4d8d29b',1,'CppTrader::Matching::OrderBook']]],
   ['attribution',['Attribution',['../struct_cpp_trader_1_1_i_t_c_h_1_1_add_order_m_p_i_d_message.html#a854289a0cf6e1d6c08096325273b6b68',1,'CppTrader::ITCH::AddOrderMPIDMessage']]],
+  ['auctioncollarextension',['AuctionCollarExtension',['../struct_cpp_trader_1_1_i_t_c_h_1_1_l_u_l_d_auction_collar_message.html#aab7088bdbadd18fa1f8c3cb923e01912',1,'CppTrader::ITCH::LULDAuctionCollarMessage']]],
+  ['auctioncollarreferenceprice',['AuctionCollarReferencePrice',['../struct_cpp_trader_1_1_i_t_c_h_1_1_l_u_l_d_auction_collar_message.html#acef74f12afb43006cf1730af3eb2245a',1,'CppTrader::ITCH::LULDAuctionCollarMessage']]],
   ['authenticity',['Authenticity',['../struct_cpp_trader_1_1_i_t_c_h_1_1_stock_directory_message.html#a4680743fa2e82a1b62aa10a75a3c1f8d',1,'CppTrader::ITCH::StockDirectoryMessage']]]
 ];
