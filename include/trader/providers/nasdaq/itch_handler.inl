@@ -5,6 +5,7 @@
     \date 21.07.2017
     \copyright MIT License
 */
+#include <cassert>
 
 namespace CppTrader {
 namespace ITCH {
