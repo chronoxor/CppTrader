@@ -59,9 +59,8 @@ branches:
 
 # Scripts that run before install
 before_install:
-  # gcc
+  # gcc, clang
   - if [ "$OS" != "osx" ] && [ "$COMPILER" = "gcc" ]; then export CC="gcc-${GCC_VERSION}" CXX="g++-${GCC_VERSION}"; fi
-  # clang, libc++, libc++abi
   - if [ "$OS" != "osx" ] && [ "$COMPILER" = "clang" ]; then export CC="clang-${CLANG_VERSION}" CXX="clang++-${CLANG_VERSION}"; fi
   # brew, doxygen, graphviz
   - if [ "$OS" == "osx" ]; then brew update; fi
