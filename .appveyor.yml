@@ -42,7 +42,8 @@ install:
   - if "%type%"=="Cygwin" appveyor-retry appveyor DownloadFile "http://cygwin.com/setup-x86_64.exe" -FileName "C:\cygwin64\setup-x86_64.exe"
   - if "%type%"=="Cygwin" C:\cygwin64\setup-x86_64.exe --quiet-mode --no-desktop --no-shortcuts --upgrade-also --root "C:\cygwin64" --local-package-dir "C:\cache\cygwin" --site "http://mirrors.kernel.org/sourceware/cygwin" --packages cmake,automake,make,gcc-core,gcc-g++,libjsoncpp19,librhash0,libuuid-devel,libuv1,doxygen,graphviz
   # MSYS2
-  - if "%type%"=="MSYS2" C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Syuu; pacman --noconfirm -Syuu"
+  - if "%type%"=="MSYS2" C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Syuu"
+  - if "%type%"=="MSYS2" C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Syuu"
   - if "%type%"=="MSYS2" set CHERE_INVOKING='yes'
   - if "%type%"=="MSYS2" set MSYSTEM='MINGW64'
   # MinGW
