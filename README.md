@@ -1,11 +1,11 @@
 # CppTrader
 
-[![Linux build status](https://img.shields.io/travis/chronoxor/CppTrader/master.svg?label=Linux)](https://travis-ci.com/chronoxor/CppTrader)
-[![OSX build status](https://img.shields.io/travis/chronoxor/CppTrader/master.svg?label=OSX)](https://travis-ci.com/chronoxor/CppTrader)
-[![Cygwin build status](https://img.shields.io/appveyor/ci/chronoxor/CppTrader/master.svg?label=Cygwin)](https://ci.appveyor.com/project/chronoxor/CppTrader)
-[![MSYS2 build status](https://img.shields.io/appveyor/ci/chronoxor/CppTrader/master.svg?label=MSYS2)](https://ci.appveyor.com/project/chronoxor/CppTrader)
-[![MinGW build status](https://img.shields.io/appveyor/ci/chronoxor/CppTrader/master.svg?label=MinGW)](https://ci.appveyor.com/project/chronoxor/CppTrader)
-[![Windows build status](https://img.shields.io/appveyor/ci/chronoxor/CppTrader/master.svg?label=Windows)](https://ci.appveyor.com/project/chronoxor/CppTrader)
+[![Linux build status](https://img.shields.io/travis/com/chronoxor/CppTrader/master?label=Linux)](https://travis-ci.com/chronoxor/CppTrader)
+[![OSX build status](https://img.shields.io/travis/com/chronoxor/CppTrader/master?label=OSX)](https://travis-ci.com/chronoxor/CppTrader)
+[![Cygwin build status](https://img.shields.io/appveyor/build/chronoxor/CppTrader/master?label=Cygwin)](https://ci.appveyor.com/project/chronoxor/CppTrader)
+[![MSYS2 build status](https://img.shields.io/appveyor/build/chronoxor/CppTrader/master?label=MSYS2)](https://ci.appveyor.com/project/chronoxor/CppTrader)
+[![MinGW build status](https://img.shields.io/appveyor/build/chronoxor/CppTrader/master?label=MinGW)](https://ci.appveyor.com/project/chronoxor/CppTrader)
+[![Windows build status](https://img.shields.io/appveyor/build/chronoxor/CppTrader/master?label=Windows)](https://ci.appveyor.com/project/chronoxor/CppTrader)
 
 C++ Trader is a set of components for building high performance Trading Platform:
 * Ultra fast matching engine
