@@ -35,6 +35,7 @@ enum class OrderSide : uint8_t
     BUY,
     SELL
 };
+
 template <class TOutputStream>
 TOutputStream& operator<<(TOutputStream& stream, OrderSide side);
 
@@ -86,6 +87,7 @@ enum class OrderType : uint8_t
     TRAILING_STOP,
     TRAILING_STOP_LIMIT
 };
+
 template <class TOutputStream>
 TOutputStream& operator<<(TOutputStream& stream, OrderType type);
 
@@ -111,6 +113,7 @@ enum class OrderTimeInForce : uint8_t
     FOK,    //!< Fill-Or-Kill
     AON     //!< All-Or-None
 };
+
 template <class TOutputStream>
 TOutputStream& operator<<(TOutputStream& stream, OrderTimeInForce tif);
 

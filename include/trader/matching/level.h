@@ -23,6 +23,7 @@ enum class LevelType : uint8_t
     BID,
     ASK
 };
+
 template <class TOutputStream>
 TOutputStream& operator<<(TOutputStream& stream, LevelType type);
 

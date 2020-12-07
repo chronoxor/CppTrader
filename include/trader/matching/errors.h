@@ -31,6 +31,7 @@ enum class ErrorCode : uint8_t
     ORDER_PARAMETER_INVALID,
     ORDER_QUANTITY_INVALID
 };
+
 template <class TOutputStream>
 TOutputStream& operator<<(TOutputStream& stream, ErrorCode error);
 

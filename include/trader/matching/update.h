@@ -24,6 +24,7 @@ enum class UpdateType : uint8_t
     UPDATE,
     DELETE
 };
+
 template <class TOutputStream>
 TOutputStream& operator<<(TOutputStream& stream, UpdateType type);
 
