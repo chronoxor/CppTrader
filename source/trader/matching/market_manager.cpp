@@ -1448,7 +1448,7 @@ uint64_t MarketManager::CalculateMatchingChain(OrderBook* order_book_ptr, LevelN
     uint64_t available = 0;
 
     // Travel through price levels
-    while (level_ptr != nullptr)
+    while (true)
     {
         // Check the arbitrage bid/ask prices
         bool arbitrage = level_ptr->IsBid() ? (price <= level_ptr->Price) : (price >= level_ptr->Price);
@@ -1474,13 +1474,13 @@ uint64_t MarketManager::CalculateMatchingChain(OrderBook* order_book_ptr, LevelN
             order_ptr = order_ptr->next;
         }
 
-        // Switch to the next price level
-        if (order_ptr == nullptr)
-        {
-            level_ptr = order_book_ptr->GetNextLevel(level_ptr);
-            if (level_ptr != nullptr)
-                order_ptr = level_ptr->OrderList.front();
-        }
+        // Switch to the next price level or break if there are no other levels
+        level_ptr = order_book_ptr->GetNextLevel(level_ptr);
+        if (level_ptr == nullptr)
+            break;
+
+        //get first order of price level
+        order_ptr = level_ptr->OrderList.front();
     }
 
     // Matching is not available
