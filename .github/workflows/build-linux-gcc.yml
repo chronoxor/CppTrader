@@ -11,6 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Setup binutils-dev
+        run: sudo apt-get install -y binutils-dev
+
       - name: "Setup gcc"
         uses: egor-tensin/setup-gcc@v1
 

@@ -28,7 +28,7 @@ C++ Trader is a set of components for building high performance Trading Platform
     * [Market manager (aggressive optimized version)](#market-manager-aggressive-optimized-version)
 
 # Features
-* Cross platform (Linux, OSX, Windows)
+* Cross platform (Linux, MacOS, Windows)
 * Benchmarks
 * Examples
 * Tests
@@ -37,7 +37,7 @@ C++ Trader is a set of components for building high performance Trading Platform
 
 # Requirements
 * Linux (binutils-dev uuid-dev)
-* OSX
+* MacOS
 * Windows 10
 * [cmake](https://www.cmake.org)
 * [gcc](https://gcc.gnu.org)
@@ -73,7 +73,7 @@ cd build
 ./unix.sh
 ```
 
-### OSX
+### MacOS
 ```shell
 cd build
 ./unix.sh
