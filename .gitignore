@@ -18,3 +18,12 @@ modules/*
 # Temporary
 .idea
 temp
+*.cmake
+CMakeFiles/*
+CMakeCache.txt
+CMakeDoxyfile.in
+cpptrader-*
+*.a
+Makefile
+*.yml
+

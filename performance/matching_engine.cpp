@@ -25,8 +25,8 @@ public:
           _max_symbols(0),
           _order_books(0),
           _max_order_books(0),
-          _max_order_book_levels(0),
-          _max_order_book_orders(0),
+          _max_AVL_levels(0),
+          _max_level_orders(0),
           _orders(0),
           _max_orders(0),
           _add_orders(0),
@@ -38,8 +38,8 @@ public:
     size_t updates() const { return _updates; }
     size_t max_symbols() const { return _max_symbols; }
     size_t max_order_books() const { return _max_order_books; }
-    size_t max_order_book_levels() const { return _max_order_book_levels; }
-    size_t max_order_book_orders() const { return _max_order_book_orders; }
+    size_t max_AVL_levels() const { return _max_AVL_levels; }
+    size_t max_level_orders() const { return _max_level_orders; }
     size_t max_orders() const { return _max_orders; }
     size_t add_orders() const { return _add_orders; }
     size_t update_orders() const { return _update_orders; }
@@ -50,10 +50,10 @@ protected:
     void onAddSymbol(const Symbol& symbol) override { ++_updates; ++_symbols; _max_symbols = std::max(_symbols, _max_symbols); }
     void onDeleteSymbol(const Symbol& symbol) override { ++_updates; --_symbols; }
     void onAddOrderBook(const OrderBook& order_book) override { ++_updates; ++_order_books; _max_order_books = std::max(_order_books, _max_order_books); }
-    void onUpdateOrderBook(const OrderBook& order_book, bool top) override { _max_order_book_levels = std::max(std::max(order_book.bids().size(), order_book.asks().size()), _max_order_book_levels); }
+    void onUpdateOrderBook(const OrderBook& order_book, bool top) override { _max_AVL_levels = std::max(std::max(order_book.bids().size(), order_book.asks().size()), _max_AVL_levels); }
     void onDeleteOrderBook(const OrderBook& order_book) override { ++_updates; --_order_books; }
     void onAddLevel(const OrderBook& order_book, const Level& level, bool top) override { ++_updates; }
-    void onUpdateLevel(const OrderBook& order_book, const Level& level, bool top) override { ++_updates; _max_order_book_orders = std::max(level.Orders, _max_order_book_orders); }
+    void onUpdateLevel(const OrderBook& order_book, const Level& level, bool top) override { ++_updates; _max_level_orders = std::max(level.Orders, _max_level_orders); }
     void onDeleteLevel(const OrderBook& order_book, const Level& level, bool top) override { ++_updates; }
     void onAddOrder(const Order& order) override { ++_updates; ++_orders; _max_orders = std::max(_orders, _max_orders); ++_add_orders; }
     void onUpdateOrder(const Order& order) override { ++_updates; ++_update_orders; }
@@ -66,8 +66,8 @@ private:
     size_t _max_symbols;
     size_t _order_books;
     size_t _max_order_books;
-    size_t _max_order_book_levels;
-    size_t _max_order_book_orders;
+    size_t _max_AVL_levels;
+    size_t _max_level_orders;
     size_t _orders;
     size_t _max_orders;
     size_t _add_orders;
@@ -82,28 +82,40 @@ public:
     explicit MyITCHHandler(MarketManager& market)
         : _market(market),
           _messages(0),
-          _errors(0)
+          _errors(0),
+          _real_messages(0),
+          _symbol_messages(0),
+          _add_order_messages(0),
+          _reduce_order_messages(0),
+          _delete_order_messages(0),
+          _replace_order_messages(0)
     {}
 
     size_t messages() const { return _messages; }
     size_t errors() const { return _errors; }
+    size_t real_messages() const { return _real_messages; }
+    size_t symbol_messages() const { return _symbol_messages; }
+    size_t add_order_messages() const { return _add_order_messages; }
+    size_t reduce_order_messages() const { return _reduce_order_messages; }
+    size_t delete_order_messages() const { return _delete_order_messages; }
+    size_t replace_order_messages() const { return _replace_order_messages; }
 
 protected:
     bool onMessage(const SystemEventMessage& message) override { ++_messages; return true; }
-    bool onMessage(const StockDirectoryMessage& message) override { ++_messages; Symbol symbol(message.StockLocate, message.Stock); _market.AddSymbol(symbol); _market.AddOrderBook(symbol); return true; }
+    bool onMessage(const StockDirectoryMessage& message) override { ++_real_messages; ++_symbol_messages; ++_messages;  Symbol symbol(message.StockLocate, message.Stock); _market.AddSymbol(symbol); _market.AddOrderBook(symbol); return true; }
     bool onMessage(const StockTradingActionMessage& message) override { ++_messages; return true; }
     bool onMessage(const RegSHOMessage& message) override { ++_messages; return true; }
     bool onMessage(const MarketParticipantPositionMessage& message) override { ++_messages; return true; }
     bool onMessage(const MWCBDeclineMessage& message) override { ++_messages; return true; }
     bool onMessage(const MWCBStatusMessage& message) override { ++_messages; return true; }
     bool onMessage(const IPOQuotingMessage& message) override { ++_messages; return true; }
-    bool onMessage(const AddOrderMessage& message) override { ++_messages; _market.AddOrder(Order::Limit(message.OrderReferenceNumber, message.StockLocate, (message.BuySellIndicator == 'B') ? OrderSide::BUY : OrderSide::SELL, message.Price, message.Shares)); return true; }
-    bool onMessage(const AddOrderMPIDMessage& message) override { ++_messages; _market.AddOrder(Order::Limit(message.OrderReferenceNumber, message.StockLocate, (message.BuySellIndicator == 'B') ? OrderSide::BUY : OrderSide::SELL, message.Price, message.Shares)); return true; }
+    bool onMessage(const AddOrderMessage& message) override { ++_real_messages; ++_add_order_messages; ++_messages; _market.AddOrder(Order::Limit(message.OrderReferenceNumber, message.StockLocate, (message.BuySellIndicator == 'B') ? OrderSide::BUY : OrderSide::SELL, message.Price, message.Shares)); return true; }
+    bool onMessage(const AddOrderMPIDMessage& message) override { ++_real_messages; ++_add_order_messages; ++_messages; _market.AddOrder(Order::Limit(message.OrderReferenceNumber, message.StockLocate, (message.BuySellIndicator == 'B') ? OrderSide::BUY : OrderSide::SELL, message.Price, message.Shares)); return true; }
     bool onMessage(const OrderExecutedMessage& message) override { ++_messages; return true; }
     bool onMessage(const OrderExecutedWithPriceMessage& message) override { ++_messages; return true; }
-    bool onMessage(const OrderCancelMessage& message) override { ++_messages; _market.ReduceOrder(message.OrderReferenceNumber, message.CanceledShares); return true; }
-    bool onMessage(const OrderDeleteMessage& message) override { ++_messages; _market.DeleteOrder(message.OrderReferenceNumber); return true; }
-    bool onMessage(const OrderReplaceMessage& message) override { ++_messages; _market.ReplaceOrder(message.OriginalOrderReferenceNumber, message.NewOrderReferenceNumber, message.Price, message.Shares); return true; }
+    bool onMessage(const OrderCancelMessage& message) override { ++_real_messages; ++_reduce_order_messages; ++_messages; _market.ReduceOrder(message.OrderReferenceNumber, message.CanceledShares); return true; }
+    bool onMessage(const OrderDeleteMessage& message) override { ++_real_messages; ++_delete_order_messages; ++_messages; _market.DeleteOrder(message.OrderReferenceNumber); return true; }
+    bool onMessage(const OrderReplaceMessage& message) override { ++_real_messages; ++_replace_order_messages; ++_messages; _market.ReplaceOrder(message.OriginalOrderReferenceNumber, message.NewOrderReferenceNumber, message.Price, message.Shares); return true; }
     bool onMessage(const TradeMessage& message) override { ++_messages; return true; }
     bool onMessage(const CrossTradeMessage& message) override { ++_messages; return true; }
     bool onMessage(const BrokenTradeMessage& message) override { ++_messages; return true; }
@@ -116,6 +128,14 @@ private:
     MarketManager& _market;
     size_t _messages;
     size_t _errors;
+    
+    //load messages
+    size_t _real_messages;
+    size_t _symbol_messages;
+    size_t _add_order_messages;
+    size_t _reduce_order_messages;
+    size_t _delete_order_messages;
+    size_t _replace_order_messages;
 };
 
 int main(int argc, char** argv)
@@ -172,22 +192,32 @@ int main(int argc, char** argv)
     size_t total_updates = market_handler.updates();
 
     std::cout << "Processing time: " << CppBenchmark::ReporterConsole::GenerateTimePeriod(timestamp_stop - timestamp_start) << std::endl;
+    std::cout << std::endl;
+    
+    std::cout << "Load messages:" << std::endl;
     std::cout << "Total ITCH messages: " << total_messages << std::endl;
+    std::cout << "Total actual used ITCH messages (Real messages): " << itch_handler.real_messages() << std::endl;
+    std::cout << "---------------" << std::endl;
+    std::cout << "Total Symbol order messages: " << itch_handler.symbol_messages() << std::endl;
+    std::cout << "Total Add order messages: " << itch_handler.add_order_messages() << std::endl;
+    std::cout << "Total Reduce order messages: " << itch_handler.reduce_order_messages() << std::endl;
+    std::cout << "Total Delete order messages: " << itch_handler.delete_order_messages() << std::endl;
+    std::cout << "Total Replace order messages: " << itch_handler.replace_order_messages() << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "Performance Statistics:" << std::endl;
     std::cout << "ITCH message latency: " << CppBenchmark::ReporterConsole::GenerateTimePeriod((timestamp_stop - timestamp_start) / total_messages) << std::endl;
     std::cout << "ITCH message throughput: " << total_messages * 1000000000 / (timestamp_stop - timestamp_start) << " msg/s" << std::endl;
-    std::cout << "Total market updates: " << total_updates << std::endl;
     std::cout << "Market update latency: " << CppBenchmark::ReporterConsole::GenerateTimePeriod((timestamp_stop - timestamp_start) / total_updates) << std::endl;
     std::cout << "Market update throughput: " << total_updates * 1000000000 / (timestamp_stop - timestamp_start) << " upd/s" << std::endl;
-
     std::cout << std::endl;
 
     std::cout << "Market statistics: " << std::endl;
     std::cout << "Max symbols: " << market_handler.max_symbols() << std::endl;
     std::cout << "Max order books: " << market_handler.max_order_books() << std::endl;
-    std::cout << "Max order book levels: " << market_handler.max_order_book_levels() << std::endl;
-    std::cout << "Max order book orders: " << market_handler.max_order_book_orders() << std::endl;
+    std::cout << "Max vector levels: " << market_handler.max_AVL_levels() << std::endl;
+    std::cout << "Max level orders: " << market_handler.max_level_orders() << std::endl;
     std::cout << "Max orders: " << market_handler.max_orders() << std::endl;
-
     std::cout << std::endl;
 
     std::cout << "Order statistics: " << std::endl;
@@ -195,6 +225,10 @@ int main(int argc, char** argv)
     std::cout << "Update order operations: " << market_handler.update_orders() << std::endl;
     std::cout << "Delete order operations: " << market_handler.delete_orders() << std::endl;
     std::cout << "Execute order operations: " << market_handler.execute_orders() << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "Output statistics: " << std::endl;
+    std::cout << "Total market updates: " << total_updates << std::endl;
 
     return 0;
 }
