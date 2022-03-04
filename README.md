@@ -17,15 +17,31 @@ C++ Trader is a set of components for building high performance Trading Platform
 
 [CppTrader API reference](https://chronoxor.github.io/CppTrader/index.html)
 
+# Diploma Thesis
+## Performance Evaluation and Improvement of System for Execution of Financial Transactions
+
+As part of my diploma thesis, on CppTraders Matching Engine I had to:
+* Understand how the system works, its architecture, its data structures and algorithms, as well as familiarize with financial terms as needed
+* Perform workload analysis
+* Use gperftools (profiling tool) in order to find bottlenecks in the systems data structures and algorithms
+* Replace the problematic data structures with better performing ones
+* Evaluate the performance of the system using various measurements and metrics (e.g. throughput)
+
+[Click here for Thesis Paper and Presentation]()
+
+To show some of my work I also made [cpptrader-performance-matching_engine_optimized](https://github.com/kasselouris/CppTrader/blob/master/performance/matching_engine_optimized.cpp) (more on this [here](#matching-engine-optimized-version---part-of-my-diploma-thesis)) based on code from [Ivan Shynkarenka (chronoxor)](https://github.com/chronoxor) who is the creator of this amazing open-source project.
+
 # Contents
   * [Features](#features)
   * [Requirements](#requirements)
   * [How to build?](#how-to-build)
   * [Performance](#performance)
-    * [NASDAQ ITCH handler](#nasdaq-itch-handler)
-    * [Market manager](#market-manager)
-    * [Market manager (optimized version)](#market-manager-optimized-version)
-    * [Market manager (aggressive optimized version)](#market-manager-aggressive-optimized-version)
+    * [NASDAQ ITCH Handler](#nasdaq-itch-handler)
+    * [Market Manager](#market-manager)
+    * [Market Manager (optimized version)](#market-manager-optimized-version)
+    * [Market Manager (aggressive optimized version)](#market-manager-aggressive-optimized-version)
+    * [Matching Engine](#matching-engine)
+    * [Matching Engine (optimized version) - Part of my Diploma Thesis](#matching-engine-optimized-version---part-of-my-diploma-thesis)
 
 # Features
 * Cross platform (Linux, MacOS, Windows)
@@ -109,76 +125,76 @@ Here comes several micro-benchmarks for trading components.
 
 Benchmark environment is the following:
 ```
-CPU architecutre: Intel(R) Core(TM) i7-4790K CPU @ 4.00GHz
-CPU logical cores: 8
-CPU physical cores: 4
-CPU clock speed: 3.998 GHz
-CPU Hyper-Threading: enabled
-RAM total: 31.962 GiB
-RAM free: 21.623 GiB
-
-OS version: Microsoft Windows 8 Enterprise Edition (build 9200), 64-bit
+CPU architecutre: Intel(R) Core(TM) i5-6400 CPU @ 2.7GHz
+CPU logical cores: 3
+CPU physical cores: 3
+RAM total: 11.8 GB
+RAM free: 9.8 GB
+Swap memory: 1.4 GB
+Machine: Vmware 15.6
+OS: Linux
 OS bits: 64-bit
-Process bits: 64-bit
-Process configuaraion: release
+Distro: Ubuntu 20.04.2 LTS (Focal Fossa)
+Process configuaraion: Release
+Cache: warmed
 ```
 
-## NASDAQ ITCH handler
+## NASDAQ ITCH Handler
 
-Benchmark measures the performance of the [NASDAQ ITCH handler](https://github.com/chronoxor/CppTrader/blob/master/include/trader/providers/nasdaq/itch_handler.h).
+Benchmark measures the performance of the [NASDAQ ITCH handler](https://github.com/kasselouris/CppTrader/blob/master/include/trader/providers/nasdaq/itch_handler.h).
 It shows how fast it can parse and handle ITCH messages from the input stream.
 
 Sample ITCH file could be downloaded from ftp://emi.nasdaq.com/ITCH
 
-* [cpptrader-performance-itch_handler](https://github.com/chronoxor/CppTrader/blob/master/performance/itch_handler.cpp) < 01302017.NASDAQ_ITCH50
+* [cpptrader-performance-itch_handler](https://github.com/kasselouris/CppTrader/blob/master/performance/itch_handler.cpp) < 12302019.NASDAQ_ITCH50
 ```
 ITCH processing...Done!
 
 Errors: 0
 
-Processing time: 6.831 s
-Total ITCH messages: 283238832
-ITCH message latency: 24 ns
-ITCH message throughput: 41460256 msg/s
+Processing time: 31.512 s
+Total ITCH messages: 268744780
+ITCH message latency: 117 ns
+ITCH message throughput: 8528274 msg/s
 ```
 
-## Market manager
+## Market Manager
 
-Benchmark measures the performance of the [Market manager](https://github.com/chronoxor/CppTrader/blob/master/include/trader/matching/market_manager.h ).
+Benchmark measures the performance of the [Market manager](https://github.com/kasselouris/CppTrader/blob/master/include/trader/matching/market_manager.h).
 It shows how fast it can handle orders operations (add, reduce, modify, delete,
 execute) and build an order book.
 
 Sample ITCH file could be downloaded from ftp://emi.nasdaq.com/ITCH
 
-* [cpptrader-performance-market_manager](https://github.com/chronoxor/CppTrader/blob/master/performance/market_manager.cpp) < 01302017.NASDAQ_ITCH50
+* [cpptrader-performance-market_manager](https://github.com/kasselouris/CppTrader/blob/master/performance/market_manager.cpp) < 12302019.NASDAQ_ITCH50
 ```
 ITCH processing...Done!
 
 Errors: 0
 
-Processing time: 1:27.616 m
-Total ITCH messages: 283238832
-ITCH message latency: 309 ns
-ITCH message throughput: 3232727 msg/s
-Total market updates: 631217516
-Market update latency: 138 ns
-Market update throughput: 7204359 upd/s
+Processing time: 3:07.481 m
+Total ITCH messages: 268744780
+ITCH message latency: 697 ns
+ITCH message throughput: 1433446 msg/s
+Total market updates: 575602561
+Market update latency: 325 ns
+Market update throughput: 3070183 upd/s
 
-Market statistics:
-Max symbols: 8371
-Max order books: 8371
-Max order book levels: 2422
-Max order book orders: 2975
-Max orders: 1647972
+Market statistics: 
+Max symbols: 8906
+Max order books: 8906
+Max order book levels: 4227
+Max order book orders: 3415
+Max orders: 1924078
 
-Order statistics:
-Add order operations: 152865456
-Update order operations: 7037619
-Delete order operations: 152865456
-Execute order operations: 5663712
+Order statistics: 
+Add order operations: 140270523
+Update order operations: 4339958
+Delete order operations: 140270523
+Execute order operations: 5822741
 ```
 
-## Market manager (optimized version)
+## Market Manager (optimized version)
 
 This is an optimized version of the Market manager. Optimization tricks are the
 following:
@@ -196,34 +212,34 @@ pre-allocated array with O(1) for create and delete each price level.
 
 Sample ITCH file could be downloaded from ftp://emi.nasdaq.com/ITCH
 
-* [cpptrader-performance-market_manager_optimized](https://github.com/chronoxor/CppTrader/blob/master/performance/market_manager_optimized.cpp) < 01302017.NASDAQ_ITCH50
+* [cpptrader-performance-market_manager_optimized](https://github.com/kasselouris/CppTrader/blob/master/performance/market_manager_optimized.cpp) < 12302019.NASDAQ_ITCH50
 ```
 ITCH processing...Done!
 
 Errors: 0
 
-Processing time: 34.150 s
-Total ITCH messages: 283238832
-ITCH message latency: 120 ns
-ITCH message throughput: 8293747 msg/s
-Total market updates: 631217516
-Market update latency: 54 ns
-Market update throughput: 18483195 upd/s
+Processing time: 55.749 s
+Total ITCH messages: 268744780
+ITCH message latency: 207 ns
+ITCH message throughput: 4820587 msg/s
+Total market updates: 575602561
+Market update latency: 96 ns
+Market update throughput: 10324823 upd/s
 
-Market statistics:
-Max symbols: 8371
-Max order books: 8371
-Max order book levels: 38
-Max orders: 1647972
+Market statistics: 
+Max symbols: 8906
+Max order books: 8906
+Max order book levels: 37
+Max orders: 1924078
 
-Order statistics:
-Add order operations: 152865456
-Update order operations: 7037619
-Delete order operations: 152865456
-Execute order operations: 5663712
+Order statistics: 
+Add order operations: 140270523
+Update order operations: 4339958
+Delete order operations: 140270523
+Execute order operations: 5822741
 ```
 
-## Market manager (aggressive optimized version)
+## Market Manager (aggressive optimized version)
 
 This is a very aggressive optimized version of the Market manager. It shows
 values of latency and throughput close to optimal with the cost of some more
@@ -239,13 +255,117 @@ manager.
 
 Sample ITCH file could be downloaded from ftp://emi.nasdaq.com/ITCH
 
-* [cpptrader-performance-market_manager_optimized_aggressive](https://github.com/chronoxor/CppTrader/blob/master/performance/market_manager_optimized_aggressive.cpp) < 01302017.NASDAQ_ITCH50
+* [cpptrader-performance-market_manager_optimized_aggressive](https://github.com/kasselouris/CppTrader/blob/master/performance/market_manager_optimized_aggressive.cpp) < 12302019.NASDAQ_ITCH50
 ```
 ITCH processing...Done!
 
 Errors: 0
-Processing time: 29.047 s
-Total ITCH messages: 283238832
-ITCH messages latency: 102 ns
-ITCH messages throughput: 9751044 msg/s
+
+Processing time: 56.722 s
+Total ITCH messages: 268744780
+ITCH message latency: 211 ns
+ITCH message throughput: 4737884 msg/s
+```
+> In my system market manager aggressive optimized versions performance is almost the same as the optimized versions one. In higher end systems it performs slightly better.
+
+## Matching Engine
+It handles add, delete, reduce, replace order operations. It also builds the order book the same way as market manager version, though now it does not handle execute order operations and we are responsible for the matching of the orders. 
+
+> There is a slight deviation in the execution of orders between market manager versions and matching engine ones.
+
+Sample ITCH file could be downloaded from ftp://emi.nasdaq.com/ITCH
+
+* [cpptrader-performance-matching_engine](https://github.com/kasselouris/CppTrader/blob/master/performance/matching_engine.cpp) < 12302019.NASDAQ_ITCH50
+```
+ITCH processing...Done!
+
+Errors: 0
+
+Processing time: 3:06.655 m
+
+Load messages:
+Total ITCH messages: 268744780
+Total actual used ITCH messages (Real messages): 257428102
+---------------
+Symbol messages: 8906
+Add order messages: 118631456
+Reduce order messages: 2787676
+Delete order messages: 114360997
+Replace order messages: 21639067
+
+Performance Statistics:
+ITCH message latency: 694 ns
+ITCH message throughput: 1439786 msg/s
+Total market updates: 574983404
+Market update latency: 324 ns
+Market update throughput: 3080445 upd/s
+
+Market statistics: 
+Max symbols: 8906
+Max order books: 8906
+Max orders: 2089674
+Max AVL-tree levels: 4272
+Max level orders: 3415
+
+Order statistics: 
+Add order operations: 139815986
+Update order operations: 5084981
+Delete order operations: 139630304
+Execute order operations: 11828382
+```
+
+## Matching Engine (optimized version) - Part of my Diploma Thesis
+This is an optimized version of the Matching Engine. Optimization tricks are the
+following:
+
+* Orders are stored in the pre-allocated array instead of HashMap. This gives
+O(1) for all orders operations with no overhead (get, insert, update, delete).
+* Price levels are stored in sorted arrays instead of AVL trees. The sort
+order keeps best prices (best bid / best ask) at the end of arrays which gives
+good CPU cache locality and near to O(1) search time for orders with close to
+market prices, but has a penalty for orders with far from market prices!
+* Price level and order objects are taken from their respective pool, which is implemented using a
+pre-allocated array with O(1) for creating and deleting each object.
+* Symbols and order books are stored in fixed size pre-allocated arrays.
+* Increased x4 input buffer size from 8192 to 32768 and disabled C and C++ input/output buffer synchronization for increased I/O performance.
+
+Sample ITCH file could be downloaded from ftp://emi.nasdaq.com/ITCH
+
+* [cpptrader-performance-matching_engine_optimized](https://github.com/kasselouris/CppTrader/blob/master/performance/matching_engine_optimized.cpp) < 12302019.NASDAQ_ITCH50
+```
+ITCH processing...Done!
+
+Errors: 0
+
+Processing time: 1:29.600 m
+
+Load messages:
+Total ITCH messages: 268744780
+Total actual used ITCH messages (Real messages): 257428102
+---------------
+Symbol messages: 8906
+Add order messages: 118631456
+Reduce order messages: 2787676
+Delete order messages: 114360997
+Replace order messages: 21639067
+
+Performance Statistics:
+ITCH message latency: 333 ns
+ITCH message throughput: 2999376 msg/s
+Total market updates: 574983404
+Market update latency: 155 ns
+Market update throughput: 6417210 upd/s
+
+Market statistics: 
+Max symbols: 8906
+Max order books: 8906
+Max orders: 2089674
+Max vector levels: 4272
+Max level orders: 3415
+
+Order statistics: 
+Add order operations: 139815986
+Update order operations: 5084981
+Delete order operations: 139630304
+Execute order operations: 11828382
 ```
