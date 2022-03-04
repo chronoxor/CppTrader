@@ -250,19 +250,19 @@ private:
     CppCommon::PoolAllocator<OrderNode, CppCommon::DefaultMemoryManager> _order_pool;
     Orders _orders;
 
-    ErrorCode AddMarketOrder(const Order& order, bool internal);
-    ErrorCode AddLimitOrder(const Order& order, bool internal);
-    ErrorCode AddStopOrder(const Order& order, bool internal);
-    ErrorCode AddStopLimitOrder(const Order& order, bool internal);
-    ErrorCode ReduceOrder(uint64_t id, uint64_t quantity, bool internal);
-    ErrorCode ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity, bool mitigate, bool internal);
-    ErrorCode ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_price, uint64_t new_quantity, bool internal);
-    ErrorCode DeleteOrder(uint64_t id, bool internal);
+    ErrorCode AddMarketOrder(const Order& order, bool recursive);
+    ErrorCode AddLimitOrder(const Order& order, bool recursive);
+    ErrorCode AddStopOrder(const Order& order, bool recursive);
+    ErrorCode AddStopLimitOrder(const Order& order, bool recursive);
+    ErrorCode ReduceOrder(uint64_t id, uint64_t quantity, bool recursive);
+    ErrorCode ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity, bool mitigate, bool recursive);
+    ErrorCode ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_price, uint64_t new_quantity, bool recursive);
+    ErrorCode DeleteOrder(uint64_t id, bool recursive);
 
     // Matching
     bool _matching;
 
-    void Match(OrderBook* order_book_ptr, bool internal);
+    void Match(OrderBook* order_book_ptr);
     void MatchMarket(OrderBook* order_book_ptr, Order* order_ptr);
     void MatchLimit(OrderBook* order_book_ptr, Order* order_ptr);
     void MatchOrder(OrderBook* order_book_ptr, Order* order_ptr);

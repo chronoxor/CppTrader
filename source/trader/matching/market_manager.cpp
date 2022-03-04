@@ -157,7 +157,7 @@ ErrorCode MarketManager::AddOrder(const Order& order)
     }
 }
 
-ErrorCode MarketManager::AddMarketOrder(const Order& order, bool internal)
+ErrorCode MarketManager::AddMarketOrder(const Order& order, bool recursive)
 {
     // Get the valid order book for the order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order.SymbolId);
@@ -170,15 +170,15 @@ ErrorCode MarketManager::AddMarketOrder(const Order& order, bool internal)
     _market_handler.onAddOrder(new_order);
 
     // Automatic order matching
-    if (_matching)
+    if (_matching && !recursive)
         MatchMarket(order_book_ptr, &new_order);
 
     // Call the corresponding handler
     _market_handler.onDeleteOrder(new_order);
 
     // Automatic order matching
-    if (_matching)
-        Match(order_book_ptr, internal);
+    if (_matching && !recursive)
+        Match(order_book_ptr);
 
     // Reset matching price
     order_book_ptr->ResetMatchingPrice();
@@ -186,7 +186,7 @@ ErrorCode MarketManager::AddMarketOrder(const Order& order, bool internal)
     return ErrorCode::OK;
 }
 
-ErrorCode MarketManager::AddLimitOrder(const Order& order, bool internal)
+ErrorCode MarketManager::AddLimitOrder(const Order& order, bool recursive)
 {
     // Get the valid order book for the order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order.SymbolId);
@@ -199,7 +199,7 @@ ErrorCode MarketManager::AddLimitOrder(const Order& order, bool internal)
     _market_handler.onAddOrder(new_order);
 
     // Automatic order matching
-    if (_matching)
+    if (_matching && !recursive)
         MatchLimit(order_book_ptr, &new_order);
 
     // Add a new order or delete remaining part in case of 'Immediate-Or-Cancel'/'Fill-Or-Kill' order
@@ -230,8 +230,8 @@ ErrorCode MarketManager::AddLimitOrder(const Order& order, bool internal)
     }
 
     // Automatic order matching
-    if (_matching)
-        Match(order_book_ptr, internal);
+    if (_matching && !recursive)
+        Match(order_book_ptr);
 
     // Reset matching price
     order_book_ptr->ResetMatchingPrice();
@@ -239,7 +239,7 @@ ErrorCode MarketManager::AddLimitOrder(const Order& order, bool internal)
     return ErrorCode::OK;
 }
 
-ErrorCode MarketManager::AddStopOrder(const Order& order, bool internal)
+ErrorCode MarketManager::AddStopOrder(const Order& order, bool recursive)
 {
     // Get the valid order book for the order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order.SymbolId);
@@ -256,7 +256,7 @@ ErrorCode MarketManager::AddStopOrder(const Order& order, bool internal)
     _market_handler.onAddOrder(new_order);
 
     // Automatic order matching
-    if (_matching)
+    if (_matching && !recursive)
     {
         // Find the price to match the stop order
         uint64_t stop_price = new_order.IsBuy() ? order_book_ptr->GetMarketPriceAsk() : order_book_ptr->GetMarketPriceBid();
@@ -281,8 +281,8 @@ ErrorCode MarketManager::AddStopOrder(const Order& order, bool internal)
             _market_handler.onDeleteOrder(new_order);
 
             // Automatic order matching
-            if (_matching)
-                Match(order_book_ptr, internal);
+            if (_matching && !recursive)
+                Match(order_book_ptr);
 
             // Reset matching price
             order_book_ptr->ResetMatchingPrice();
@@ -322,8 +322,8 @@ ErrorCode MarketManager::AddStopOrder(const Order& order, bool internal)
     }
 
     // Automatic order matching
-    if (_matching)
-        Match(order_book_ptr, internal);
+    if (_matching && !recursive)
+        Match(order_book_ptr);
 
     // Reset matching price
     order_book_ptr->ResetMatchingPrice();
@@ -331,7 +331,7 @@ ErrorCode MarketManager::AddStopOrder(const Order& order, bool internal)
     return ErrorCode::OK;
 }
 
-ErrorCode MarketManager::AddStopLimitOrder(const Order& order, bool internal)
+ErrorCode MarketManager::AddStopLimitOrder(const Order& order, bool recursive)
 {
     // Get the valid order book for the order
     OrderBook* order_book_ptr = (OrderBook*)GetOrderBook(order.SymbolId);
@@ -352,7 +352,7 @@ ErrorCode MarketManager::AddStopLimitOrder(const Order& order, bool internal)
     _market_handler.onAddOrder(new_order);
 
     // Automatic order matching
-    if (_matching)
+    if (_matching && !recursive)
     {
         // Find the price to match the stop-limit order
         uint64_t stop_price = new_order.IsBuy() ? order_book_ptr->GetMarketPriceAsk() : order_book_ptr->GetMarketPriceBid();
@@ -399,8 +399,8 @@ ErrorCode MarketManager::AddStopLimitOrder(const Order& order, bool internal)
             }
 
             // Automatic order matching
-            if (_matching)
-                Match(order_book_ptr, internal);
+            if (_matching && !recursive)
+                Match(order_book_ptr);
 
             // Reset matching price
             order_book_ptr->ResetMatchingPrice();
@@ -440,8 +440,8 @@ ErrorCode MarketManager::AddStopLimitOrder(const Order& order, bool internal)
     }
 
     // Automatic order matching
-    if (_matching)
-        Match(order_book_ptr, internal);
+    if (_matching && !recursive)
+        Match(order_book_ptr);
 
     // Reset matching price
     order_book_ptr->ResetMatchingPrice();
@@ -454,7 +454,7 @@ ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity)
     return ReduceOrder(id, quantity, false);
 }
 
-ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity, bool internal)
+ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity, bool recursive)
 {
     // Validate parameters
     assert((id > 0) && "Order Id must be greater than zero!");
@@ -545,8 +545,8 @@ ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity, bool intern
     }
 
     // Automatic order matching
-    if (_matching)
-        Match(order_book_ptr, internal);
+    if (_matching && !recursive)
+        Match(order_book_ptr);
 
     // Reset matching price
     order_book_ptr->ResetMatchingPrice();
@@ -564,7 +564,7 @@ ErrorCode MarketManager::MitigateOrder(uint64_t id, uint64_t new_price, uint64_t
     return ModifyOrder(id, new_price, new_quantity, true, false);
 }
 
-ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity, bool mitigate, bool internal)
+ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity, bool mitigate, bool recursive)
 {
     // Validate parameters
     assert((id > 0) && "Order Id must be greater than zero!");
@@ -627,7 +627,7 @@ ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t n
         _market_handler.onUpdateOrder(*order_ptr);
 
         // Automatic order matching
-        if (_matching)
+        if (_matching && !recursive)
             MatchLimit(order_book_ptr, order_ptr);
 
         // Add non empty order into the order book
@@ -668,8 +668,8 @@ ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t n
     }
 
     // Automatic order matching
-    if (_matching)
-        Match(order_book_ptr, internal);
+    if (_matching && !recursive)
+        Match(order_book_ptr);
 
     // Reset matching price
     order_book_ptr->ResetMatchingPrice();
@@ -682,7 +682,7 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
     return ReplaceOrder(id, new_id, new_price, new_quantity, false);
 }
 
-ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_price, uint64_t new_quantity, bool internal)
+ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new_price, uint64_t new_quantity, bool recursive)
 {
     // Validate parameters
     assert((id > 0) && "Order Id must be greater than zero!");
@@ -746,7 +746,7 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
     _market_handler.onAddOrder(*order_ptr);
 
     // Automatic order matching
-    if (_matching)
+    if (_matching && !recursive)
         MatchLimit(order_book_ptr, order_ptr);
 
     if (order_ptr->LeavesQuantity > 0)
@@ -792,8 +792,8 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
     }
 
     // Automatic order matching
-    if (_matching)
-        Match(order_book_ptr, internal);
+    if (_matching && !recursive)
+        Match(order_book_ptr);
 
     // Reset matching price
     order_book_ptr->ResetMatchingPrice();
@@ -817,7 +817,7 @@ ErrorCode MarketManager::DeleteOrder(uint64_t id)
     return DeleteOrder(id, false);
 }
 
-ErrorCode MarketManager::DeleteOrder(uint64_t id, bool internal)
+ErrorCode MarketManager::DeleteOrder(uint64_t id, bool recursive)
 {
     // Validate parameters
     assert((id > 0) && "Order Id must be greater than zero!");
@@ -865,8 +865,8 @@ ErrorCode MarketManager::DeleteOrder(uint64_t id, bool internal)
     _order_pool.Release(order_ptr);
 
     // Automatic order matching
-    if (_matching)
-        Match(order_book_ptr, internal);
+    if (_matching && !recursive)
+        Match(order_book_ptr);
 
     // Reset matching price
     order_book_ptr->ResetMatchingPrice();
@@ -957,7 +957,7 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
 
     // Automatic order matching
     if (_matching)
-        Match(order_book_ptr, false);
+        Match(order_book_ptr);
 
     // Reset matching price
     order_book_ptr->ResetMatchingPrice();
@@ -1048,7 +1048,7 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quan
 
     // Automatic order matching
     if (_matching)
-        Match(order_book_ptr, false);
+        Match(order_book_ptr);
 
     // Reset matching price
     order_book_ptr->ResetMatchingPrice();
@@ -1060,10 +1060,10 @@ void MarketManager::Match()
 {
     for (auto order_book_ptr : _order_books)
         if (order_book_ptr != nullptr)
-            Match(order_book_ptr, false);
+            Match(order_book_ptr);
 }
 
-void MarketManager::Match(OrderBook* order_book_ptr, bool internal)
+void MarketManager::Match(OrderBook* order_book_ptr)
 {
     // Matching loop
     for (;;)
@@ -1099,8 +1099,18 @@ void MarketManager::Match(OrderBook* order_book_ptr, bool internal)
                         return;
 
                     // Execute orders in the matching chain
-                    ExecuteMatchingChain(order_book_ptr, bid_level_ptr, bid_order_ptr->Price, chain);
-                    ExecuteMatchingChain(order_book_ptr, ask_level_ptr, ask_order_ptr->Price, chain);
+                    if (bid_order_ptr->IsAON())
+                    {
+                        uint64_t price = bid_order_ptr->Price;
+                        ExecuteMatchingChain(order_book_ptr, bid_level_ptr, price, chain);
+                        ExecuteMatchingChain(order_book_ptr, ask_level_ptr, price, chain);
+                    }
+                    else
+                    {
+                        uint64_t price = ask_order_ptr->Price;
+                        ExecuteMatchingChain(order_book_ptr, ask_level_ptr, price, chain);
+                        ExecuteMatchingChain(order_book_ptr, bid_level_ptr, price, chain);
+                    }
 
                     break;
                 }
@@ -1149,16 +1159,9 @@ void MarketManager::Match(OrderBook* order_book_ptr, bool internal)
             }
 
             // Activate stop orders only if the current price level changed
-            if (!internal)
-            {
-                ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_buy_stop(), order_book_ptr->GetMarketPriceAsk());
-                ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_sell_stop(), order_book_ptr->GetMarketPriceBid());
-            }
+            ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_buy_stop(), order_book_ptr->GetMarketPriceAsk());
+            ActivateStopOrders(order_book_ptr, (LevelNode*)order_book_ptr->best_sell_stop(), order_book_ptr->GetMarketPriceBid());
         }
-
-        // Internal matching should not activate stop orders
-        if (internal)
-            break;
 
         // Activate stop orders until there is something to activate
         if (!ActivateStopOrders(order_book_ptr))
