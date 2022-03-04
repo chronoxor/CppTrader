@@ -379,7 +379,7 @@ public:
     {
         _symbols.resize(10000);
         _order_books.resize(10000);
-        _orders.resize(300000000);
+        _orders.resize(310000000);
     }
     MarketManagerOptimized(const MarketManagerOptimized&) = delete;
     MarketManagerOptimized(MarketManagerOptimized&&) = delete;

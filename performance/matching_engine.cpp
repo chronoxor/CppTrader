@@ -198,16 +198,17 @@ int main(int argc, char** argv)
     std::cout << "Total ITCH messages: " << total_messages << std::endl;
     std::cout << "Total actual used ITCH messages (Real messages): " << itch_handler.real_messages() << std::endl;
     std::cout << "---------------" << std::endl;
-    std::cout << "Total Symbol order messages: " << itch_handler.symbol_messages() << std::endl;
-    std::cout << "Total Add order messages: " << itch_handler.add_order_messages() << std::endl;
-    std::cout << "Total Reduce order messages: " << itch_handler.reduce_order_messages() << std::endl;
-    std::cout << "Total Delete order messages: " << itch_handler.delete_order_messages() << std::endl;
-    std::cout << "Total Replace order messages: " << itch_handler.replace_order_messages() << std::endl;
+    std::cout << "Symbol messages: " << itch_handler.symbol_messages() << std::endl;
+    std::cout << "Add order messages: " << itch_handler.add_order_messages() << std::endl;
+    std::cout << "Reduce order messages: " << itch_handler.reduce_order_messages() << std::endl;
+    std::cout << "Delete order messages: " << itch_handler.delete_order_messages() << std::endl;
+    std::cout << "Replace order messages: " << itch_handler.replace_order_messages() << std::endl;
     std::cout << std::endl;
 
     std::cout << "Performance Statistics:" << std::endl;
     std::cout << "ITCH message latency: " << CppBenchmark::ReporterConsole::GenerateTimePeriod((timestamp_stop - timestamp_start) / total_messages) << std::endl;
     std::cout << "ITCH message throughput: " << total_messages * 1000000000 / (timestamp_stop - timestamp_start) << " msg/s" << std::endl;
+    std::cout << "Total market updates: " << total_updates << std::endl;
     std::cout << "Market update latency: " << CppBenchmark::ReporterConsole::GenerateTimePeriod((timestamp_stop - timestamp_start) / total_updates) << std::endl;
     std::cout << "Market update throughput: " << total_updates * 1000000000 / (timestamp_stop - timestamp_start) << " upd/s" << std::endl;
     std::cout << std::endl;
@@ -215,9 +216,9 @@ int main(int argc, char** argv)
     std::cout << "Market statistics: " << std::endl;
     std::cout << "Max symbols: " << market_handler.max_symbols() << std::endl;
     std::cout << "Max order books: " << market_handler.max_order_books() << std::endl;
-    std::cout << "Max vector levels: " << market_handler.max_AVL_levels() << std::endl;
-    std::cout << "Max level orders: " << market_handler.max_level_orders() << std::endl;
     std::cout << "Max orders: " << market_handler.max_orders() << std::endl;
+    std::cout << "Max AVL-tree levels: " << market_handler.max_AVL_levels() << std::endl;
+    std::cout << "Max level orders: " << market_handler.max_level_orders() << std::endl;
     std::cout << std::endl;
 
     std::cout << "Order statistics: " << std::endl;
@@ -225,10 +226,6 @@ int main(int argc, char** argv)
     std::cout << "Update order operations: " << market_handler.update_orders() << std::endl;
     std::cout << "Delete order operations: " << market_handler.delete_orders() << std::endl;
     std::cout << "Execute order operations: " << market_handler.execute_orders() << std::endl;
-    std::cout << std::endl;
-
-    std::cout << "Output statistics: " << std::endl;
-    std::cout << "Total market updates: " << total_updates << std::endl;
 
     return 0;
 }

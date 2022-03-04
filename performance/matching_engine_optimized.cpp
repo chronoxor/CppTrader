@@ -1,7 +1,7 @@
 /*
     Created by Apostolis Kasselouris based on code from Ivan Shynkarenka
     Date 9.02.2022
-    Matching engine optimized version made for my Diploma Thesis
+    Matching engine optimized version made as part of my Diploma Thesis
 */
 
 #include "trader/providers/nasdaq/itch_handler.h"
@@ -16,7 +16,6 @@
 
 #include <algorithm>
 #include <vector>
-
 
 using namespace CppCommon;
 using namespace CppTrader;
@@ -49,9 +48,7 @@ struct OrderNode : public CppCommon::List<OrderNode>::Node
     uint32_t Quantity;
     size_t Level;
 
-    //! Is the order with buy side?
     bool IsBuy() const noexcept { return Side == OrderSide::BUY; }
-    //! Is the order with sell side?
     bool IsSell() const noexcept { return Side == OrderSide::SELL; }
 };
 
@@ -71,9 +68,7 @@ struct Level
     uint32_t Volume;
     size_t Orders;
 
-    //! Is the bid price level?
     bool IsBid() const noexcept { return Type == LevelType::BID; }
-    //! Is the ask price level?
     bool IsAsk() const noexcept { return Type == LevelType::ASK; }
 };
 
@@ -147,9 +142,7 @@ class OrderBook
 public:
     typedef std::vector<PriceLevel> Levels;
 
-    OrderBook() :
-        _best_bid(nullptr),
-        _best_ask(nullptr)
+    OrderBook()
     {
         _bids.reserve(5000);
         _asks.reserve(5000);
@@ -175,14 +168,12 @@ public:
     size_t size() const noexcept { return _bids.size() + _asks.size(); }
     const Levels& bids() const noexcept { return _bids; }
     const Levels& asks() const noexcept { return _asks; }
-    const Level* best_bid() const noexcept { return _bids.empty() ? nullptr : _levels.get(_bids.back().Level); }
-    const Level* best_ask() const noexcept { return _asks.empty() ? nullptr : _levels.get(_asks.back().Level); }
+    Level* best_bid() const noexcept { return _bids.empty() ? nullptr : _levels.get(_bids.back().Level); }
+    Level* best_ask() const noexcept { return _asks.empty() ? nullptr : _levels.get(_asks.back().Level); }
 
 private:
     Levels _bids;
-    Levels _asks;
-    Level* _best_bid;
-    Level* _best_ask;    
+    Levels _asks;  
 
     static MemoryPool<Level> _levels;
 
@@ -212,13 +203,6 @@ private:
             // Insert the price level into the bid collection
             _bids.insert(++it, PriceLevel{ level_ptr->Price, level_index });
 
-            // Update the best_bid price level
-            if(!_bids.empty())
-                _best_bid = _levels.get(_bids.back().Level);
-            else{
-                _best_bid = nullptr;
-            }
-
             return std::make_pair(level_index, UpdateType::ADD);
         }
         else
@@ -245,13 +229,6 @@ private:
             // Insert the price level into the ask collection
             _asks.insert(++it, PriceLevel{ level_ptr->Price, level_index });
 
-            // Update the best_ask price level
-            if(!_asks.empty())
-                _best_ask = _levels.get(_asks.back().Level);
-            else{
-                _best_ask = nullptr;
-            }
-
             return std::make_pair(level_index, UpdateType::ADD);
         }
     }
@@ -272,12 +249,6 @@ private:
                 if (it->Price < order_ptr->Price)
                     return; // No price level to delete found
             }
-            // Update the best_bid price level
-            if(!_bids.empty())
-                _best_bid = _levels.get(_bids.back().Level);
-            else{
-                _best_bid = nullptr;
-            }
         }
         else
         {
@@ -292,13 +263,6 @@ private:
                 }
                 if (it->Price > order_ptr->Price)
                     return; // No price level to delete found
-            }
-
-            // Update the best_ask price level
-            if(!_asks.empty())
-                _best_ask = _levels.get(_asks.back().Level);
-            else{
-                _best_ask = nullptr;
             }
         }
 
@@ -325,7 +289,7 @@ private:
         order_ptr->Level = find_result.first;
 
         // Price level was changed. Return top of the book modification flag.
-        return LevelUpdate{ find_result.second, *level_ptr, (level_ptr == (order_ptr->IsBuy() ? _best_bid : _best_ask)) };
+        return LevelUpdate{ find_result.second, *level_ptr, (level_ptr == (order_ptr->IsBuy() ? best_bid() : best_ask())) };
     }
 
     LevelUpdate ReduceOrder(OrderNode* order_ptr, uint32_t reduce_quantity)
@@ -350,7 +314,7 @@ private:
             update = UpdateType::DELETE;
         }
 
-        return LevelUpdate{ update, *level_ptr, (level_ptr == (order_ptr->IsBuy() ? _best_bid : _best_ask)) };
+        return LevelUpdate{ update, *level_ptr, (level_ptr == (order_ptr->IsBuy() ? best_bid() : best_ask())) };
     }
 
     LevelUpdate DeleteOrder(OrderNode* order_ptr)
@@ -375,7 +339,7 @@ private:
             update = UpdateType::DELETE;
         }
 
-        return LevelUpdate{ update, *level_ptr, (level_ptr == (order_ptr->IsBuy() ? _best_bid : _best_ask)) };
+        return LevelUpdate{ update, *level_ptr, (level_ptr == (order_ptr->IsBuy() ? best_bid() : best_ask())) };
     }
 };
 
@@ -501,7 +465,7 @@ public:
 
     void AddLimitOrder(uint64_t id, uint32_t symbol, OrderSide side, uint32_t price, uint32_t quantity)
     {
-         // Validate order
+        // Validate order
         if (id <= 0 || price <= 0 || quantity <= 0)
             return;
 
@@ -526,7 +490,7 @@ public:
 
         if (order_ptr->Quantity > 0)
         {
-            // Add the new limit order into the _orders
+            // Add the new limit order into the _orders vector
             if(_orders[id] == -1)
                 _orders[id] = order_index;
             else{
@@ -637,7 +601,7 @@ public:
         // Add order to its appropriate order book
         if (order_ptr->Quantity > 0)
         {
-            // Add the new limit order into the _orders
+            // Add the new limit order into the _orders vector
             if(_orders[new_id] == -1)
                 _orders[new_id] = order_index;
             else{
@@ -698,7 +662,7 @@ public:
         // Start the matching from the top of the book
         Level* level_ptr;
 
-        while ((level_ptr = order_ptr->IsBuy() ? order_book_ptr->_best_ask : order_book_ptr->_best_bid) != nullptr)
+        while ((level_ptr = order_ptr->IsBuy() ? order_book_ptr->best_ask() : order_book_ptr->best_bid()) != nullptr)
         {
             // Check the arbitrage bid/ask prices
             bool arbitrage = order_ptr->IsBuy() ? (order_ptr->Price >= level_ptr->Price) : (order_ptr->Price <= level_ptr->Price);
@@ -833,7 +797,8 @@ private:
 
 int main(int argc, char** argv)
 {
-    std::ios_base::sync_with_stdio(false);
+    //remove C and C++ input/output buffer synchronization for performance
+    std::ios_base::sync_with_stdio(false);  
 
     auto parser = optparse::OptionParser().version("1.0.0.0");
 
@@ -863,7 +828,7 @@ int main(int argc, char** argv)
 
     // Perform input
     size_t size;
-    uint8_t buffer[32768];  //from 8192 to 8192*4 = 32768
+    uint8_t buffer[32768];
     std::cout << "ITCH processing...";
     uint64_t timestamp_start = Timestamp::nano();
     while ((size = input->Read(buffer, sizeof(buffer))) > 0)
@@ -890,16 +855,17 @@ int main(int argc, char** argv)
     std::cout << "Total ITCH messages: " << total_messages << std::endl;
     std::cout << "Total actual used ITCH messages (Real messages): " << itch_handler.real_messages() << std::endl;
     std::cout << "---------------" << std::endl;
-    std::cout << "Total Symbol order messages: " << itch_handler.symbol_messages() << std::endl;
-    std::cout << "Total Add order messages: " << itch_handler.add_order_messages() << std::endl;
-    std::cout << "Total Reduce order messages: " << itch_handler.reduce_order_messages() << std::endl;
-    std::cout << "Total Delete order messages: " << itch_handler.delete_order_messages() << std::endl;
-    std::cout << "Total Replace order messages: " << itch_handler.replace_order_messages() << std::endl;
+    std::cout << "Symbol messages: " << itch_handler.symbol_messages() << std::endl;
+    std::cout << "Add order messages: " << itch_handler.add_order_messages() << std::endl;
+    std::cout << "Reduce order messages: " << itch_handler.reduce_order_messages() << std::endl;
+    std::cout << "Delete order messages: " << itch_handler.delete_order_messages() << std::endl;
+    std::cout << "Replace order messages: " << itch_handler.replace_order_messages() << std::endl;
     std::cout << std::endl;
 
     std::cout << "Performance Statistics:" << std::endl;
     std::cout << "ITCH message latency: " << CppBenchmark::ReporterConsole::GenerateTimePeriod((timestamp_stop - timestamp_start) / total_messages) << std::endl;
     std::cout << "ITCH message throughput: " << total_messages * 1000000000 / (timestamp_stop - timestamp_start) << " msg/s" << std::endl;
+    std::cout << "Total market updates: " << total_updates << std::endl;
     std::cout << "Market update latency: " << CppBenchmark::ReporterConsole::GenerateTimePeriod((timestamp_stop - timestamp_start) / total_updates) << std::endl;
     std::cout << "Market update throughput: " << total_updates * 1000000000 / (timestamp_stop - timestamp_start) << " upd/s" << std::endl;
     std::cout << std::endl;
@@ -907,9 +873,9 @@ int main(int argc, char** argv)
     std::cout << "Market statistics: " << std::endl;
     std::cout << "Max symbols: " << market_handler.max_symbols() << std::endl;
     std::cout << "Max order books: " << market_handler.max_order_books() << std::endl;
+    std::cout << "Max orders: " << market_handler.max_orders() << std::endl;
     std::cout << "Max vector levels: " << market_handler.max_vector_levels() << std::endl;
     std::cout << "Max level orders: " << market_handler.max_level_orders() << std::endl;
-    std::cout << "Max orders: " << market_handler.max_orders() << std::endl;
     std::cout << std::endl;
 
     std::cout << "Order statistics: " << std::endl;
@@ -917,10 +883,6 @@ int main(int argc, char** argv)
     std::cout << "Update order operations: " << market_handler.update_orders() << std::endl;
     std::cout << "Delete order operations: " << market_handler.delete_orders() << std::endl;
     std::cout << "Execute order operations: " << market_handler.execute_orders() << std::endl;
-    std::cout << std::endl;
-
-    std::cout << "Output statistics: " << std::endl;
-    std::cout << "Total market updates: " << total_updates << std::endl;
 
     return 0;
 }
