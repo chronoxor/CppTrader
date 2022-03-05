@@ -27,7 +27,7 @@ As part of my diploma thesis, on CppTraders Matching Engine I had to:
 * Replace the problematic data structures with better performing ones
 * Evaluate the performance of the system using various measurements and metrics (e.g. throughput)
 
-[Click here for Thesis Paper and Presentation]()
+[Click here for Thesis Paper and Presentation](https://github.com/kasselouris/CppTrader/tree/master/thesis_docs)
 
 To show some of my work I also made [cpptrader-performance-matching_engine_optimized](https://github.com/kasselouris/CppTrader/blob/master/performance/matching_engine_optimized.cpp) (more on this [here](#matching-engine-optimized-version---part-of-my-diploma-thesis)) based on code from [Ivan Shynkarenka (chronoxor)](https://github.com/chronoxor) who is the creator of this amazing open-source project.
 
