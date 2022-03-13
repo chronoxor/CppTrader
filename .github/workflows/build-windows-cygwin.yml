@@ -22,7 +22,7 @@ jobs:
         uses: egor-tensin/setup-cygwin@v3
         with:
           platform: x64
-          packages: automake make cmake gcc-g++ libssl-devel libuuid-devel
+          packages: automake make cmake gcc-g++ libuuid-devel
 
       - name: "Setup cmake"
         run: cmake --version
