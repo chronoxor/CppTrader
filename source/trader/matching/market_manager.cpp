@@ -1383,7 +1383,10 @@ bool MarketManager::ActivateStopOrders(OrderBook* order_book_ptr, LevelNode* lev
 bool MarketManager::ActivateStopOrder(OrderBook* order_book_ptr, OrderNode* order_ptr)
 {
     // Delete the stop order from the order book
-    order_book_ptr->DeleteStopOrder(order_ptr);
+    if (order_ptr->IsTrailingStop() || order_ptr->IsTrailingStopLimit())
+        order_book_ptr->DeleteTrailingStopOrder(order_ptr);
+    else
+        order_book_ptr->DeleteStopOrder(order_ptr);
 
     // Convert the stop order into the market order
     order_ptr->Type = OrderType::MARKET;
@@ -1412,7 +1415,10 @@ bool MarketManager::ActivateStopOrder(OrderBook* order_book_ptr, OrderNode* orde
 bool MarketManager::ActivateStopLimitOrder(OrderBook* order_book_ptr, OrderNode* order_ptr)
 {
     // Delete the stop order from the order book
-    order_book_ptr->DeleteStopOrder(order_ptr);
+    if (order_ptr->IsTrailingStop() || order_ptr->IsTrailingStopLimit())
+        order_book_ptr->DeleteTrailingStopOrder(order_ptr);
+    else
+        order_book_ptr->DeleteStopOrder(order_ptr);
 
     // Convert the stop-limit order into the limit order
     order_ptr->Type = OrderType::LIMIT;
