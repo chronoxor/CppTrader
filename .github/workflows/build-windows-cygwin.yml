@@ -10,7 +10,7 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        shell: C:\tools\cygwin\bin\bash.exe --login -o igncr {0}
+        shell: C:\cygwin\bin\bash.exe --login -o igncr {0}
     steps:
       - name: "Setup git"
         shell: cmd
@@ -19,9 +19,9 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: "Setup Cygwin"
-        uses: egor-tensin/setup-cygwin@v3
+        uses: cygwin/cygwin-install-action@v2
         with:
-          platform: x64
+          platform: x86_64
           packages: automake make cmake gcc-g++ doxygen graphviz libssl-devel libuuid-devel
 
       - name: "Setup cmake"
