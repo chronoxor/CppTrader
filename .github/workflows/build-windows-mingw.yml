@@ -21,8 +21,8 @@ jobs:
 
       - name: "Build"
         env:
-          INCLUDE: C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\x86_64-w64-mingw32\include
-          LIB: C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\x86_64-w64-mingw32\lib
+          INCLUDE: C:\mingw64\x86_64-w64-mingw32\include
+          LIB: C:\mingw64\x86_64-w64-mingw32\lib
         run: |
           cd build
           ./mingw.bat
