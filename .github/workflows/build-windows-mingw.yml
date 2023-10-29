@@ -21,7 +21,6 @@ jobs:
 
       - name: "Build"
         env:
-
           INCLUDE: C:\mingw64\x86_64-w64-mingw32\include
           LIB: C:\mingw64\x86_64-w64-mingw32\lib
         run: |
