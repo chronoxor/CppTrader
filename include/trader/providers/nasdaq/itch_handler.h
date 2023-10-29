@@ -380,7 +380,7 @@ struct UnknownMessage
     http://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/NQTVITCHSpecification.pdf
 
     NASDAQ ITCH protocol examples:
-    ftp://emi.nasdaq.com/ITCH
+    https://emi.nasdaq.com/ITCH
 
     Not thread-safe.
 */
