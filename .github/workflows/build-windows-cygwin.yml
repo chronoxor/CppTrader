@@ -21,6 +21,7 @@ jobs:
       - name: "Setup Cygwin"
         uses: cygwin/cygwin-install-action@v2
         with:
+          check-sig: false
           platform: x86_64
           packages: automake make cmake gcc-g++ doxygen graphviz libssl-devel libuuid-devel
 
