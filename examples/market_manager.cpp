@@ -49,13 +49,12 @@ protected:
     { std::cout << "Execute order: " << order << " with price " << price << " and quantity " << quantity << std::endl; }
 };
 
-class MyITCHHandler : public ITCHHandler
+class MyITCHHandler : public ITCHHandler<MyITCHHandler>
 {
 public:
     MyITCHHandler(MarketManager& market) : _market(market) {}
 
-protected:
-    bool onMessage(const StockDirectoryMessage& message) override
+    bool onMessage(const StockDirectoryMessage& message)
     {
         Symbol symbol(message.StockLocate, message.Stock);
         _market.AddSymbol(symbol);
@@ -63,43 +62,43 @@ protected:
         return true;
     }
 
-    bool onMessage(const AddOrderMessage& message) override
+    bool onMessage(const AddOrderMessage& message)
     {
         _market.AddOrder(Order::Limit(message.OrderReferenceNumber, message.StockLocate, (message.BuySellIndicator == 'B') ? OrderSide::BUY : OrderSide::SELL, message.Price, message.Shares));
         return true;
     }
 
-    bool onMessage(const AddOrderMPIDMessage& message) override
+    bool onMessage(const AddOrderMPIDMessage& message)
     {
         _market.AddOrder(Order::Limit(message.OrderReferenceNumber, message.StockLocate, (message.BuySellIndicator == 'B') ? OrderSide::BUY : OrderSide::SELL, message.Price, message.Shares));
         return true;
     }
 
-    bool onMessage(const OrderExecutedMessage& message) override
+    bool onMessage(const OrderExecutedMessage& message)
     {
         _market.ExecuteOrder(message.OrderReferenceNumber, message.ExecutedShares);
         return true;
     }
 
-    bool onMessage(const OrderExecutedWithPriceMessage& message) override
+    bool onMessage(const OrderExecutedWithPriceMessage& message)
     {
         _market.ExecuteOrder(message.OrderReferenceNumber, message.ExecutionPrice, message.ExecutedShares);
         return true;
     }
 
-    bool onMessage(const OrderCancelMessage& message) override
+    bool onMessage(const OrderCancelMessage& message)
     {
         _market.ReduceOrder(message.OrderReferenceNumber, message.CanceledShares);
         return true;
     }
 
-    bool onMessage(const OrderDeleteMessage& message) override
+    bool onMessage(const OrderDeleteMessage& message)
     {
         _market.DeleteOrder(message.OrderReferenceNumber);
         return true;
     }
 
-    bool onMessage(const OrderReplaceMessage& message) override
+    bool onMessage(const OrderReplaceMessage& message)
     {
         _market.ReplaceOrder(message.OriginalOrderReferenceNumber, message.NewOrderReferenceNumber, message.Price, message.Shares);
         return true;
