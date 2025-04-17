@@ -27,7 +27,7 @@ GitHub: https://github.com/chronoxor/CppTrader
 namespace CppTrader {
 
 //! Project version
-const char version[] = "1.0.4.0";
+const char version[] = "1.0.5.0";
 
 } // namespace CppTrader
 
