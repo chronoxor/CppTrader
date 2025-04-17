@@ -13,6 +13,7 @@
 #include "utility/iostream.h"
 
 #include <vector>
+#include <experimental/type_traits>
 
 namespace CppTrader {
 
@@ -384,6 +385,7 @@ struct UnknownMessage
 
     Not thread-safe.
 */
+template<typename SubClass>
 class ITCHHandler
 {
 public:
@@ -415,32 +417,44 @@ public:
 
 protected:
     // Message handlers
-    virtual bool onMessage(const SystemEventMessage& message) { return true; }
-    virtual bool onMessage(const StockDirectoryMessage& message) { return true; }
-    virtual bool onMessage(const StockTradingActionMessage& message) { return true; }
-    virtual bool onMessage(const RegSHOMessage& message) { return true; }
-    virtual bool onMessage(const MarketParticipantPositionMessage& message) { return true; }
-    virtual bool onMessage(const MWCBDeclineMessage& message) { return true; }
-    virtual bool onMessage(const MWCBStatusMessage& message) { return true; }
-    virtual bool onMessage(const IPOQuotingMessage& message) { return true; }
-    virtual bool onMessage(const AddOrderMessage& message) { return true; }
-    virtual bool onMessage(const AddOrderMPIDMessage& message) { return true; }
-    virtual bool onMessage(const OrderExecutedMessage& message) { return true; }
-    virtual bool onMessage(const OrderExecutedWithPriceMessage& message) { return true; }
-    virtual bool onMessage(const OrderCancelMessage& message) { return true; }
-    virtual bool onMessage(const OrderDeleteMessage& message) { return true; }
-    virtual bool onMessage(const OrderReplaceMessage& message) { return true; }
-    virtual bool onMessage(const TradeMessage& message) { return true; }
-    virtual bool onMessage(const CrossTradeMessage& message) { return true; }
-    virtual bool onMessage(const BrokenTradeMessage& message) { return true; }
-    virtual bool onMessage(const NOIIMessage& message) { return true; }
-    virtual bool onMessage(const RPIIMessage& message) { return true; }
-    virtual bool onMessage(const LULDAuctionCollarMessage& message) { return true; }
-    virtual bool onMessage(const UnknownMessage& message) { return true; }
+    bool onMessage(const SystemEventMessage& message) { return true; }
+    bool onMessage(const StockDirectoryMessage& message) { return true; }
+    bool onMessage(const StockTradingActionMessage& message) { return true; }
+    bool onMessage(const RegSHOMessage& message) { return true; }
+    bool onMessage(const MarketParticipantPositionMessage& message) { return true; }
+    bool onMessage(const MWCBDeclineMessage& message) { return true; }
+    bool onMessage(const MWCBStatusMessage& message) { return true; }
+    bool onMessage(const IPOQuotingMessage& message) { return true; }
+    bool onMessage(const AddOrderMessage& message) { return true; }
+    bool onMessage(const AddOrderMPIDMessage& message) { return true; }
+    bool onMessage(const OrderExecutedMessage& message) { return true; }
+    bool onMessage(const OrderExecutedWithPriceMessage& message) { return true; }
+    bool onMessage(const OrderCancelMessage& message) { return true; }
+    bool onMessage(const OrderDeleteMessage& message) { return true; }
+    bool onMessage(const OrderReplaceMessage& message) { return true; }
+    bool onMessage(const TradeMessage& message) { return true; }
+    bool onMessage(const CrossTradeMessage& message) { return true; }
+    bool onMessage(const BrokenTradeMessage& message) { return true; }
+    bool onMessage(const NOIIMessage& message) { return true; }
+    bool onMessage(const RPIIMessage& message) { return true; }
+    bool onMessage(const LULDAuctionCollarMessage& message) { return true; }
+    bool onMessage(const UnknownMessage& message) { return true; }
 
 private:
     size_t _size;
     std::vector<uint8_t> _cache;
+
+    template<typename ClassType, typename... ArgType>
+    using OnMessageType = decltype(std::declval<ClassType&>().onMessage(std::declval<ArgType>()...));
+
+    //! Call the corresponding message handler if defined (as a public method) in SubClass, otherwise the default implementation.
+    template<typename T>
+    bool onMessageWrapper(T&& message) {
+        if constexpr (std::experimental::is_detected<OnMessageType, SubClass, decltype(message)>::value)
+            return static_cast<SubClass*>(this)->onMessage(std::forward<T>(message));
+        else
+            return onMessage(std::forward<T>(message));
+    }
 
     bool ProcessSystemEventMessage(void* buffer, size_t size);
     bool ProcessStockDirectoryMessage(void* buffer, size_t size);
