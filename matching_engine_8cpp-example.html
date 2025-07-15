@@ -643,6 +643,27 @@ $(function() {
 <div class="line">    std::cerr &lt;&lt; <span class="stringliteral">&quot;Invalid &#39;delete order&#39; command: &quot;</span> &lt;&lt; command &lt;&lt; std::endl;</div>
 <div class="line">}</div>
 <div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> ExecuteOrder(<a class="code hl_class" href="class_cpp_trader_1_1_matching_1_1_market_manager.html">MarketManager</a>&amp; market, <span class="keyword">const</span> std::string&amp; command)</div>
+<div class="line">{</div>
+<div class="line">    <span class="keyword">static</span> std::regex pattern(<span class="stringliteral">&quot;^execute order (\\d+) (\\d+) (\\d+)$&quot;</span>);</div>
+<div class="line">    std::smatch match;</div>
+<div class="line"> </div>
+<div class="line">    <span class="keywordflow">if</span> (std::regex_search(command, match, pattern))</div>
+<div class="line">    {</div>
+<div class="line">        uint64_t <span class="keywordtype">id</span> = std::stoi(match[1]);</div>
+<div class="line">        uint64_t price = std::stoi(match[2]);</div>
+<div class="line">        uint64_t quantity = std::stoi(match[3]);</div>
+<div class="line"> </div>
+<div class="line">        <a class="code hl_enumeration" href="namespace_cpp_trader_1_1_matching.html#a1ec2fbd049c2332c538badf16c46b86e">ErrorCode</a> result = (price == 0) ? market.<a id="a16" name="a16"></a><a class="code hl_function" href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a48bc935e51319f975eedcffb54849087">ExecuteOrder</a>(<span class="keywordtype">id</span>, quantity) : market.<a class="code hl_function" href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a48bc935e51319f975eedcffb54849087">ExecuteOrder</a>(<span class="keywordtype">id</span>, price, quantity);</div>
+<div class="line">        <span class="keywordflow">if</span> (result != ErrorCode::OK)</div>
+<div class="line">            std::cerr &lt;&lt; <span class="stringliteral">&quot;Failed &#39;execute order&#39; command: &quot;</span> &lt;&lt; result &lt;&lt; std::endl;</div>
+<div class="line"> </div>
+<div class="line">        <span class="keywordflow">return</span>;</div>
+<div class="line">    }</div>
+<div class="line"> </div>
+<div class="line">    std::cerr &lt;&lt; <span class="stringliteral">&quot;Invalid &#39;execute order&#39; command: &quot;</span> &lt;&lt; command &lt;&lt; std::endl;</div>
+<div class="line">}</div>
+<div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>** argv)</div>
 <div class="line">{</div>
 <div class="line">    MyMarketHandler market_handler;</div>
@@ -681,9 +702,9 @@ $(function() {
 <div class="line">        <span class="keywordflow">else</span> <span class="keywordflow">if</span> ((line.find(<span class="stringliteral">&quot;#&quot;</span>) == 0) || (line == <span class="stringliteral">&quot;&quot;</span>))</div>
 <div class="line">            <span class="keywordflow">continue</span>;</div>
 <div class="line">        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (line == <span class="stringliteral">&quot;enable matching&quot;</span>)</div>
-<div class="line">            market.<a id="a16" name="a16"></a><a class="code hl_function" href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a4bd7f531ee55fdd76974d75115e18687">EnableMatching</a>();</div>
+<div class="line">            market.<a id="a17" name="a17"></a><a class="code hl_function" href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a4bd7f531ee55fdd76974d75115e18687">EnableMatching</a>();</div>
 <div class="line">        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (line == <span class="stringliteral">&quot;disable matching&quot;</span>)</div>
-<div class="line">            market.<a id="a17" name="a17"></a><a class="code hl_function" href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a06930138a5a90d2f8f79ddeb3941d286">DisableMatching</a>();</div>
+<div class="line">            market.<a id="a18" name="a18"></a><a class="code hl_function" href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a06930138a5a90d2f8f79ddeb3941d286">DisableMatching</a>();</div>
 <div class="line">        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (line.find(<span class="stringliteral">&quot;add symbol&quot;</span>) != std::string::npos)</div>
 <div class="line">            AddSymbol(market, line);</div>
 <div class="line">        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (line.find(<span class="stringliteral">&quot;delete symbol&quot;</span>) != std::string::npos)</div>
@@ -722,6 +743,8 @@ $(function() {
 <div class="line">            ReplaceOrder(market, line);</div>
 <div class="line">        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (line.find(<span class="stringliteral">&quot;delete order&quot;</span>) != std::string::npos)</div>
 <div class="line">            DeleteOrder(market, line);</div>
+<div class="line">        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (line.find(<span class="stringliteral">&quot;execute order&quot;</span>) != std::string::npos)</div>
+<div class="line">            ExecuteOrder(market, line);</div>
 <div class="line">        <span class="keywordflow">else</span></div>
 <div class="line">            std::cerr &lt;&lt; <span class="stringliteral">&quot;Unknown command: &quot;</span>  &lt;&lt; line &lt;&lt; std::endl;</div>
 <div class="line">    }</div>
@@ -734,6 +757,7 @@ $(function() {
 <div class="ttc" id="aclass_cpp_trader_1_1_matching_1_1_market_manager_html_a0de974448f76a5d97b033a969bc5b0b8"><div class="ttname"><a href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a0de974448f76a5d97b033a969bc5b0b8">CppTrader::Matching::MarketManager::ReduceOrder</a></div><div class="ttdeci">ErrorCode ReduceOrder(uint64_t id, uint64_t quantity)</div><div class="ttdoc">Reduce the order by the given quantity.</div><div class="ttdef"><b>Definition</b> <a href="market__manager_8cpp_source.html#l00452">market_manager.cpp:452</a></div></div>
 <div class="ttc" id="aclass_cpp_trader_1_1_matching_1_1_market_manager_html_a24a4ae0561e03e2f82ef6ae217814678"><div class="ttname"><a href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a24a4ae0561e03e2f82ef6ae217814678">CppTrader::Matching::MarketManager::MitigateOrder</a></div><div class="ttdeci">ErrorCode MitigateOrder(uint64_t id, uint64_t new_price, uint64_t new_quantity)</div><div class="ttdoc">Mitigate the order.</div><div class="ttdef"><b>Definition</b> <a href="market__manager_8cpp_source.html#l00562">market_manager.cpp:562</a></div></div>
 <div class="ttc" id="aclass_cpp_trader_1_1_matching_1_1_market_manager_html_a2b256b95613140f917fc9cab0a5edec4"><div class="ttname"><a href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a2b256b95613140f917fc9cab0a5edec4">CppTrader::Matching::MarketManager::AddOrderBook</a></div><div class="ttdeci">ErrorCode AddOrderBook(const Symbol &amp;symbol)</div><div class="ttdoc">Add a new order book.</div><div class="ttdef"><b>Definition</b> <a href="market__manager_8cpp_source.html#l00082">market_manager.cpp:82</a></div></div>
+<div class="ttc" id="aclass_cpp_trader_1_1_matching_1_1_market_manager_html_a48bc935e51319f975eedcffb54849087"><div class="ttname"><a href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a48bc935e51319f975eedcffb54849087">CppTrader::Matching::MarketManager::ExecuteOrder</a></div><div class="ttdeci">ErrorCode ExecuteOrder(uint64_t id, uint64_t quantity)</div><div class="ttdoc">Execute the order.</div><div class="ttdef"><b>Definition</b> <a href="market__manager_8cpp_source.html#l00877">market_manager.cpp:877</a></div></div>
 <div class="ttc" id="aclass_cpp_trader_1_1_matching_1_1_market_manager_html_a4bd22c0b638edcc5b543210b8d2dcb83"><div class="ttname"><a href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a4bd22c0b638edcc5b543210b8d2dcb83">CppTrader::Matching::MarketManager::DeleteOrder</a></div><div class="ttdeci">ErrorCode DeleteOrder(uint64_t id)</div><div class="ttdoc">Delete the order.</div><div class="ttdef"><b>Definition</b> <a href="market__manager_8cpp_source.html#l00815">market_manager.cpp:815</a></div></div>
 <div class="ttc" id="aclass_cpp_trader_1_1_matching_1_1_market_manager_html_a4bd7f531ee55fdd76974d75115e18687"><div class="ttname"><a href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a4bd7f531ee55fdd76974d75115e18687">CppTrader::Matching::MarketManager::EnableMatching</a></div><div class="ttdeci">void EnableMatching()</div><div class="ttdoc">Enable automatic matching.</div><div class="ttdef"><b>Definition</b> <a href="market__manager_8h_source.html#l00212">market_manager.h:212</a></div></div>
 <div class="ttc" id="aclass_cpp_trader_1_1_matching_1_1_market_manager_html_a69d21a5d2128335edd697fbf317d6190"><div class="ttname"><a href="class_cpp_trader_1_1_matching_1_1_market_manager.html#a69d21a5d2128335edd697fbf317d6190">CppTrader::Matching::MarketManager::AddSymbol</a></div><div class="ttdeci">ErrorCode AddSymbol(const Symbol &amp;symbol)</div><div class="ttdoc">Add a new symbol.</div><div class="ttdef"><b>Definition</b> <a href="market__manager_8cpp_source.html#l00036">market_manager.cpp:36</a></div></div>
