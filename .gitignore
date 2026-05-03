@@ -1,8 +1,10 @@
 # Build
 build
 
+# Claude
+.claude/worktrees
+
 # CMake
-build
 cmake
 cmake-build-*
 
@@ -14,6 +16,9 @@ tags.idx
 modules/*
 !modules/CMakeLists.txt
 !modules/*.cmake
+
+# Security
+.env
 
 # Temporary
 .idea
