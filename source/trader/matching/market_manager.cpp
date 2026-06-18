@@ -512,7 +512,7 @@ ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity, bool recurs
                 assert(false && "Unsupported order type!");
                 break;
         }
-     }
+    }
     else
     {
         // Call the corresponding handler
@@ -538,7 +538,7 @@ ErrorCode MarketManager::ReduceOrder(uint64_t id, uint64_t quantity, bool recurs
         }
 
         // Erase the order
-        _orders.erase(order_it);
+        _orders.erase(_orders.find(order_ptr->Id));
 
         // Relase the order
         _order_pool.Release(order_ptr);
@@ -661,7 +661,7 @@ ErrorCode MarketManager::ModifyOrder(uint64_t id, uint64_t new_price, uint64_t n
         _market_handler.onDeleteOrder(*order_ptr);
 
         // Erase the order
-        _orders.erase(order_it);
+        _orders.erase(_orders.find(order_ptr->Id));
 
         // Relase the order
         _order_pool.Release(order_ptr);
@@ -733,7 +733,7 @@ ErrorCode MarketManager::ReplaceOrder(uint64_t id, uint64_t new_id, uint64_t new
     _market_handler.onDeleteOrder(*order_ptr);
 
     // Erase the order
-    _orders.erase(order_it);
+    _orders.erase(_orders.find(order_ptr->Id));
 
     // Replace the order
     order_ptr->Id = new_id;
@@ -859,7 +859,7 @@ ErrorCode MarketManager::DeleteOrder(uint64_t id, bool recursive)
     _market_handler.onDeleteOrder(*order_ptr);
 
     // Erase the order
-    _orders.erase(order_it);
+    _orders.erase(_orders.find(order_ptr->Id));
 
     // Relase the order
     _order_pool.Release(order_ptr);
@@ -949,7 +949,7 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t quantity)
         _market_handler.onDeleteOrder(*order_ptr);
 
         // Erase the order
-        _orders.erase(order_it);
+        _orders.erase(_orders.find(order_ptr->Id));
 
         // Relase the order
         _order_pool.Release(order_ptr);
@@ -1040,7 +1040,7 @@ ErrorCode MarketManager::ExecuteOrder(uint64_t id, uint64_t price, uint64_t quan
         _market_handler.onDeleteOrder(*order_ptr);
 
         // Erase the order
-        _orders.erase(order_it);
+        _orders.erase(_orders.find(order_ptr->Id));
 
         // Relase the order
         _order_pool.Release(order_ptr);
