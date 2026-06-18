@@ -601,7 +601,7 @@ $(function() {
 <div class="line"><a id="l00512" name="l00512"></a><span class="lineno">  512</span>                assert(<span class="keyword">false</span> &amp;&amp; <span class="stringliteral">&quot;Unsupported order type!&quot;</span>);</div>
 <div class="line"><a id="l00513" name="l00513"></a><span class="lineno">  513</span>                <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00514" name="l00514"></a><span class="lineno">  514</span>        }</div>
-<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>     }</div>
+<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>    }</div>
 <div class="line"><a id="l00516" name="l00516"></a><span class="lineno">  516</span>    <span class="keywordflow">else</span></div>
 <div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span>    {</div>
 <div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>        <span class="comment">// Call the corresponding handler</span></div>
@@ -627,7 +627,7 @@ $(function() {
 <div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>        }</div>
 <div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span> </div>
 <div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>        <span class="comment">// Erase the order</span></div>
-<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>        _orders.erase(order_it);</div>
+<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>        _orders.erase(_orders.find(order_ptr-&gt;Id));</div>
 <div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span> </div>
 <div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>        <span class="comment">// Relase the order</span></div>
 <div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>        _order_pool.Release(order_ptr);</div>
@@ -754,7 +754,7 @@ $(function() {
 <div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>        _market_handler.onDeleteOrder(*order_ptr);</div>
 <div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span> </div>
 <div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>        <span class="comment">// Erase the order</span></div>
-<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>        _orders.erase(order_it);</div>
+<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>        _orders.erase(_orders.find(order_ptr-&gt;Id));</div>
 <div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span> </div>
 <div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>        <span class="comment">// Relase the order</span></div>
 <div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>        _order_pool.Release(order_ptr);</div>
@@ -828,7 +828,7 @@ $(function() {
 <div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>    _market_handler.<a class="code hl_function" href="class_cpp_trader_1_1_matching_1_1_market_handler.html#a86fc9940fbb919c7dfb1c971fd68c5f9">onDeleteOrder</a>(*order_ptr);</div>
 <div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span> </div>
 <div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>    <span class="comment">// Erase the order</span></div>
-<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>    _orders.erase(order_it);</div>
+<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>    _orders.erase(_orders.find(order_ptr-&gt;Id));</div>
 <div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span> </div>
 <div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>    <span class="comment">// Replace the order</span></div>
 <div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>    order_ptr-&gt;Id = new_id;</div>
@@ -958,7 +958,7 @@ $(function() {
 <div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>    _market_handler.<a class="code hl_function" href="class_cpp_trader_1_1_matching_1_1_market_handler.html#a86fc9940fbb919c7dfb1c971fd68c5f9">onDeleteOrder</a>(*order_ptr);</div>
 <div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span> </div>
 <div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>    <span class="comment">// Erase the order</span></div>
-<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>    _orders.erase(order_it);</div>
+<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>    _orders.erase(_orders.find(order_ptr-&gt;Id));</div>
 <div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span> </div>
 <div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>    <span class="comment">// Relase the order</span></div>
 <div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>    _order_pool.Release(order_ptr);</div>
@@ -1049,7 +1049,7 @@ $(function() {
 <div class="line"><a id="l00949" name="l00949"></a><span class="lineno">  949</span>        _market_handler.onDeleteOrder(*order_ptr);</div>
 <div class="line"><a id="l00950" name="l00950"></a><span class="lineno">  950</span> </div>
 <div class="line"><a id="l00951" name="l00951"></a><span class="lineno">  951</span>        <span class="comment">// Erase the order</span></div>
-<div class="line"><a id="l00952" name="l00952"></a><span class="lineno">  952</span>        _orders.erase(order_it);</div>
+<div class="line"><a id="l00952" name="l00952"></a><span class="lineno">  952</span>        _orders.erase(_orders.find(order_ptr-&gt;<a class="code hl_variable" href="struct_cpp_trader_1_1_matching_1_1_order.html#ab1bdcd3d6bd3dce6d54d0c3bbdcaeeac">Id</a>));</div>
 <div class="line"><a id="l00953" name="l00953"></a><span class="lineno">  953</span> </div>
 <div class="line"><a id="l00954" name="l00954"></a><span class="lineno">  954</span>        <span class="comment">// Relase the order</span></div>
 <div class="line"><a id="l00955" name="l00955"></a><span class="lineno">  955</span>        _order_pool.Release(order_ptr);</div>
@@ -1142,7 +1142,7 @@ $(function() {
 <div class="line"><a id="l01040" name="l01040"></a><span class="lineno"> 1040</span>        _market_handler.onDeleteOrder(*order_ptr);</div>
 <div class="line"><a id="l01041" name="l01041"></a><span class="lineno"> 1041</span> </div>
 <div class="line"><a id="l01042" name="l01042"></a><span class="lineno"> 1042</span>        <span class="comment">// Erase the order</span></div>
-<div class="line"><a id="l01043" name="l01043"></a><span class="lineno"> 1043</span>        _orders.erase(order_it);</div>
+<div class="line"><a id="l01043" name="l01043"></a><span class="lineno"> 1043</span>        _orders.erase(_orders.find(order_ptr-&gt;<a class="code hl_variable" href="struct_cpp_trader_1_1_matching_1_1_order.html#ab1bdcd3d6bd3dce6d54d0c3bbdcaeeac">Id</a>));</div>
 <div class="line"><a id="l01044" name="l01044"></a><span class="lineno"> 1044</span> </div>
 <div class="line"><a id="l01045" name="l01045"></a><span class="lineno"> 1045</span>        <span class="comment">// Relase the order</span></div>
 <div class="line"><a id="l01046" name="l01046"></a><span class="lineno"> 1046</span>        _order_pool.Release(order_ptr);</div>
@@ -1928,6 +1928,7 @@ $(function() {
 <div class="ttc" id="astruct_cpp_trader_1_1_matching_1_1_order_html_a798b7777f5c575a301c6174af2c23e94"><div class="ttname"><a href="struct_cpp_trader_1_1_matching_1_1_order.html#a798b7777f5c575a301c6174af2c23e94">CppTrader::Matching::Order::LeavesQuantity</a></div><div class="ttdeci">uint64_t LeavesQuantity</div><div class="ttdoc">Order leaves quantity.</div><div class="ttdef"><b>Definition</b> <a href="order_8h_source.html#l00147">order.h:147</a></div></div>
 <div class="ttc" id="astruct_cpp_trader_1_1_matching_1_1_order_html_a8f9a2bd4403993d06556167258a3ed95"><div class="ttname"><a href="struct_cpp_trader_1_1_matching_1_1_order.html#a8f9a2bd4403993d06556167258a3ed95">CppTrader::Matching::Order::Type</a></div><div class="ttdeci">OrderType Type</div><div class="ttdoc">Order type.</div><div class="ttdef"><b>Definition</b> <a href="order_8h_source.html#l00134">order.h:134</a></div></div>
 <div class="ttc" id="astruct_cpp_trader_1_1_matching_1_1_order_html_aa3e4861d7ecd323ee3304a0704922a60"><div class="ttname"><a href="struct_cpp_trader_1_1_matching_1_1_order.html#aa3e4861d7ecd323ee3304a0704922a60">CppTrader::Matching::Order::HiddenQuantity</a></div><div class="ttdeci">uint64_t HiddenQuantity() const noexcept</div><div class="ttdoc">Order hidden quantity.</div><div class="ttdef"><b>Definition</b> <a href="order_8h_source.html#l00164">order.h:164</a></div></div>
+<div class="ttc" id="astruct_cpp_trader_1_1_matching_1_1_order_html_ab1bdcd3d6bd3dce6d54d0c3bbdcaeeac"><div class="ttname"><a href="struct_cpp_trader_1_1_matching_1_1_order.html#ab1bdcd3d6bd3dce6d54d0c3bbdcaeeac">CppTrader::Matching::Order::Id</a></div><div class="ttdeci">uint64_t Id</div><div class="ttdoc">Order Id.</div><div class="ttdef"><b>Definition</b> <a href="order_8h_source.html#l00130">order.h:130</a></div></div>
 <div class="ttc" id="astruct_cpp_trader_1_1_matching_1_1_order_html_ad78901a32671682eb2e829e73e5a6839"><div class="ttname"><a href="struct_cpp_trader_1_1_matching_1_1_order.html#ad78901a32671682eb2e829e73e5a6839">CppTrader::Matching::Order::SymbolId</a></div><div class="ttdeci">uint32_t SymbolId</div><div class="ttdoc">Symbol Id.</div><div class="ttdef"><b>Definition</b> <a href="order_8h_source.html#l00132">order.h:132</a></div></div>
 <div class="ttc" id="astruct_cpp_trader_1_1_matching_1_1_order_node_html"><div class="ttname"><a href="struct_cpp_trader_1_1_matching_1_1_order_node.html">CppTrader::Matching::OrderNode</a></div><div class="ttdoc">Order node.</div><div class="ttdef"><b>Definition</b> <a href="order_8h_source.html#l00301">order.h:302</a></div></div>
 <div class="ttc" id="astruct_cpp_trader_1_1_matching_1_1_symbol_html"><div class="ttname"><a href="struct_cpp_trader_1_1_matching_1_1_symbol.html">CppTrader::Matching::Symbol</a></div><div class="ttdoc">Symbol.</div><div class="ttdef"><b>Definition</b> <a href="symbol_8h_source.html#l00021">symbol.h:22</a></div></div>
