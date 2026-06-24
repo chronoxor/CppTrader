@@ -76,7 +76,7 @@ private:
     size_t _execute_orders;
 };
 
-class MyITCHHandler : public ITCHHandler
+class MyITCHHandler : public ITCHHandler<MyITCHHandler>
 {
 public:
     explicit MyITCHHandler(MarketManager& market)
@@ -88,29 +88,28 @@ public:
     size_t messages() const { return _messages; }
     size_t errors() const { return _errors; }
 
-protected:
-    bool onMessage(const SystemEventMessage& message) override { ++_messages; return true; }
-    bool onMessage(const StockDirectoryMessage& message) override { ++_messages; Symbol symbol(message.StockLocate, message.Stock); _market.AddSymbol(symbol); _market.AddOrderBook(symbol); return true; }
-    bool onMessage(const StockTradingActionMessage& message) override { ++_messages; return true; }
-    bool onMessage(const RegSHOMessage& message) override { ++_messages; return true; }
-    bool onMessage(const MarketParticipantPositionMessage& message) override { ++_messages; return true; }
-    bool onMessage(const MWCBDeclineMessage& message) override { ++_messages; return true; }
-    bool onMessage(const MWCBStatusMessage& message) override { ++_messages; return true; }
-    bool onMessage(const IPOQuotingMessage& message) override { ++_messages; return true; }
-    bool onMessage(const AddOrderMessage& message) override { ++_messages; _market.AddOrder(Order::Limit(message.OrderReferenceNumber, message.StockLocate, (message.BuySellIndicator == 'B') ? OrderSide::BUY : OrderSide::SELL, message.Price, message.Shares)); return true; }
-    bool onMessage(const AddOrderMPIDMessage& message) override { ++_messages; _market.AddOrder(Order::Limit(message.OrderReferenceNumber, message.StockLocate, (message.BuySellIndicator == 'B') ? OrderSide::BUY : OrderSide::SELL, message.Price, message.Shares)); return true; }
-    bool onMessage(const OrderExecutedMessage& message) override { ++_messages; return true; }
-    bool onMessage(const OrderExecutedWithPriceMessage& message) override { ++_messages; return true; }
-    bool onMessage(const OrderCancelMessage& message) override { ++_messages; _market.ReduceOrder(message.OrderReferenceNumber, message.CanceledShares); return true; }
-    bool onMessage(const OrderDeleteMessage& message) override { ++_messages; _market.DeleteOrder(message.OrderReferenceNumber); return true; }
-    bool onMessage(const OrderReplaceMessage& message) override { ++_messages; _market.ReplaceOrder(message.OriginalOrderReferenceNumber, message.NewOrderReferenceNumber, message.Price, message.Shares); return true; }
-    bool onMessage(const TradeMessage& message) override { ++_messages; return true; }
-    bool onMessage(const CrossTradeMessage& message) override { ++_messages; return true; }
-    bool onMessage(const BrokenTradeMessage& message) override { ++_messages; return true; }
-    bool onMessage(const NOIIMessage& message) override { ++_messages; return true; }
-    bool onMessage(const RPIIMessage& message) override { ++_messages; return true; }
-    bool onMessage(const LULDAuctionCollarMessage& message) override { ++_messages; return true; }
-    bool onMessage(const UnknownMessage& message) override { ++_errors; return true; }
+    bool onMessage(const SystemEventMessage& message) { ++_messages; return true; }
+    bool onMessage(const StockDirectoryMessage& message) { ++_messages; Symbol symbol(message.StockLocate, message.Stock); _market.AddSymbol(symbol); _market.AddOrderBook(symbol); return true; }
+    bool onMessage(const StockTradingActionMessage& message) { ++_messages; return true; }
+    bool onMessage(const RegSHOMessage& message) { ++_messages; return true; }
+    bool onMessage(const MarketParticipantPositionMessage& message) { ++_messages; return true; }
+    bool onMessage(const MWCBDeclineMessage& message) { ++_messages; return true; }
+    bool onMessage(const MWCBStatusMessage& message) { ++_messages; return true; }
+    bool onMessage(const IPOQuotingMessage& message) { ++_messages; return true; }
+    bool onMessage(const AddOrderMessage& message) { ++_messages; _market.AddOrder(Order::Limit(message.OrderReferenceNumber, message.StockLocate, (message.BuySellIndicator == 'B') ? OrderSide::BUY : OrderSide::SELL, message.Price, message.Shares)); return true; }
+    bool onMessage(const AddOrderMPIDMessage& message) { ++_messages; _market.AddOrder(Order::Limit(message.OrderReferenceNumber, message.StockLocate, (message.BuySellIndicator == 'B') ? OrderSide::BUY : OrderSide::SELL, message.Price, message.Shares)); return true; }
+    bool onMessage(const OrderExecutedMessage& message) { ++_messages; return true; }
+    bool onMessage(const OrderExecutedWithPriceMessage& message) { ++_messages; return true; }
+    bool onMessage(const OrderCancelMessage& message) { ++_messages; _market.ReduceOrder(message.OrderReferenceNumber, message.CanceledShares); return true; }
+    bool onMessage(const OrderDeleteMessage& message) { ++_messages; _market.DeleteOrder(message.OrderReferenceNumber); return true; }
+    bool onMessage(const OrderReplaceMessage& message) { ++_messages; _market.ReplaceOrder(message.OriginalOrderReferenceNumber, message.NewOrderReferenceNumber, message.Price, message.Shares); return true; }
+    bool onMessage(const TradeMessage& message) { ++_messages; return true; }
+    bool onMessage(const CrossTradeMessage& message) { ++_messages; return true; }
+    bool onMessage(const BrokenTradeMessage& message) { ++_messages; return true; }
+    bool onMessage(const NOIIMessage& message) { ++_messages; return true; }
+    bool onMessage(const RPIIMessage& message) { ++_messages; return true; }
+    bool onMessage(const LULDAuctionCollarMessage& message) { ++_messages; return true; }
+    bool onMessage(const UnknownMessage& message) { ++_errors; return true; }
 
 private:
     MarketManager& _market;
