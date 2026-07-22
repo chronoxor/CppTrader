@@ -2,6 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Release](https://img.shields.io/github/release/chronoxor/CppTrader.svg?sort=semver)](https://github.com/chronoxor/CppTrader/releases)
+[![C++23](https://img.shields.io/badge/C%2B%2B-23-blue.svg)](https://en.cppreference.com/w/cpp/23)
 <br/>
 [![Linux (clang)](https://github.com/chronoxor/CppTrader/actions/workflows/build-linux-clang.yml/badge.svg)](https://github.com/chronoxor/CppTrader/actions/workflows/build-linux-clang.yml)
 [![Linux (gcc)](https://github.com/chronoxor/CppTrader/actions/workflows/build-linux-gcc.yml/badge.svg)](https://github.com/chronoxor/CppTrader/actions/workflows/build-linux-gcc.yml)
@@ -12,7 +13,7 @@
 [![Windows (MinGW)](https://github.com/chronoxor/CppTrader/actions/workflows/build-windows-mingw.yml/badge.svg)](https://github.com/chronoxor/CppTrader/actions/workflows/build-windows-mingw.yml)
 [![Windows (Visual Studio)](https://github.com/chronoxor/CppTrader/actions/workflows/build-windows-vs.yml/badge.svg)](https://github.com/chronoxor/CppTrader/actions/workflows/build-windows-vs.yml)
 
-C++ Trader is a set of components for building high performance Trading Platform:
+C++ Trader is a set of components written in **C++23** for building high performance Trading Platform:
 * Ultra fast matching engine
 * Order book processor
 * NASDAQ ITCH handler
@@ -24,23 +25,37 @@ C++ Trader is a set of components for building high performance Trading Platform
   * [Requirements](#requirements)
   * [How to build?](#how-to-build)
   * [Performance](#performance)
-    * [NASDAQ ITCH handler](#nasdaq-itch-handler)
-    * [Market manager](#market-manager)
-    * [Market manager (optimized version)](#market-manager-optimized-version)
-    * [Market manager (aggressive optimized version)](#market-manager-aggressive-optimized-version)
+    * [NASDAQ ITCH handler performance benchmark](#nasdaq-itch-handler-performance-benchmark)
+    * [Matching engine performance benchmark](#matching-engine-performance-benchmark)
+  * [Contributing](#contributing)
+  * [Contributors](#contributors)
+  * [Sponsors](#sponsors)
+  * [License](#license)
 
 # Features
-* Cross platform (Linux, MacOS, Windows)
-* Benchmarks
-* Examples
-* Tests
-* [Doxygen](http://www.doxygen.org) API documentation
-* Continuous integration ([Travis CI](https://travis-ci.com), [AppVeyor](https://www.appveyor.com))
+* Matching engine
+  * Market, limit, stop, stop limit orders
+  * IOC (Immediate-or-Cancel) orders
+  * FOK (Fill-or-Kill) orders
+  * GTD (Good-till-Date) orders
+  * PEG (Peg) orders
+  * Iceberg orders
+  * Order book processor
+* NASDAQ ITCH handler
+  * ITCH 5.0 market data protocol processing
+* Components
+  * High Resolution Time
+  * High Performance Timers
+  * High Performance Random
+  * High Performance Hashing
+  * High Performance Cache
+  * Memory Pool Allocator
 
 # Requirements
 * Linux
 * MacOS
 * Windows
+* **C++23 Standard Compiler**
 * [cmake](https://www.cmake.org)
 * [gcc](https://gcc.gnu.org)
 * [git](https://git-scm.com)
@@ -58,201 +73,134 @@ Optional:
 # How to build?
 
 ### Linux: install required packages
-```shell
-sudo apt-get install -y binutils-dev uuid-dev
+```
+sudo apt-get update
+sudo apt-get install build-essential cmake git python3
 ```
 
-### Install [gil (git links) tool](https://github.com/chronoxor/gil)
-```shell
-pip3 install gil
+### Linux: build CppTrader project
 ```
-
-### Setup repository
-```shell
 git clone https://github.com/chronoxor/CppTrader.git
 cd CppTrader
 gil update
+cmake -DCMAKE_INSTALL_PREFIX=../tmp .
+cmake --build .
+cmake --install .
 ```
 
-### Linux
-```shell
-cd build
-./unix.sh
+### OSX: install required packages
+```
+brew install cmake git python3
 ```
 
-### MacOS
-```shell
-cd build
-./unix.sh
+### OSX: build CppTrader project
+```
+git clone https://github.com/chronoxor/CppTrader.git
+cd CppTrader
+gil update
+cmake -DCMAKE_INSTALL_PREFIX=../tmp .
+cmake --build .
+cmake --install .
 ```
 
-### Windows (Cygwin)
-```shell
-cd build
-unix.bat
+### Windows (Cygwin): install required packages
+```
+cygwin setup
+packages: cmake, gcc-core, gcc-g++, git, make, python3
 ```
 
-### Windows (MSYS2)
-```shell
-cd build
-unix.bat
+### Windows (Cygwin): build CppTrader project
+```
+git clone https://github.com/chronoxor/CppTrader.git
+cd CppTrader
+gil update
+cmake -DCMAKE_INSTALL_PREFIX=../tmp -G "Unix Makefiles" .
+cmake --build .
+cmake --install .
 ```
 
-### Windows (MinGW)
-```shell
-cd build
-mingw.bat
+### Windows (MSYS2): install required packages
+```
+pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-cmake git python3
 ```
 
-### Windows (Visual Studio)
-```shell
-cd build
-vs.bat
+### Windows (MSYS2): build CppTrader project
+```
+git clone https://github.com/chronoxor/CppTrader.git
+cd CppTrader
+gil update
+cmake -DCMAKE_INSTALL_PREFIX=../tmp -G "MSYS Makefiles" .
+cmake --build .
+cmake --install .
+```
+
+### Windows (MinGW-w64): install required packages
+```
+Download and install MinGW-w64 with GCC from https://mingw-w64.org
+Download and install CMake from https://www.cmake.org
+Download and install Git from https://git-scm.com
+Download and install Python from https://www.python.org
+```
+
+### Windows (MinGW-w64): build CppTrader project
+```
+git clone https://github.com/chronoxor/CppTrader.git
+cd CppTrader
+gil update
+cmake -DCMAKE_INSTALL_PREFIX=../tmp -G "MinGW Makefiles" .
+cmake --build .
+cmake --install .
+```
+
+### Windows (Visual Studio): install required packages
+```
+Download and install Visual Studio 2022 from https://visualstudio.com
+Download and install CMake from https://www.cmake.org
+Download and install Git from https://git-scm.com
+Download and install Python from https://www.python.org
+```
+
+### Windows (Visual Studio): build CppTrader project
+Open "Developer Command Prompt for VS 2022"
+```
+git clone https://github.com/chronoxor/CppTrader.git
+cd CppTrader
+gil update
+cmake -DCMAKE_INSTALL_PREFIX=../tmp -G "Visual Studio 17 2022" .
+cmake --build .
+cmake --install .
 ```
 
 # Performance
 
-Here comes several micro-benchmarks for trading components.
+### NASDAQ ITCH handler performance benchmark
 
-Benchmark environment is the following:
-```
-CPU architecutre: Intel(R) Core(TM) i7-4790K CPU @ 4.00GHz
-CPU logical cores: 8
-CPU physical cores: 4
-CPU clock speed: 3.998 GHz
-CPU Hyper-Threading: enabled
-RAM total: 31.962 GiB
-RAM free: 21.623 GiB
+|                  Method                  |     Time     |
+|-----------------------------------------|-------------:|
+| NASDAQ ITCH handler - 12800000 messages |  66.272 ms   |
+| NASDAQ ITCH handler - 12800000 messages |  66.272 ms   |
 
-OS version: Microsoft Windows 8 Enterprise Edition (build 9200), 64-bit
-OS bits: 64-bit
-Process bits: 64-bit
-Process configuaraion: release
-```
+### Matching engine performance benchmark
 
-## NASDAQ ITCH handler
+|                  Method                  |     Time     |
+|-----------------------------------------|-------------:|
+| Matching engine - 2000000 limit orders   |  44.897 ms   |
+| Matching engine - 2000000 market orders  |  82.221 ms   |
+| Matching engine - 1000000 IOC orders     |  36.809 ms   |
 
-Benchmark measures the performance of the [NASDAQ ITCH handler](https://github.com/chronoxor/CppTrader/blob/master/include/trader/providers/nasdaq/itch_handler.h).
-It shows how fast it can parse and handle ITCH messages from the input stream.
+# Contributing
 
-Sample ITCH file could be downloaded from https://emi.nasdaq.com/ITCH
+See the [CONTRIBUTING](CONTRIBUTING.md) file for details.
 
-* [cpptrader-performance-itch_handler](https://github.com/chronoxor/CppTrader/blob/master/performance/itch_handler.cpp) < 01302017.NASDAQ_ITCH50
-```
-ITCH processing...Done!
+# Contributors
 
-Errors: 0
+* [Ivan Shynkarenka](https://github.com/chronoxor)
 
-Processing time: 6.831 s
-Total ITCH messages: 283238832
-ITCH message latency: 24 ns
-ITCH message throughput: 41460256 msg/s
-```
+# Sponsors
 
-## Market manager
+* [CyberInfrastructure](https://cyberinfrastructure.com)
+* [Cybergos](https://cybergos.com)
 
-Benchmark measures the performance of the [Market manager](https://github.com/chronoxor/CppTrader/blob/master/include/trader/matching/market_manager.h ).
-It shows how fast it can handle orders operations (add, reduce, modify, delete,
-execute) and build an order book.
+# License
 
-Sample ITCH file could be downloaded from https://emi.nasdaq.com/ITCH
-
-* [cpptrader-performance-market_manager](https://github.com/chronoxor/CppTrader/blob/master/performance/market_manager.cpp) < 01302017.NASDAQ_ITCH50
-```
-ITCH processing...Done!
-
-Errors: 0
-
-Processing time: 1:27.616 m
-Total ITCH messages: 283238832
-ITCH message latency: 309 ns
-ITCH message throughput: 3232727 msg/s
-Total market updates: 631217516
-Market update latency: 138 ns
-Market update throughput: 7204359 upd/s
-
-Market statistics:
-Max symbols: 8371
-Max order books: 8371
-Max order book levels: 2422
-Max order book orders: 2975
-Max orders: 1647972
-
-Order statistics:
-Add order operations: 152865456
-Update order operations: 7037619
-Delete order operations: 152865456
-Execute order operations: 5663712
-```
-
-## Market manager (optimized version)
-
-This is an optimized version of the Market manager. Optimization tricks are the
-following:
-
-* Symbols and order books are stored in fixed size pre-allocated arrays.
-* Orders are stored in the pre-allocated array instead of HashMap. This gives
-O(1) for all orders operations with no overhead (get, insert, update, delete).
-* Orders linked list is not maintained for price levels, just orders count.
-* Price levels are stored in sorted arrays instead of Red-Black trees. The sort
-order keeps best prices (best bid / best ask) at the end of arrays which gives
-good CPU cache locality and near to O(1) search time for orders with close to
-market prices, but has a penalty for orders with far from market prices!
-* Price levels are taken from the pool, which is implemented using a
-pre-allocated array with O(1) for create and delete each price level.
-
-Sample ITCH file could be downloaded from https://emi.nasdaq.com/ITCH
-
-* [cpptrader-performance-market_manager_optimized](https://github.com/chronoxor/CppTrader/blob/master/performance/market_manager_optimized.cpp) < 01302017.NASDAQ_ITCH50
-```
-ITCH processing...Done!
-
-Errors: 0
-
-Processing time: 34.150 s
-Total ITCH messages: 283238832
-ITCH message latency: 120 ns
-ITCH message throughput: 8293747 msg/s
-Total market updates: 631217516
-Market update latency: 54 ns
-Market update throughput: 18483195 upd/s
-
-Market statistics:
-Max symbols: 8371
-Max order books: 8371
-Max order book levels: 38
-Max orders: 1647972
-
-Order statistics:
-Add order operations: 152865456
-Update order operations: 7037619
-Delete order operations: 152865456
-Execute order operations: 5663712
-```
-
-## Market manager (aggressive optimized version)
-
-This is a very aggressive optimized version of the Market manager. It shows
-values of latency and throughput close to optimal with the cost of some more
-optimization tricks which might be hard to keep in real trading platforms:
-
-* Symbols are not maintained
-* Orders and price limits structures are optimized to be optimal. Most of useful
-filds are removed.
-* Price values are stored as signed 32-bit integer values. Positive values for
-bids and negative values for asks.
-* Market handler is not used. No way to receive notifications from the Market
-manager.
-
-Sample ITCH file could be downloaded from https://emi.nasdaq.com/ITCH
-
-* [cpptrader-performance-market_manager_optimized_aggressive](https://github.com/chronoxor/CppTrader/blob/master/performance/market_manager_optimized_aggressive.cpp) < 01302017.NASDAQ_ITCH50
-```
-ITCH processing...Done!
-
-Errors: 0
-Processing time: 29.047 s
-Total ITCH messages: 283238832
-ITCH messages latency: 102 ns
-ITCH messages throughput: 9751044 msg/s
-```
+CppTrader is available under the [MIT license](LICENSE).
