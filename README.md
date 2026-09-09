@@ -256,3 +256,4 @@ Total ITCH messages: 283238832
 ITCH messages latency: 102 ns
 ITCH messages throughput: 9751044 msg/s
 ```
+
