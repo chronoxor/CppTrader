@@ -13,7 +13,7 @@ using namespace CppTrader::ITCH;
 
 namespace {
 
-class MyITCHHandler : public ITCHHandler
+class MyITCHHandler : public ITCHHandler<MyITCHHandler>
 {
 public:
     MyITCHHandler()
@@ -24,29 +24,28 @@ public:
     size_t messages() const { return _messages; }
     size_t errors() const { return _errors; }
 
-protected:
-    bool onMessage(const SystemEventMessage& message) override { ++_messages; return true; }
-    bool onMessage(const StockDirectoryMessage& message) override { ++_messages; return true; }
-    bool onMessage(const StockTradingActionMessage& message) override { ++_messages; return true; }
-    bool onMessage(const RegSHOMessage& message) override { ++_messages; return true; }
-    bool onMessage(const MarketParticipantPositionMessage& message) override { ++_messages; return true; }
-    bool onMessage(const MWCBDeclineMessage& message) override { ++_messages; return true; }
-    bool onMessage(const MWCBStatusMessage& message) override { ++_messages; return true; }
-    bool onMessage(const IPOQuotingMessage& message) override { ++_messages; return true; }
-    bool onMessage(const AddOrderMessage& message) override { ++_messages; return true; }
-    bool onMessage(const AddOrderMPIDMessage& message) override { ++_messages; return true; }
-    bool onMessage(const OrderExecutedMessage& message) override { ++_messages; return true; }
-    bool onMessage(const OrderExecutedWithPriceMessage& message) override { ++_messages; return true; }
-    bool onMessage(const OrderCancelMessage& message) override { ++_messages; return true; }
-    bool onMessage(const OrderDeleteMessage& message) override { ++_messages; return true; }
-    bool onMessage(const OrderReplaceMessage& message) override { ++_messages; return true; }
-    bool onMessage(const TradeMessage& message) override { ++_messages; return true; }
-    bool onMessage(const CrossTradeMessage& message) override { ++_messages; return true; }
-    bool onMessage(const BrokenTradeMessage& message) override { ++_messages; return true; }
-    bool onMessage(const NOIIMessage& message) override { ++_messages; return true; }
-    bool onMessage(const RPIIMessage& message) override { ++_messages; return true; }
-    bool onMessage(const LULDAuctionCollarMessage& message) override { ++_messages; return true; }
-    bool onMessage(const UnknownMessage& message) override { ++_errors; return true; }
+    bool onMessage(const SystemEventMessage& message) { ++_messages; return true; }
+    bool onMessage(const StockDirectoryMessage& message) { ++_messages; return true; }
+    bool onMessage(const StockTradingActionMessage& message) { ++_messages; return true; }
+    bool onMessage(const RegSHOMessage& message) { ++_messages; return true; }
+    bool onMessage(const MarketParticipantPositionMessage& message) { ++_messages; return true; }
+    bool onMessage(const MWCBDeclineMessage& message) { ++_messages; return true; }
+    bool onMessage(const MWCBStatusMessage& message) { ++_messages; return true; }
+    bool onMessage(const IPOQuotingMessage& message) { ++_messages; return true; }
+    bool onMessage(const AddOrderMessage& message) { ++_messages; return true; }
+    bool onMessage(const AddOrderMPIDMessage& message) { ++_messages; return true; }
+    bool onMessage(const OrderExecutedMessage& message) { ++_messages; return true; }
+    bool onMessage(const OrderExecutedWithPriceMessage& message) { ++_messages; return true; }
+    bool onMessage(const OrderCancelMessage& message) { ++_messages; return true; }
+    bool onMessage(const OrderDeleteMessage& message) { ++_messages; return true; }
+    bool onMessage(const OrderReplaceMessage& message) { ++_messages; return true; }
+    bool onMessage(const TradeMessage& message) { ++_messages; return true; }
+    bool onMessage(const CrossTradeMessage& message) { ++_messages; return true; }
+    bool onMessage(const BrokenTradeMessage& message) { ++_messages; return true; }
+    bool onMessage(const NOIIMessage& message) { ++_messages; return true; }
+    bool onMessage(const RPIIMessage& message) { ++_messages; return true; }
+    bool onMessage(const LULDAuctionCollarMessage& message) { ++_messages; return true; }
+    bool onMessage(const UnknownMessage& message) { ++_errors; return true; }
 
 private:
     size_t _messages;
