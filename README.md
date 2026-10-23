@@ -34,8 +34,6 @@ C++ Trader is a set of components for building high performance Trading Platform
 * Benchmarks
 * Examples
 * Tests
-* [Doxygen](http://www.doxygen.org) API documentation
-* Continuous integration ([Travis CI](https://travis-ci.com), [AppVeyor](https://www.appveyor.com))
 
 # Requirements
 * Linux

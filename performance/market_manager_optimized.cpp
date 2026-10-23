@@ -428,6 +428,7 @@ public:
         order_ptr->Id = id;
         order_ptr->Symbol = symbol;
         order_ptr->Side = side;
+        order_ptr->Price = price;
         order_ptr->Quantity = quantity;
 
         // Call the corresponding handler
